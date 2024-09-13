@@ -31,6 +31,12 @@ n/a
 ---
 n/a
 
+## Features
+---
+- Allows users to rate and view other's ratings for each professor on different aspects (Overall, likeability, good-lectures, etc)
+- Graphical displays of grade distributions for class/professor taken from official NAU reports
+
+
 ## Contributing
 ---
 <a href="https://github.com/jeffreyHoelzel/LouiesRatings/graphs/contributors">
