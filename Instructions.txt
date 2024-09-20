@@ -1,0 +1,6 @@
+Hey Guys!
+
+I finally did it and it was painful. To start run the command `docker-compose up --build`.
+You will see lots of red errors but trust the process. Once it is done you should be able to view the containers from localhost:5000 for backend
+and localhost:3000 for frontend. I set up some code to test it out and you should see that the message from the backend is sent to the front end
+via an api call. If it works then you did it and now you have a working docker enviroment.
