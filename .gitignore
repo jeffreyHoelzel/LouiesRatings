@@ -3,3 +3,6 @@ db-data/
 service/node_modules
 web/node_modules
 
+.venv
+venv
+/venv
