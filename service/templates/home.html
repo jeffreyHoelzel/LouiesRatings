@@ -1,0 +1,22 @@
+<!-- frontend/public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <title>React App</title>
+  </head>
+  <body>
+    <div>
+      <form action="{{ url_for('send_message') }}" method="post">
+        <label for="demo">Say hello to the backend:</label>
+        <input type="text" id="demo" name="demo" placeholder="enter some text">
+        <button type="submit">Send</button>
+      </form>
+      <p>{{ message }}</p>
+    </div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
