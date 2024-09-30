@@ -42,7 +42,6 @@ n/a
 <a href="https://github.com/jeffreyHoelzel/LouiesRatings/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=jeffreyHoelzel/LouiesRatings" />
 </a>
-Note: once people make more commits, I can add everyone.
 
 ## License
 ---
