@@ -27,21 +27,21 @@ services:
     environment:
       - FLASK_ENV=development  
     volumes:
-      - ./service:/app  
-    depends_on:
-      - db
-    links:
-      - db
+      - ./service:/app  # Persist the SQLite database file
+#    depends_on:
+#      - db
+#    links:
+#      - db
 
-  db:
-    container_name: db
-    image: postgres:13
-    environment:
-      - POSTGRES_DB=mydb
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - db-data:/var/lib/postgresql/data 
+#  db:
+#    container_name: db
+#    image: postgres:13
+#    environment:
+#      - POSTGRES_DB=mydb
+#      - POSTGRES_USER=user
+#      - POSTGRES_PASSWORD=password
+#    volumes:
+#      - db-data:/var/lib/postgresql/data 
 
-volumes:
-  db-data:
+#volumes:
+#  db-data:

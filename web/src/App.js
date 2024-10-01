@@ -25,6 +25,7 @@ function App() {
       <h1>Frontend - React App</h1>
       <p>Backend says: {message}</p>
     </div>
+    
   );
 }
 
