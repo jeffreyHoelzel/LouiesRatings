@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 # For testing only
@@ -9,15 +9,19 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 @app.route('/', methods=['GET', 'POST'])
 def send_message():
-    message = ''
-    # check if form is for post request
+
+    # checks if form is for post request
     if request.method == 'POST':
-        # get message from user with name = demo in home.html
-        message = request.form.get('demo')
-        # modify message
-        message = f'We got your message: "{message}".'
-    # render new home.HTML page with modified message
-    return render_template('home.html', message=message)
+
+        # all post functions to the backend will have to do data manipulation 
+        # think of POST as a way to send data to the backend to make changes to the data
+
+        # usually a different return here 
+        users = [{'id': 1, 'username': 'Alice'}, {'id': 2, 'username': 'Bob'}]
+        return jsonify(users), 200
+
+    # we cannot send render templates as we are not using flask python templates on the frontend
+    return jsonify(message="Hello From Backend"), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
