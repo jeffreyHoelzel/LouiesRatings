@@ -3,4 +3,8 @@ Werkzeug==2.0.1
 flask-cors==3.0.10
 SQLAlchemy==1.4
 Flask-SQLAlchemy
+selenium==4.11.2
+beautifulsoup4
+pandas
+
 
