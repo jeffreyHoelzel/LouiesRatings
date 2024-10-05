@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data
-import sys
 import threading
 
 # turn to true to start filling the database with class information when the server starts
