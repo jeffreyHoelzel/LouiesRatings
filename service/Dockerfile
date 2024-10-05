@@ -23,7 +23,7 @@ RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable 
 RUN apt-get -y update
 RUN apt-get install -y google-chrome-stable
 
-# install chromedriver
+# install chromedriver to bin
 # version may need to be changes
 RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/129.0.6668.89/linux64/chromedriver-linux64.zip \
   && unzip chromedriver-linux64.zip && rm -dfr chromedriver_linux64.zip \
