@@ -5,7 +5,7 @@ from database import db, User, ClassData, fetch_grade_distribution_data
 import threading
 
 # turn to true to start filling the database with class information when the server starts
-FILL_DB_WITH_CLASS_DATA = False
+FILL_DB_WITH_CLASS_DATA = True
 
 # For testing only
 

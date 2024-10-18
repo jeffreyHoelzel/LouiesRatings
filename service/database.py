@@ -43,7 +43,14 @@ class ClassData(db.Model):
     pending = db.Column(db.Integer, nullable=False)
     total = db.Column(db.Integer, nullable=False)
 
+class Comment(db.Model):
+    comment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user = db.Column(db.Integer, autoincrement=True, nullable=False)
+    comment = db.Column(db.String(10), nullable=False)
 # ====================================
+
+
+
 
 # ====================================
 # DATABASE FUNCTIONS
