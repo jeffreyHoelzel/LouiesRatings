@@ -1,0 +1,101 @@
+body.login-open {
+  overflow: hidden;
+}
+
+.login-popup {
+  /* display: none; */
+  position: fixed;
+  z-index: 1;
+  right: 5px;
+  top: 5px;
+  background-color: white;
+  color: #1A2852;
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+.login-popup-content {
+  margin: 5% auto;
+  padding: 20px;
+  max-width: 300px;
+}
+
+.close-popup {
+  color: black;
+  float: right;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.close-popup:hover {
+  text-decoration: none;
+  cursor: pointer;
+  color: red;
+}
+
+.close-popup:active {
+  scale: 95%;
+  user-select: none;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+}
+
+.form-container input[type=text], 
+.form-container input[type=password] {
+  background-color: white;
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 20px 0;
+  border: 1px solid #1A2852;
+  border-radius: 3px;
+}
+
+.form-container input[type=text]:focus, 
+.form-container input[type=password]:focus {
+  background-color: #f4f4f4;
+  outline: none;
+}
+
+.option-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.login-btn {
+  background-color: #1A2852;
+  color: white;
+  padding: 10px 30px;
+  width: 50%;
+  border: none;
+  border-radius: 3px;
+}
+
+.login-btn:hover {
+  background-color: #F4B51A;
+  cursor: pointer;
+}
+
+.login-btn:active {
+  scale: 95%;
+}
+
+.new-account {
+  text-align: center;
+  width: 50%;
+  font-size: 16px;
+  text-decoration: none;
+  color: #1A2852;
+}
+
+.new-account:hover {
+  color: #F4B51A;
+  text-decoration: underline;
+}
+
+.new-account:active {
+  scale: 95%;
+}
