@@ -2,7 +2,9 @@ from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data
+from generate_graph import make_graph
 import threading
+import pandas as pd
 
 # turn to true to start filling the database with class information when the server starts
 FILL_DB_WITH_CLASS_DATA = False
@@ -64,6 +66,47 @@ def profile():
             db.session.commit()
 
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
+
+@app.route('/make_graph', methods=["GET", "POST"])
+def profile():
+    if request.method == 'POST':
+        data = request.json  # Get JSON data from the request
+
+        # get specfic class data
+        # todo: add functionality for professor data too
+        search_class_name = data.get('class_name')
+
+        # create data frame to generate chart from
+        class_data = ClassData.query.filter_by(class_name=search_class_name).all()
+
+        # create pandas data frame user the data
+        class_data_df= pd.DataFrame([
+            {
+                'id': data.id,
+                'semester': data.semester,
+                'subject': data.subject,
+                'class_name': data.class_name,
+                'section': data.section,
+                'class_nbr': data.class_nbr,
+                'instructor_name': data.instructor_name,
+                'a': data.a,
+                'b': data.b,
+                'c': data.c,
+                'd': data.d,
+                'f': data.f,
+                'au': data.au,
+                'p': data.p,
+                'ng': data.ng,
+                'w': data.w,
+                'i': data.i,
+                'ip': data.ip,
+                'pending': data.pending,
+                'total': data.total
+            } for data in class_data
+        ])
+
+        # return chart as json (will need to read from front end using vega-embed)
+        return make_graph(class_data_df)
 
 # ====================================
 

@@ -57,7 +57,7 @@ def make_graph(class_data: pd.DataFrame):
         color=alt.value("#002454")
     )
 
-    chart.save('chart.html')
+    return chart.save('chart.json')
 
 if __name__ == "__main__":
     make_graph(example_df)
