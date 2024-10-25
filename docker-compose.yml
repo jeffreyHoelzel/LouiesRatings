@@ -29,11 +29,11 @@ services:
     environment:
       - FLASK_ENV=development  
     volumes:
-      - ./service:/app  # Persist the SQLite database file
+      - ./service:/app  
 #    depends_on:
 #      - db
-#    links:
-#      - db
+    networks:
+      - louie_shared_network
 
 #  db:
 #    container_name: db
@@ -44,6 +44,8 @@ services:
 #      - POSTGRES_PASSWORD=password
 #    volumes:
 #      - db-data:/var/lib/postgresql/data 
+#    networks:
+#      - louie_shared_network
 
 #volumes:
 #  db-data:

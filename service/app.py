@@ -3,9 +3,19 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data
 import threading
+import os
+import logging
+import sys
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # turn to true to start filling the database with class information when the server starts
 FILL_DB_WITH_CLASS_DATA = False
+
+# only fill if sqlite database does not already exists on start up
+if not os.path.isfile('table.db'):
+    FILL_DB_WITH_CLASS_DATA = True
 
 # For testing only
 
@@ -87,13 +97,15 @@ def profile():
 # ====================================
 
 def fill_db_with_class_data():
+    logger.info("\nWebscraper running...")
     # only run this to fill database with class data
     with app.app_context():
         fetch_grade_distribution_data(db)
+    logger.info("\nWebscraper finished...")
 
 if __name__ == '__main__':
     if FILL_DB_WITH_CLASS_DATA:
         thread = threading.Thread(target=fill_db_with_class_data)
         thread.start()
 
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)

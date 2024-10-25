@@ -2,7 +2,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/styles1.css';
 import App from './App';
-import AddData from './DBExample';
 
 // I am gonna be so real I don't know what I did
 
