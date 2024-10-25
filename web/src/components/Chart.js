@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 
-const ChartComponent = () => {
-    const [data, setData] = useState([{grade: "empty", sum:0}]); // Initialize data as empty
+const Chart = ({className, instructorName, searchBy}) => {
+    const requestData = { class_name: className, instructor_name: instructorName, search_by: searchBy };
+    const [data, setData] = useState([{grade: "empty", sum:0}]); // Initialize data that is graphed as empty
 
     useEffect(() => {
         const fetchData = async () => {
             const backendUrl = "/service/get_graph_data";
-
-            // example data to request, use either class_name or instructor_name in search_by
-            const requestData = { class_name: 'CS 386', instructor_name: 'Leverington,Michael E', search_by: "class_name" };
 
             try {
                 // fetch data via class name
@@ -48,4 +46,4 @@ const ChartComponent = () => {
     );
 };
 
-export default ChartComponent;
+export default Chart;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
-import ChartComponent from './components/Graph';
+import Chart from './components/Chart';
 
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
       <Main />
       <Footer />
       <p>{message}</p>
-      <ChartComponent />
+      <Chart className="CS 249" instructorName="Leverington,Michael E" searchBy="class_name" />
     </div>
     
   );
