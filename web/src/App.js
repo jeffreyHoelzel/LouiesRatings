@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
+import ChartComponent from './components/Graph';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
       <Main />
       <Footer />
       <p>{message}</p>
+      <ChartComponent />
     </div>
     
   );
