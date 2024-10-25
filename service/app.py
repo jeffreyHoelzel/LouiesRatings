@@ -97,7 +97,7 @@ def profile():
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
 
 @app.route('/make_graph', methods=["GET", "POST"])
-def profile():
+def make_graph():
     if request.method == 'POST':
         data = request.json  # Get JSON data from the request
 
