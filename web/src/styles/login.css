@@ -88,12 +88,14 @@ body.login-open {
   width: 50%;
   font-size: 16px;
   text-decoration: none;
+  user-select: none;
   color: #1A2852;
 }
 
 .new-account:hover {
   color: #F4B51A;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .new-account:active {
