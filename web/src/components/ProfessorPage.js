@@ -55,11 +55,6 @@ const ProfessorPage = () => {
       
       {/* Lots of basic placeholders until we implement these features */}
       <div className="info-sections">
-        <section className="grade-distribution">
-          <h2>Grade Distribution</h2>
-          <p>Data on grades given by this professor in past classes.</p>
-        </section>
-
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
           <Chart className="CS 249" instructorName={professorData} searchBy="instructor_name" />
