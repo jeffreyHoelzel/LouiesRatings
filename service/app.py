@@ -109,13 +109,6 @@ def get_professor_data():
             ClassData.instructor_name.ilike(f"%{first_name}%")
         ).all()
     else:
-        courses = []
-
-    #Testing
-    # app.logger.debug(f"Query result: {courses}")
-
-    if not courses:
-        # app.logger.debug("No courses found for this instructor.")
         return jsonify({"error": "Professor not found"}), 404
 
     # Extract full instructor name from the first matched course, add space following comma
@@ -151,16 +144,17 @@ def get_graph_data():
         # get specfic class data
         search_by = request_data.get('search_by')
 
-        logger.info(f"Received request for search by: {request_data}")
-
         # get specific data from search name
         grade_data = list()
+
+        search_name = request_data.get(search_by)
+
         if search_by == 'class_name':
-            search_name = request_data.get('class_name')
             grade_data = ClassData.query.filter_by(class_name=search_name).all()
-        elif search_by == 'instructor_name':
-            search_name = request_data.get('instructor_name')
+
+        else:
             grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+
         if len(grade_data) == 0:
             # nothing found, so return empty data
             return jsonify({"grade": "empty", "sum":0})

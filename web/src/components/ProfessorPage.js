@@ -22,9 +22,7 @@ const ProfessorPage = () => {
     // Fetch professor data from the backend
     const fetchProfessorData = async () => {
       try {
-        // Testing
-        // console.log("Instructor Name:", instructorName);
-        const response = await fetch(`http://localhost:8080/professor?name=${encodeURIComponent(instructorName)}`);
+        const response = await fetch(`/service/professor?name=${encodeURIComponent(instructorName)}`);
         if (!response.ok) throw new Error("Professor not found.");
 
         if (response.status === 404) {
