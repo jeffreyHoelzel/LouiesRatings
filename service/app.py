@@ -119,7 +119,7 @@ def get_professor_data():
         return jsonify({"error": "Professor not found"}), 404
 
     # Extract full instructor name from the first matched course, add space following comma
-    full_instructor_name = courses[0].instructor_name.replace(",", ", ")
+    full_instructor_name = courses[0].instructor_name
 
     course_data = [
         {
@@ -150,6 +150,8 @@ def get_graph_data():
 
         # get specfic class data
         search_by = request_data.get('search_by')
+
+        logger.info(f"Received request for search by: {request_data}")
 
         # get specific data from search name
         grade_data = list()

@@ -22,7 +22,7 @@ const Chart = ({className, instructorName, searchBy}) => {
                 if( response.ok ) {
                     // fill chart with fetched data
                     const tempData = await response.json();
-                    const chartData = JSON.parse(tempData)
+                    const chartData = JSON.parse(tempData);
                     setData(chartData)
                 }
                 else {

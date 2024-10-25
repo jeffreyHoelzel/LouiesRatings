@@ -33,7 +33,7 @@ const ProfessorPage = () => {
         }
         
         const data = await response.json();
-        setProfessorData(data);
+        setProfessorData(data.professor);
       } catch (err) {
         setError(err.message);
       }
@@ -50,7 +50,7 @@ const ProfessorPage = () => {
   return (
     <main className="professor-page container">
       <header className="professor-header">
-        <h1>{professorData.professor}</h1>
+        <h1>{professorData}</h1>
       </header>
       
       {/* Lots of basic placeholders until we implement these features */}
@@ -62,7 +62,7 @@ const ProfessorPage = () => {
 
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
-          <Chart className="CS 249" instructorName={professorData.professor} searchBy="class_name" />
+          <Chart className="CS 249" instructorName={professorData} searchBy="instructor_name" />
         </section>
 
         <section className="pass-fail-rates">
