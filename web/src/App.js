@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
 import ProfessorPage from './components/ProfessorPage';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
 function App() {
@@ -26,13 +27,17 @@ function App() {
 
   // changes the html content in /web/public/index.html
   return (
-    <div>
-      <Header />
-      <Main />
-      <ProfessorPage />
-      <Footer />
-      <p>{message}</p>
-    </div>
+    <Router>
+      <div>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/professor/:professorId" element={<ProfessorPage />} />
+        </Routes>
+        <Footer />
+        {/* <p>{message}</p> */}
+      </div>
+    </Router>
     
   );
 }

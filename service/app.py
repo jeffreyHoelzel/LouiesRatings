@@ -93,6 +93,54 @@ def profile():
             db.session.commit()
 
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
+    
+@app.route('/professor', methods=['GET'])
+def get_professor_data():
+    instructor_name = request.args.get('name')
+    # Testing
+    # app.logger.debug(f"Received request for instructor: {instructor_name}")
+
+    if instructor_name:
+        # Split the instructor name into last name and first name and search database for any matching names
+        last_name, first_name = instructor_name.split(", ")
+        courses = ClassData.query.filter(
+            ClassData.instructor_name.ilike(f"%{last_name}%"),
+            ClassData.instructor_name.ilike(f"%{first_name}%")
+        ).all()
+    else:
+        courses = []
+
+    #Testing
+    # app.logger.debug(f"Query result: {courses}")
+
+    if not courses:
+        # app.logger.debug("No courses found for this instructor.")
+        return jsonify({"error": "Professor not found"}), 404
+
+    # Extract full instructor name from the first matched course, add space following comma
+    full_instructor_name = courses[0].instructor_name.replace(",", ", ")
+
+    course_data = [
+        {
+            "semester": course.semester,
+            "subject": course.subject,
+            "class_name": course.class_name,
+            "section": course.section,
+            "grades": {
+                "A": course.a,
+                "B": course.b,
+                "C": course.c,
+                "D": course.d,
+                "F": course.f,
+                "P": course.p,
+                "W": course.w
+            },
+        }
+        for course in courses
+    ]
+
+    # Include the full instructor name in the response
+    return jsonify({"professor": full_instructor_name, "courses": course_data})
 
 # ====================================
 

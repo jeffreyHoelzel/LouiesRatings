@@ -9,3 +9,7 @@ The database will fill with class data on startup if table.db does not already e
 It still takes a while to fill up, but it is done once you see everything in the database (you can use the SQLite Viewer extension).
 Also, since it is parallelized, the server is slower while webscraping, which is not ideal, but I will keep it like that for now since I want it
 to get done as quick as possible.
+
+To view the basic professor page go to localhost/professor/lastname-firstname. If the last name and first name are within a name in the database 
+(i.e a professor with 2 first names) or its a direct match the website should render a page for that professor. Right now it'll just update the name accordingly
+since we haven't made all the features yet.
