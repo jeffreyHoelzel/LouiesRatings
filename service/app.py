@@ -13,7 +13,7 @@ FILL_DB_WITH_CLASS_DATA = False
 # Create app
 # ====================================
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -73,12 +73,4 @@ def fill_db_with_class_data():
         fetch_grade_distribution_data(db)
 
 if __name__ == '__main__':
-    if FILL_DB_WITH_CLASS_DATA:
-        thread = threading.Thread(target=fill_db_with_class_data)
-        thread.start()
-
     app.run(host='0.0.0.0', port=5000)
-
-                                  
-    
-
