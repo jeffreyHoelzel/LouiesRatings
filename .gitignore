@@ -6,8 +6,8 @@ web/node_modules
 .venv
 venv
 /venv
+
 .DS_Store
 web/.DS_Store
 web/public/.DS_Store
 web/src/.DS_Store
-
