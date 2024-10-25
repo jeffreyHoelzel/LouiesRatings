@@ -30,25 +30,25 @@ services:
       - FLASK_ENV=development  
     volumes:
       - ./service:/app  
-    depends_on:
-      - db
+#    depends_on:
+#      - db
     networks:
       - louie_shared_network
 
-  db:
-    container_name: db
-    image: postgres:13
-    environment:
-      - POSTGRES_DB=mydb
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - db-data:/var/lib/postgresql/data 
-    networks:
-      - louie_shared_network
+#  db:
+#    container_name: db
+#    image: postgres:13
+#    environment:
+#      - POSTGRES_DB=mydb
+#      - POSTGRES_USER=user
+#      - POSTGRES_PASSWORD=password
+#    volumes:
+#      - db-data:/var/lib/postgresql/data 
+#    networks:
+#      - louie_shared_network
 
-volumes:
-  db-data:
+#volumes:
+#  db-data:
 
 networks:
   louie_shared_network:

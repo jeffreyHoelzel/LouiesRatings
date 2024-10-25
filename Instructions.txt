@@ -4,3 +4,8 @@ I finally did it and it was painful. To start run the command `docker-compose up
 You will see lots of red errors but trust the process. Once it is done you should be able to view the containers from localhost:5000 for backend
 and localhost:3000 for frontend. I set up some code to test it out and you should see that the message from the backend is sent to the front end
 via an api call. If it works then you did it and now you have a working docker enviroment.
+
+The database will fill with class data on startup if table.db does not already exist. The webscraper is parallelized, so the semesters will be out of order.
+It still takes a while to fill up, but it is done once you see everything in the database (you can use the SQLite Viewer extension).
+Also, since it is parallelized, the server is slower while webscraping, which is not ideal, but I will keep it like that for now since I want it
+to get done as quick as possible.
