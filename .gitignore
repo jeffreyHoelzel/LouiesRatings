@@ -13,3 +13,4 @@ web/public/.DS_Store
 web/src/.DS_Store
 
 .db
+table.db
