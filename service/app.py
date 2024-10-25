@@ -2,7 +2,12 @@ from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data
+import sys
+import logging
 import threading
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger('service')
 
 # turn to true to start filling the database with class information when the server starts
 FILL_DB_WITH_CLASS_DATA = False
@@ -64,6 +69,25 @@ def profile():
             db.session.commit()
 
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
+    
+@app.route('/login', methods=['POST'])
+def login():
+    if request.method == 'POST':
+        # get JSON data from user
+        data = request.get_json()
+        requested_username = data.get('username')
+        requested_password = data.get('password')
+
+        # get username and password from database, if user DNE, user will be None
+        user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
+
+        # check if user DNE
+        if user is None:
+            logger.info('\nThe username or password doesn\'t match our records. Please try again')
+            return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 200
+        else:
+            logger.info('\nUser logged in successfully.')
+            return jsonify({'message': 'User logged in successfully.', "exists": True}), 200
 
 # ====================================
 
@@ -73,4 +97,4 @@ def fill_db_with_class_data():
         fetch_grade_distribution_data(db)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
