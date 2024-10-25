@@ -1,6 +1,7 @@
 # For accessing webscraping script
 from flask_sqlalchemy import SQLAlchemy
 from webscraper import get_all_grade_distribution_data_parallel
+from datetime import datetime
 
 # create sqlalchemy object
 db = SQLAlchemy()
@@ -44,9 +45,18 @@ class ClassData(db.Model):
     total = db.Column(db.Integer, nullable=False)
 
 class Comment(db.Model):
-    comment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user = db.Column(db.Integer, autoincrement=True, nullable=False)
-    comment = db.Column(db.String(10), nullable=False)
+    id = db.Column( db.Integer, primary_key=True, autoincrement = True )
+    user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
+    content = db.Column( db.Text, nullable=False )
+    timestamp = db.Column( db.DateTime, default=datetime.utcnow)
+
+    def serialize( self ):
+        return {
+            'id' : self.id,
+            'user_id': self.user_id,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
 # ====================================
 
 

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data
+from database import db, User, ClassData, fetch_grade_distribution_data, Comment
 import threading
 import os
 import logging
@@ -94,6 +94,40 @@ def profile():
 
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
 
+# Route to retrieve all comments
+@app.route('/comments', methods=[ "GET" ])
+def get_comments():
+    
+    # Retreive all comments from the database
+    comments = Comment.query.all()
+    serialized_comments = [comment.serialize() for comment in comments]
+    return jsonify( serialized_comments ), 200
+
+# Route to create a new comment
+@app.route('/comments', methods=[ "POST" ])
+def post_comment():
+
+    # Add a new comment to the database
+    data = request.get_json()
+    new_comment = Comment(
+        user_id=data['user_id'],
+        content=data['content']
+        )
+    db.session.add( new_comment )
+    db.session.commit()
+    return jsonify( new_comment.serialize()), 201
+
+# Route to delete a comment by ID
+@app.route('/comments/<int:id>', methods=[ "DELETE" ])
+def delete_comment( id ):
+    comment = Comment.query.get( id )
+    if comment is None:
+        return jsonify({ 'message': 'Comment not found' }), 404
+
+    db.session.delete( comment )
+    db.session.commit()
+    return jsonify({ 'message': 'Comment deleted successfully' }), 200
+
 # ====================================
 
 def fill_db_with_class_data():
@@ -109,3 +143,4 @@ if __name__ == '__main__':
         thread.start()
 
     app.run(host='0.0.0.0', port=8080)
+
