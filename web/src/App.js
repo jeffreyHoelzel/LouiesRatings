@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
+import ProfessorPage from './components/ProfessorPage';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
     <div>
       <Header />
       <Main />
+      <ProfessorPage />
       <Footer />
       <p>{message}</p>
     </div>
