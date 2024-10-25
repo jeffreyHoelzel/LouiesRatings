@@ -1,20 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import './index.css';
+import { createRoot } from 'react-dom/client';
+import './styles/styles1.css';
 import App from './App';
-import AddData from './DBExample';
 
 // I am gonna be so real I don't know what I did
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'));
+root.render(
   <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/db_example"element={<AddData />} />
-      </Routes>
-    </Router>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <App />
+  </React.StrictMode>
 );

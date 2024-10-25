@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Header from './components/Header';
+import Main from './components/Main';
+import Footer from './components/Footer';
+
 
 function App() {
   const [message, setMessage] = useState("Loading...");
@@ -9,21 +13,23 @@ function App() {
 
   // This block of code sends a 'GET request' to the backend server
   useEffect(() => {
-    const backendUrl = "http://localhost:5000";
+    const backendUrl = "/service/"
 
     // parses the data
     fetch(backendUrl)
       .then(res => res.json())
       .then(data => setMessage(data.message))
-      .catch(err => setMessage("Error connecting to backend"));
+      .catch(err => setMessage("Error connecting to backend", err));
 
   }, []);
 
   // changes the html content in /web/public/index.html
   return (
     <div>
-      <h1>Frontend - React App</h1>
-      <p>Backend says: {message}</p>
+      <Header />
+      <Main />
+      <Footer />
+      <p>{message}</p>
     </div>
     
   );
