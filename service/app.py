@@ -5,9 +5,19 @@ from database import db, User, ClassData, fetch_grade_distribution_data
 from generate_graph import make_graph
 import threading
 import pandas as pd
+import os
+import logging
+import sys
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger("service")
 
 # turn to true to start filling the database with class information when the server starts
 FILL_DB_WITH_CLASS_DATA = False
+
+# only fill if sqlite database does not already exists on start up
+if not os.path.isfile('table.db'):
+    FILL_DB_WITH_CLASS_DATA = True
 
 # For testing only
 
@@ -15,7 +25,7 @@ FILL_DB_WITH_CLASS_DATA = False
 # Create app
 # ====================================
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -49,6 +59,25 @@ def send_message():
     # we cannot send render templates as we are not using flask python templates on the frontend
     return jsonify(message="Hello From Backend"), 200
 
+@app.route('/search', methods=['POST'])
+def search():
+
+    # checks if the request is a get type also think Post as a way to send data to the backend to make changes to the data 
+    # or just get data from the backend in this case
+    if request.method == 'POST':
+
+        # Get the JSON data from the request
+        data = request.get_json() 
+
+        # Extract the search query from the JSON data
+        search_query = data.get('query')
+
+        # usually a different return here 
+        users = [{'id': 1, 'username': 'Alice'}, {'id': 2, 'username': 'Bob'}, {'id': 3, 'username': search_query}]
+
+        # Return the mock users to test and 200 means a successful request
+        return jsonify(users), 200
+    
 @app.route('/add_user', methods=["GET", "POST"])
 def profile():
     if request.method == 'POST':
@@ -111,17 +140,15 @@ def profile():
 # ====================================
 
 def fill_db_with_class_data():
+    logger.info("\nWebscraper running...")
     # only run this to fill database with class data
     with app.app_context():
         fetch_grade_distribution_data(db)
+    logger.info("\nWebscraper finished...")
 
 if __name__ == '__main__':
     if FILL_DB_WITH_CLASS_DATA:
         thread = threading.Thread(target=fill_db_with_class_data)
         thread.start()
 
-    app.run(host='0.0.0.0', port=5000)
-
-                                  
-    
-
+    app.run(host='0.0.0.0', port=8080)
