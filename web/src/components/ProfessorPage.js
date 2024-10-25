@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/ProfessorPageStyling.css';
+import Chart from './Chart';
 
 const ProfessorPage = () => {
   const { professorId } = useParams();
@@ -61,6 +62,7 @@ const ProfessorPage = () => {
 
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
+          <Chart className="CS 249" instructorName={professorData.professor} searchBy="class_name" />
         </section>
 
         <section className="pass-fail-rates">

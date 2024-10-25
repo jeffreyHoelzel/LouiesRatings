@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data
 import threading
+import pandas as pd
 import os
 import logging
 import sys
@@ -141,6 +142,69 @@ def get_professor_data():
 
     # Include the full instructor name in the response
     return jsonify({"professor": full_instructor_name, "courses": course_data})
+
+@app.route('/get_graph_data', methods=["GET", "POST"])
+def get_graph_data():
+    if request.method == 'POST':
+        request_data = request.json  # Get JSON data from the request
+
+        # get specfic class data
+        search_by = request_data.get('search_by')
+
+        # get specific data from search name
+        grade_data = list()
+        if search_by == 'class_name':
+            search_name = request_data.get('class_name')
+            grade_data = ClassData.query.filter_by(class_name=search_name).all()
+        elif search_by == 'instructor_name':
+            search_name = request_data.get('instructor_name')
+            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+        if len(grade_data) == 0:
+            # nothing found, so return empty data
+            return jsonify({"grade": "empty", "sum":0})
+        
+        # create pandas data frame user the data
+        grade_data_df= pd.DataFrame([
+            {
+                'id': data.id,
+                'semester': data.semester,
+                'subject': data.subject,
+                'class_name': data.class_name,
+                'section': data.section,
+                'class_nbr': data.class_nbr,
+                'instructor_name': data.instructor_name,
+                'a': data.a,
+                'b': data.b,
+                'c': data.c,
+                'd': data.d,
+                'f': data.f,
+                'au': data.au,
+                'p': data.p,
+                'ng': data.ng,
+                'w': data.w,
+                'i': data.i,
+                'ip': data.ip,
+                'pending': data.pending,
+                'total': data.total
+            } for data in grade_data
+        ])
+
+        # make all column names lower case
+        grade_data_df.columns = grade_data_df.columns.str.lower()
+
+        # extract only the grade distributions
+        grade_distributions = grade_data_df.filter(items=['a', 'b', 'c', 'd', 'f', 'au', 'p', 'ng', 'w', 'i', 'ip', 'pending'])
+
+        # add row for column sums
+        grade_distributions.loc["sum"] = grade_distributions.sum(numeric_only=True)
+
+        # remove all rows except for the last two
+        grade_distributions = grade_distributions.iloc[[-1]]
+
+        # transpose, and make the index a column for grades
+        grade_distributions = grade_distributions.T.reset_index(drop=False).rename(columns={"index":"grade"})
+        
+        return jsonify(grade_distributions.to_json(orient='records'))
 
 # ====================================
 
