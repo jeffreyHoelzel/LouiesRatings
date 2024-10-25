@@ -11,3 +11,6 @@ venv
 web/.DS_Store
 web/public/.DS_Store
 web/src/.DS_Store
+
+service/__pycache__
+service/*.db

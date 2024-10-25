@@ -1,9 +1,17 @@
-import React from 'react';
+import { useState } from 'react';
 import Search from './Search';
+import Login from './Login';
 
 
 // make a header component for the website that contains the logo, search bar, and profile icon
 const Header = () => {
+    // set up use state for displaying login popup
+    const [loginPopup, setLoginPopup] = useState(false);
+
+    // allow popup to be toggleable
+    const toggleLoginPopup = () => {
+      setLoginPopup(!loginPopup);
+    };
 
     // TODO: we should add a route to the logo to lead to main!
     return (
@@ -18,10 +26,13 @@ const Header = () => {
                 <Search/>
 
                 <div className="profile-box">
-                    <a href="#">
+                    <a onClick={toggleLoginPopup}>
                         <img src="imgs/profile.jpeg" alt="Profile Icon" />
                     </a>
                 </div>
+                {loginPopup && (
+                    <Login />
+                )}
             </div>
         </header>
     );
