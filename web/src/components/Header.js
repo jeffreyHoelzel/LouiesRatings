@@ -30,9 +30,14 @@ const Header = () => {
                         <img src="imgs/profile.jpeg" alt="Profile Icon" />
                     </a>
                 </div>
-                {loginPopup && (
-                    <Login />
-                )}
+                {loginPopup &&
+                    <div className="login-popup" id="popup">
+                        <div className="login-popup-content">
+                            <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
+                                <Login />
+                        </div>
+                    </div>
+                }
             </div>
         </header>
     );

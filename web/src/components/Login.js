@@ -5,9 +5,9 @@ import '../styles/homepage.css';
 const Login = () => {
   return (
     <div>
-      <div className="login-popup" id="popup">
+      {/* <div className="login-popup" id="popup">
         <div className="login-popup-content">
-          <span className="close-popup">&times;</span>
+          <span className="close-popup">&times;</span> */}
           <form action="" className="form-container">
             <h2>Login</h2>
             <label for="username"><b>Username</b></label>
@@ -19,8 +19,6 @@ const Login = () => {
               <a className="new-account" id="create-new-account">Register</a>
             </div>
           </form>
-        </div>
-      </div>
     </div>
   );
 }
