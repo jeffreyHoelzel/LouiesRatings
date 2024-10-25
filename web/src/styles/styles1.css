@@ -120,3 +120,29 @@ footer .container {
     height: 60px;
     color: #1A2852;
 }
+
+.class-description {
+    background-color: #e9ecef; 
+    border-left: 5px solid #F4B51A; 
+    padding: 15px; 
+    margin-top: 20px; 
+    font-size: 1.1em; 
+    text-align: justify; 
+    color: #1A2852;
+}
+
+.professor-list {
+    background-color: #f8f9fa; 
+    border: 3px solid #1A2852; 
+    color: #1A2852;
+    padding: 15px; 
+    margin-top: 20px; 
+    border-radius: 8px; 
+    text-align: left;
+}
+
+.professor-list li {
+    margin: 10px 0; 
+    display: inline-block; 
+    margin-right: 20px; 
+}

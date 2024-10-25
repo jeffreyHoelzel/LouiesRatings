@@ -1,6 +1,7 @@
 db-data/
 
 service/node_modules
+service/*.db
 web/node_modules
 
 .venv
