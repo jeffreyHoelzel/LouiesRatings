@@ -77,6 +77,10 @@ header {
     padding: 3px;
 }
 
+.profile-box:hover {
+    cursor: pointer;
+}
+
 .profile-box img {
     max-width: 80%;
     max-height: 80%;
