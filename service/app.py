@@ -13,7 +13,7 @@ FILL_DB_WITH_CLASS_DATA = False
 # Create app
 # ====================================
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -47,6 +47,25 @@ def send_message():
     # we cannot send render templates as we are not using flask python templates on the frontend
     return jsonify(message="Hello From Backend"), 200
 
+@app.route('/search', methods=['POST'])
+def search():
+
+    # checks if the request is a get type also think Post as a way to send data to the backend to make changes to the data 
+    # or just get data from the backend in this case
+    if request.method == 'POST':
+
+        # Get the JSON data from the request
+        data = request.get_json() 
+
+        # Extract the search query from the JSON data
+        search_query = data.get('query')
+
+        # usually a different return here 
+        users = [{'id': 1, 'username': 'Alice'}, {'id': 2, 'username': 'Bob'}, {'id': 3, 'username': search_query}]
+
+        # Return the mock users to test and 200 means a successful request
+        return jsonify(users), 200
+    
 @app.route('/add_user', methods=["GET", "POST"])
 def profile():
     if request.method == 'POST':
@@ -78,7 +97,3 @@ if __name__ == '__main__':
         thread.start()
 
     app.run(host='0.0.0.0', port=5000)
-
-                                  
-    
-

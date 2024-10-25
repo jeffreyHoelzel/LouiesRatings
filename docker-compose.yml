@@ -10,12 +10,14 @@ services:
       - "3000:3000"
     environment:
       - CHOKIDAR_USEPOLLING=true
-      - REACT_APP_BACKEND_URL=http://backend:5000/
+      - REACT_APP_BACKEND_URL=http://backend:8080
     volumes:
       - ./web:/app 
       - /app/node_modules
     depends_on:
       - backend
+    networks:
+      - louie_shared_network
 
   backend:
     container_name: service
@@ -23,7 +25,7 @@ services:
       context: ./service
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "8080:8080"
     environment:
       - FLASK_ENV=development  
     volumes:
@@ -45,3 +47,7 @@ services:
 
 #volumes:
 #  db-data:
+
+networks:
+  louie_shared_network:
+    external: true
