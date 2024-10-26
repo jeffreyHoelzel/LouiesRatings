@@ -16,12 +16,12 @@ const Login = () => {
 
     // try to get response from backend
     try {
-      const response = await fetch('service/login', {
+      const response = await fetch('/service/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({query: username, query: password})
+        body: JSON.stringify({"username": username, "password": password})
       });
 
       const data = await response.json();
@@ -41,9 +41,9 @@ const Login = () => {
       <form action="" className="form-container">
         <h2>Login</h2>
         <label for="username"><b>Username</b></label>
-        <input type="text" placeholder="Enter username" name="username" required />
+        <input type="text" placeholder="Enter username" name="username" onChange={(e) => setUsername(e.target.value)} required />
         <label for="password"><b>Password</b></label>
-        <input type="password" placeholder="Enter password" name="password" required />
+        <input type="password" placeholder="Enter password" name="password" onChange={(e) => setPassword(e.target.value)} required />
         <div className="option-container">
           <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>
           <a className="new-account" id="create-new-account">Register</a>
