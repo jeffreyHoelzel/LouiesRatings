@@ -1,8 +1,8 @@
+import { useState } from 'react';
+
 // style imports
 import '../styles/login.css';
 import '../styles/homepage.css';
-
-import { useState, useEffect } from 'react';
 
 const Login = () => {
   // set up use states for username, password, response message, and validations
@@ -45,35 +45,31 @@ const Login = () => {
       console.log("Error:", error);
       setMessage("Trouble connecting to backend.");
     }
+
+    // check if status true
+    if (localStorage.getItem("status") === "true") {
+      // refresh page to reflect correct user
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
   }
 
   // render normal login on load and if user has input wrong username or password
-  const renderLoginForm = (
-    <form action="" className="form-container">
-      <h2>Login</h2>
-      <label for="username"><b>Username</b></label>
-      <input type="text" placeholder="Enter username" name="username" onChange={(e) => setUsername(e.target.value)} required />
-      <label for="password"><b>Password</b></label>
-      <input type="password" placeholder="Enter password" name="password" onChange={(e) => setPassword(e.target.value)} required />
-      <div className="option-container">
-        <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>
-        <a className="new-account" id="create-new-account">Register</a>
-      </div>
-      {!valid && <span style={{color: 'red'}}>{message}</span>}
-    </form>
-  );
-
-  // render successful login popup
-  const renderSuccessfulLogin = (
-    <div className="successful-login">
-      <h2>@{username}</h2>
-      <p>*name of user*</p>
-    </div>
-  );
-
   return (
     <div>
-      {valid ? renderSuccessfulLogin : renderLoginForm}
+      <form action="" className="form-container">
+        <h2>Login</h2>
+        <label for="username"><b>Username</b></label>
+        <input type="text" placeholder="Enter username" name="username" onChange={(e) => setUsername(e.target.value)} required />
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="Enter password" name="password" onChange={(e) => setPassword(e.target.value)} required />
+        <div className="option-container">
+          <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>
+          <a className="new-account" id="create-new-account">Register</a>
+        </div>
+        {!valid && <span style={{color: 'red'}}>{message}</span>}
+      </form>
     </div>
   );
 }

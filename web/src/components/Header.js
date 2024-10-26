@@ -3,6 +3,9 @@ import Search from './Search';
 import Login from './Login';
 import Authenticate from './Authenticate';
 
+// style imports
+import '../styles/login.css';
+
 
 // make a header component for the website that contains the logo, search bar, and profile icon
 const Header = () => {
@@ -14,7 +17,18 @@ const Header = () => {
     // allow popup to be toggleable
     const toggleLoginPopup = () => {
       setLoginPopup(!loginPopup);
+    //   localStorage.clear(); // FOR TESTING
     };
+
+    const logout = () => {
+        // remove status and username from localstorage
+        localStorage.removeItem("status");
+        localStorage.removeItem("username");
+        // refresh page to reflect changes
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+      }
 
     // TODO: we should add a route to the logo to lead to main!
     return (
@@ -50,6 +64,7 @@ const Header = () => {
                                 <div className="successful-login">
                                     <h2>@{username}</h2>
                                     <p>*name of user*</p>
+                                    <a className="sign-out" onClick={logout}>Sign out</a>
                                 </div>
                             </div>
                         </div>
