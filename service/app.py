@@ -1,24 +1,13 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data
-import threading
+from database import db, User, ClassData
 import pandas as pd
-import os
 import logging
 import sys
+import os
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger("service")
-
-# turn to true to start filling the database with class information when the server starts
-FILL_DB_WITH_CLASS_DATA = False
-
-# only fill if sqlite database does not already exists on start up
-if not os.path.isfile('table.db'):
-    FILL_DB_WITH_CLASS_DATA = True
-
-# For testing only
 
 # ====================================
 # Create app
@@ -28,8 +17,11 @@ CORS(app)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# maybe change from sqlite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///table.db'
+# get secret database url
+with open("/run/secrets/db_url", 'r') as secret_file:
+    DATABASE_URL = secret_file.readline()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
 # bind the database to backend
 db.init_app(app)
@@ -204,16 +196,5 @@ def get_graph_data():
 
 # ====================================
 
-def fill_db_with_class_data():
-    logger.info("\nWebscraper running...")
-    # only run this to fill database with class data
-    with app.app_context():
-        fetch_grade_distribution_data(db)
-    logger.info("\nWebscraper finished...")
-
 if __name__ == '__main__':
-    if FILL_DB_WITH_CLASS_DATA:
-        thread = threading.Thread(target=fill_db_with_class_data)
-        thread.start()
-
     app.run(host='0.0.0.0', port=8080)

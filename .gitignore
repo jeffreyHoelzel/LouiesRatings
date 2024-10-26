@@ -15,3 +15,5 @@ web/src/.DS_Store
 .db
 table.db
 __pycache__
+
+db_url.txt
