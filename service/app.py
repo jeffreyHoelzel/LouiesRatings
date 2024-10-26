@@ -72,11 +72,28 @@ def profile():
     
 @app.route('/login', methods=['POST'])
 def login():
+
+
+# ===============TESTING ONLY=====================
+
+    # add a mock user to db
+    mock_user = User(username='jeffhoelzel', password='jeff123')
+
+    # save object to db
+    db.session.add(mock_user)
+    db.session.commit()
+
+# ===============TESTING ONLY=====================
+
+
     if request.method == 'POST':
         # get JSON data from user
-        data = request.get_json()
+        data = request.json
         requested_username = data.get('username')
         requested_password = data.get('password')
+
+        logger.info('\nreq user: %s', requested_username)
+        logger.info('\nreq pass: %s', requested_password)
 
         # get username and password from database, if user DNE, user will be None
         user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
