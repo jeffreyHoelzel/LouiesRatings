@@ -101,7 +101,7 @@ def login():
         # check if user DNE
         if user is None:
             logger.info('\nThe username or password doesn\'t match our records. Please try again')
-            return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 200
+            return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 401
         else:
             logger.info('\nUser logged in successfully.')
             return jsonify({'message': 'User logged in successfully.', "exists": True}), 200
