@@ -42,7 +42,8 @@ body.login-open {
 }
 
 .form-container input[type=text], 
-.form-container input[type=password] {
+.form-container input[type=password],
+.form-container input[type=email] {
   background-color: white;
   width: 100%;
   padding: 15px;
@@ -52,7 +53,8 @@ body.login-open {
 }
 
 .form-container input[type=text]:focus, 
-.form-container input[type=password]:focus {
+.form-container input[type=password]:focus,
+.form-container input[type=email]:focus {
   background-color: #f4f4f4;
   outline: none;
 }

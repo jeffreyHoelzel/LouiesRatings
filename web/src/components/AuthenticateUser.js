@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const Authenticate = () => {
+const AuthenticateUser = () => {
   // set up states for username and logged in
   const [loginStatus, setLoginStatus] = useState(false);
   const [username, setUsername] = useState("");
@@ -25,4 +25,4 @@ const Authenticate = () => {
   return {loginStatus, username};
 }
 
-export default Authenticate;
+export default AuthenticateUser;

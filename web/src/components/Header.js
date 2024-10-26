@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Search from './Search';
 import Login from './Login';
-import Authenticate from './Authenticate';
+import AuthenticateUser from './AuthenticateUser';
 
 // style imports
 import '../styles/login.css';
@@ -11,14 +11,23 @@ import '../styles/login.css';
 const Header = () => {
     // set up use state for displaying login popup
     const [loginPopup, setLoginPopup] = useState(false);
+    // set up use state for displaying registration popup
+    const [registrationPopup, setRegistrationPopup] = useState(false);
     // set up authentication hook
-    const {loginStatus, username} = Authenticate();
+    const {loginStatus, username} = AuthenticateUser();
 
-    // allow popup to be toggleable
+    // allow login popup to be toggleable
     const toggleLoginPopup = () => {
       setLoginPopup(!loginPopup);
     //   localStorage.clear(); // FOR TESTING
     };
+
+    // allow registration popup to be toggleable
+    const toggleRegistrationPopup = () => {
+        setRegistrationPopup(!registrationPopup);
+        // close login popup
+        setLoginPopup(!loginPopup);
+    }
 
     const logout = () => {
         // remove status and username from localstorage
@@ -56,19 +65,19 @@ const Header = () => {
                                 <Login />
                         </div>
                     </div>
-                    ) : (
-                        loginPopup && 
-                        <div className="login-popup" id="popup">
-                            <div className="login-popup-content">
-                                <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
-                                <div className="successful-login">
-                                    <h2>@{username}</h2>
-                                    <p>*name of user*</p>
-                                    <a className="sign-out" onClick={logout}>Sign out</a>
-                                </div>
+                ) : (
+                    loginPopup && 
+                    <div className="login-popup" id="popup">
+                        <div className="login-popup-content">
+                            <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
+                            <div className="successful-login">
+                                <h2>@{username}</h2>
+                                <p>*name of user*</p>
+                                <a className="sign-out" onClick={logout}>Sign out</a>
                             </div>
                         </div>
-                    )}
+                    </div>
+                )}
                 </div>
             </div>
         </header>
