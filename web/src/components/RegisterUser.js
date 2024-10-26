@@ -78,7 +78,7 @@ const RegisterUser = () => {
   return (
     <div>
       <form action="" className="form-container">
-        <h2>Register</h2>
+        <h2>New account</h2>
         <label for="firstName"><b>First name</b></label>
         <input type="text" placeholder="Enter first name" name="firstName" onChange={handleChange} required />
 
@@ -95,8 +95,7 @@ const RegisterUser = () => {
         <input type="password" placeholder="Enter password" name="password" onChange={handleChange} required />
 
         <div className="option-container">
-          <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>
-          <a className="new-account" id="create-new-account">Register</a>
+          <button type="submit" className="login-btn" onClick={handleSubmit}>Sign up</button>
         </div>
         {!valid && <span style={{color: 'red'}}>{message}</span>}
       </form>

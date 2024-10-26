@@ -11,8 +11,6 @@ import '../styles/login.css';
 const Header = () => {
     // set up use state for displaying login popup
     const [loginPopup, setLoginPopup] = useState(false);
-    // set up use state for displaying registration popup
-    const [registrationPopup, setRegistrationPopup] = useState(false);
     // set up authentication hook
     const {loginStatus, username} = AuthenticateUser();
 
@@ -21,13 +19,6 @@ const Header = () => {
       setLoginPopup(!loginPopup);
     //   localStorage.clear(); // FOR TESTING
     };
-
-    // allow registration popup to be toggleable
-    const toggleRegistrationPopup = () => {
-        setRegistrationPopup(!registrationPopup);
-        // close login popup
-        setLoginPopup(!loginPopup);
-    }
 
     const logout = () => {
         // remove status and username from localstorage
