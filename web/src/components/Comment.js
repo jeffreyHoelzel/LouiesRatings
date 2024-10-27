@@ -6,7 +6,7 @@ const Comment = () => {
   const [content, setContent] = useState('');
   const [message, setMessage] = useState('');
 
-  const backendUrl = "service/comments"; // Ensure this matches your Flask route
+  const backendUrl = "service/comments";
 
   // Fetch comments when the component mounts
   useEffect(() => {
@@ -17,7 +17,7 @@ const Comment = () => {
     fetch(backendUrl)
       .then(res => res.json())
       .then(data => {
-        setComments(data); // Assuming the backend returns an array of comments
+        setComments(data);
         setMessage('');
       })
       .catch(err => {
