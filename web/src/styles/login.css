@@ -61,7 +61,8 @@
   width: 100%;
 }
 
-.login-btn {
+.login-btn,
+.sign-up-btn {
   background-color: #1A2852;
   color: white;
   padding: 10px 30px;

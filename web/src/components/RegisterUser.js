@@ -95,7 +95,7 @@ const RegisterUser = () => {
         <input type="password" placeholder="Enter password" name="password" onChange={handleChange} required />
 
         <div className="option-container">
-          <button type="submit" className="login-btn" onClick={handleSubmit}>Sign up</button>
+          <button type="submit" className="sign-up-btn" onClick={handleSubmit}>Sign up</button>
         </div>
         {error && <span style={{color: 'red'}}>{message}</span>}
       </form>
