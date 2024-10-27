@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 const Comment = () => {
-  const [comments, setComments] = useState([]);
-  const [userId, setUserId] = useState(1); // Placeholder for user ID
-  const [content, setContent] = useState('');
-  const [message, setMessage] = useState('');
+  const [commentsList, setCommentsList] = useState([]); // Renamed from comments to commentsList
+  const [currentUserId, setCurrentUserId] = useState(1); // Renamed from userId to currentUserId
+  const [commentContent, setCommentContent] = useState(''); // Renamed from content to commentContent
+  const [statusMessage, setStatusMessage] = useState(''); // Renamed from message to statusMessage
 
   const backendUrl = "service/comments";
 
@@ -15,24 +15,24 @@ const Comment = () => {
 
   const fetchComments = () => {
     fetch(backendUrl)
-      .then(res => res.json())
+      .then(response => response.json())
       .then(data => {
-        setComments(data);
-        setMessage('');
+        setCommentsList(data);
+        setStatusMessage(''); // Reset message after fetching comments
       })
-      .catch(err => {
-        console.error(err);
-        setMessage("Failed to load comments.");
+      .catch(error => {
+        console.error(error);
+        setStatusMessage("Failed to load comments.");
       });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     
     // Prepare the comment data
-    const newComment = {
-      user_id: userId,
-      content: content
+    const newCommentData = {
+      user_id: currentUserId,
+      content: commentContent
     };
 
     // Send the new comment to the backend
@@ -41,40 +41,40 @@ const Comment = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(newComment)
+      body: JSON.stringify(newCommentData)
     })
-      .then(res => {
-        if (!res.ok) {
+      .then(response => {
+        if (!response.ok) {
           throw new Error("Failed to submit comment");
         }
-        return res.json();
+        return response.json();
       })
       .then(data => {
-        setComments(prev => [...prev, data.comment]); // Update the comments list immediately
-        setContent(''); // Clear the input field
-        setMessage(data.message); // Set success message
+        setCommentsList(prevComments => [...prevComments, data.comment]); // Update the comments list
+        setCommentContent(''); // Clear the input field
+        setStatusMessage(data.message); // Set success message
       })
-      .catch(err => {
-        console.error(err);
-        setMessage("Failed to submit comment.");
+      .catch(error => {
+        console.error(error);
+        setStatusMessage("Failed to submit comment.");
       });
   };
 
   return (
     <div>
       <h2>Comments</h2>
-      {message && <p>{message}</p>}
+      {statusMessage && <p>{statusMessage}</p>}
       <form onSubmit={handleSubmit}>
         <textarea 
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          value={commentContent}
+          onChange={(event) => setCommentContent(event.target.value)}
           placeholder="Leave a comment..."
           required
         />
         <button type="submit">Submit</button>
       </form>
       <ul>
-        {comments.map(comment => (
+        {commentsList.map(comment => (
           <li key={comment.id}>
             <p><strong>User {comment.user_id}:</strong> {comment.content}</p>
             <p>{new Date(comment.timestamp).toLocaleString()}</p>

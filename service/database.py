@@ -98,4 +98,32 @@ def fetch_grade_distribution_data(db: SQLAlchemy):
     db.session.bulk_save_objects(data_to_add)
     db.session.commit()
 
+def add_comment(user_id, content):
+    try:
+        # Create a new Comment object with the provided user_id and content
+        new_comment = Comment(user_id=user_id, content=content)
+        
+        # Add the new comment to the database session
+        db.session.add(new_comment)
+        
+        # Commit the session to save changes
+        db.session.commit()
+        
+        return new_comment  # Return the newly created comment
+    except Exception as database_error:
+        # Roll back the session in case of error
+        db.session.rollback()
+        
+        # Log the error
+        logger.error(f"Error adding comment: {database_error}")
+        
+        return None
+
+def fetch_comment(comment_id):
+    return Comment.query.get(comment_id)
+
+def delete_comment(comment):
+    db.session.delete(comment)
+    db.session.commit()
+
 # ====================================

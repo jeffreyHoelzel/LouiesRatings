@@ -12,4 +12,5 @@ web/.DS_Store
 web/public/.DS_Store
 web/src/.DS_Store
 
-table.db
+database.cpython-39.pyc
+webscraper.cpython-39.pyc

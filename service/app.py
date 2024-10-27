@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data, Comment
+from database import db, User, ClassData, fetch_grade_distribution_data, Comment, add_comment, fetch_comment, delete_comment
 import threading
 import os
 import logging
@@ -108,11 +108,10 @@ def handle_comments():
         user_id = data.get('user_id')
         content = data.get('content')
 
-        # Create a new Comment object and store it in the database
-        if user_id is not None and content:
-            new_comment = Comment(user_id=user_id, content=content)
-            db.session.add(new_comment)
-            db.session.commit()
+        # Use the add_comment function to create a new comment
+        new_comment = add_comment(user_id, content)
+
+        if new_comment:
             return jsonify({'message': 'Comment added!', 'comment': new_comment.serialize()}), 201
 
         return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
@@ -120,12 +119,11 @@ def handle_comments():
 # Route to delete a comment by ID
 @app.route('/comments/<int:id>', methods=[ "DELETE" ])
 def delete_comment( id ):
-    comment = Comment.query.get( id )
-    if comment is None:
+    comment = fetch_comment( id )
+    if not comment:
         return jsonify({ 'message': 'Comment not found' }), 404
 
-    db.session.delete( comment )
-    db.session.commit()
+    delete_comment( comment )
     return jsonify({ 'message': 'Comment deleted successfully' }), 200
 
 
