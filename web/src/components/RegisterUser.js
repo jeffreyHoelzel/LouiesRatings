@@ -11,7 +11,7 @@ const RegisterUser = () => {
   });
   // states for message and validation (if user already exists)
   const [message, setMessage] = useState("");
-  const [valid, setValid] = useState(false);
+  const [error, setError] = useState(false);
 
   // function to dynamically handle changes to registration data
   const handleChange = (e) => {
@@ -32,6 +32,7 @@ const RegisterUser = () => {
 
     // try to get response from backend by requesting new user verification in json format
     try {
+      console.log(registrationData.username);
       const response = await fetch('/service/register', {
         method: "POST",
         headers: {
@@ -59,7 +60,7 @@ const RegisterUser = () => {
 
       // set message and validation to confirm or deny login
       setMessage(data.message);
-      setValid(data.exists);
+      setError(data.error);
 
     } catch (error) {
       console.log("Error:", error);
@@ -97,7 +98,7 @@ const RegisterUser = () => {
         <div className="option-container">
           <button type="submit" className="login-btn" onClick={handleSubmit}>Sign up</button>
         </div>
-        {!valid && <span style={{color: 'red'}}>{message}</span>}
+        {error && <span style={{color: 'red'}}>{message}</span>}
       </form>
     </div>
   );

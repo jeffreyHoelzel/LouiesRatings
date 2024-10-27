@@ -4,7 +4,6 @@ body.login-open {
 
 .login-popup {
   position: fixed;
-  z-index: 100;
   right: 5px;
   top: 5px;
   background-color: white;

@@ -52,23 +52,47 @@ def send_message():
     # we cannot send render templates as we are not using flask python templates on the frontend
     return jsonify(message="Hello From Backend"), 200
 
-@app.route('/add_user', methods=["GET", "POST"])
-def profile():
+@app.route('/register', methods=['POST'])
+def register():
     if request.method == 'POST':
-        data = request.json  # Get JSON data from the request
+        # get JSON data from new user
+        data = request.json
 
-        # get username and password
+        # get username, password, email, first name, and last name
         username = data.get('username')
         password = data.get('password')
+        email = data.get('email')
+        first_name = data.get('firstName')
+        last_name = data.get('lastName')
 
-        # create an object of the User class of models
-        # and store data as a row in our datatable
-        if username != '' and password != '':
-            p = User(username=username, password=password)
-            db.session.add(p)
-            db.session.commit()
+        logger.info('\nusername: %s', username)
+        logger.info('\npassword: %s', password)
+        logger.info('\nemail: %s', email)
+        logger.info('\nfirst name: %s', first_name)
+        logger.info('\nlast name: %s', last_name)
 
-        return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
+        # if all credentials are not empty strings, create a new user object, otherwise, throw error
+        if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
+            new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+        else:
+            logger.info('\nServer was provided with incomplete information.')
+            return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
+
+        # search for username and email in database
+        user_db = db.session.query(User).filter_by(username=username, email=email).first()
+
+        # if either are in use, send 403 response (already exists)
+        if user_db is not None:
+            logger.info('\nUsername or email already in use.')
+            return jsonify({'message': 'Username or email already in use.', 'error': True}), 403
+        
+        # otherwise, add user to database
+        db.session.add(new_user)
+        db.session.commit()
+
+        # return success message and 200 response (ok)
+        logger.info('\nNew user successfully added.')
+        return jsonify({'message': 'New user successfully added.', 'error': False}), 200
     
 @app.route('/login', methods=['POST'])
 def login():
