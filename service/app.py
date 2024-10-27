@@ -96,20 +96,6 @@ def register():
     
 @app.route('/login', methods=['POST'])
 def login():
-
-
-# ===============TESTING ONLY=====================
-
-    # # add a mock user to db
-    # mock_user = User(username='jeffhoelzel', password='jeff123')
-
-    # # save object to db
-    # db.session.add(mock_user)
-    # db.session.commit()
-
-# ===============TESTING ONLY=====================
-
-
     if request.method == 'POST':
         # get JSON data from user
         data = request.json

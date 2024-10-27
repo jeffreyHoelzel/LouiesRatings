@@ -63,7 +63,6 @@ const Header = () => {
                             <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
                             <div className="successful-login">
                                 <h2>@{username}</h2>
-                                <p>*name of user*</p>
                                 <a className="sign-out" onClick={logout}>Sign out</a>
                             </div>
                         </div>

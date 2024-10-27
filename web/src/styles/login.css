@@ -1,7 +1,3 @@
-body.login-open {
-  overflow: hidden;
-}
-
 .login-popup {
   position: fixed;
   right: 5px;
@@ -83,25 +79,7 @@ body.login-open {
   transform: scale(0.95);
 }
 
-.new-account {
-  text-align: center;
-  width: 50%;
-  font-size: 16px;
-  text-decoration: none;
-  user-select: none;
-  color: #1A2852;
-}
-
-.new-account:hover {
-  color: #F4B51A;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.new-account:active {
-  transform: scale(0.95);
-}
-
+.new-account,
 .sign-out {
   text-align: center;
   width: 50%;
@@ -111,12 +89,29 @@ body.login-open {
   color: #1A2852;
 }
 
+.sign-out {
+  margin-top: 20px;
+}
+
+.new-account:hover {
+  color: #F4B51A;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.new-account:active,
+.sign-out:active {
+  transform: scale(0.95);
+}
+
 .sign-out:hover {
   color: red;
   text-decoration: underline;
   cursor: pointer;
 }
 
-.sign-out:active {
-  transform: scale(0.95);
+.successful-login {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
 }
