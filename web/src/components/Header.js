@@ -17,7 +17,6 @@ const Header = () => {
     // allow login popup to be toggleable
     const toggleLoginPopup = () => {
       setLoginPopup(!loginPopup);
-    //   localStorage.clear(); // FOR TESTING
     };
 
     const logout = () => {
