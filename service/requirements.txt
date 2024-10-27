@@ -7,4 +7,3 @@ selenium==4.11.2
 beautifulsoup4
 pandas
 
-

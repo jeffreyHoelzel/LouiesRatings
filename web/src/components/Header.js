@@ -11,7 +11,7 @@ const Header = () => {
             <div className="container">
                 <div className="logo-box">
                     <a href="#">
-                        <img src="imgs/logo.png" alt="Logo" />
+                        <img src="/imgs/logo.png" alt="Logo" />
                     </a>
                 </div>
 
@@ -19,7 +19,7 @@ const Header = () => {
 
                 <div className="profile-box">
                     <a href="#">
-                        <img src="imgs/profile.jpeg" alt="Profile Icon" />
+                        <img src="/imgs/profile.jpeg" alt="Profile Icon" />
                     </a>
                 </div>
             </div>

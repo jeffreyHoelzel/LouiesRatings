@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import *
 import threading
+import pandas as pd
 import os
 import logging
 import sys
@@ -96,6 +97,94 @@ def profile():
             db.session.commit()
 
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
+    
+@app.route('/professor', methods=['GET'])
+def get_professor_data():
+    instructor_name = request.args.get('name')
+    # Testing
+    # app.logger.debug(f"Received request for instructor: {instructor_name}")
+
+    if instructor_name:
+        # Split the instructor name into last name and first name and search database for any matching names
+        last_name, first_name = instructor_name.split(", ")
+        courses = ClassData.query.filter(
+            ClassData.instructor_name.ilike(f"%{last_name}%"),
+            ClassData.instructor_name.ilike(f"%{first_name}%")
+        ).all()
+    else:
+        return jsonify({"error": "Professor not found"}), 404
+
+    # Extract full instructor name from the first matched course, add space following comma
+    full_instructor_name = courses[0].instructor_name
+
+    course_data = [
+        {
+            "semester": course.semester,
+            "subject": course.subject,
+            "class_name": course.class_name,
+            "section": course.section,
+            "grades": {
+                "A": course.a,
+                "B": course.b,
+                "C": course.c,
+                "D": course.d,
+                "F": course.f,
+                "P": course.p,
+                "W": course.w
+            },
+        }
+        for course in courses
+    ]
+
+    # Include the full instructor name in the response
+    return jsonify({"professor": full_instructor_name, "courses": course_data})
+
+@app.route('/get_graph_data', methods=["GET", "POST"])
+def get_graph_data():
+    if request.method == 'POST':
+        request_data = request.json  # Get JSON data from the request
+
+        # get specfic class data
+        search_by = request_data.get('search_by')
+
+        # get specific data from search name
+        grade_data = list()
+
+        search_name = request_data.get(search_by)
+
+        if search_by == 'class_name':
+            grade_data = ClassData.query.filter_by(class_name=search_name).all()
+
+        else:
+            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+
+        if len(grade_data) == 0:
+            # nothing found, so return empty data
+            return jsonify({"grade": "empty", "sum":0})
+        
+        # create pandas data frame user the data, only get relevant information
+        grade_distributions= pd.DataFrame([
+            {
+                'A': data.a,
+                'B': data.b,
+                'C': data.c,
+                'D': data.d,
+                'F': data.f,
+                'P': data.p,
+                'W': data.w
+            } for data in grade_data
+        ])
+
+        # add row for column sums
+        grade_distributions.loc["sum"] = grade_distributions.sum(numeric_only=True)
+
+        # remove all rows except for the last two
+        grade_distributions = grade_distributions.iloc[[-1]]
+
+        # transpose, and make the index a column for grades
+        grade_distributions = grade_distributions.T.reset_index(drop=False).rename(columns={"index":"grade"})
+        
+        return jsonify(grade_distributions.to_json(orient='records'))
 
 # ====================================
 
