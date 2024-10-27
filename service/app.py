@@ -71,14 +71,10 @@ def search():
         # Extract the search query from the JSON data
         search_query = data.get('query')
 
-        classes = fetch_classes(search_query)
-
-
-        classes = {course.class_name : course.class_nbr for course in classes}
-
-        logger.info(f"Search query: {classes}")
+        instructors = search_instructors(search_query)
+        
         # Return the mock users to test and 200 means a successful request
-        return jsonify(classes), 200
+        return jsonify(instructors), 200
     
 @app.route('/add_user', methods=["GET", "POST"])
 def profile():

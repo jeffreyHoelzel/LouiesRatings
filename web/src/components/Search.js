@@ -6,7 +6,7 @@ const Search = () => {
     const [search, setSearch] = React.useState("");
 
     // this pair will hold the classes from search and the other will update the classes
-    const [filteredClasses, setFilteredClasses] = React.useState([]);
+    const [filteredProfs, setFilteredProfs] = React.useState([]);
 
     // this will set up the navigation to the class page
     const navigate = useNavigate();
@@ -16,35 +16,58 @@ const Search = () => {
         // this will set the form data to the search variable and call the mutator search function
         // side note this might change to be dynamic with the search idk how big our data set yet is
         setSearch(input.target.value);
+
+        // if char count greater tham 3 then call the search function
+        if (input.target.value.length > 3) {
+            handleSearch(input);
+        }
     }
 
     // Define a function to call setSearch function to update the search variable
-    const handleSearch = (input) => {
+    const handleSearch = async (input) => {
 
         // prevents enter from refreshing the page
         input.preventDefault(); 
 
         // make a fetch request to the API to get the search results
-        fetch(`service/search`, { 
-            method: 'POST', 
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({query: search}) 
-        })
+        try {
+            const res = await fetch(`service/search`, { 
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({query: search}) 
+            })
 
-            //.then(res => res.json()) // will return the json data
-            .then(data => { setFilteredClasses(data) }) // now this line will send data to console which you can see with crtl+shift+i on chrome
-            .catch(err => console.log(err)); // will catch any errors but idk if we need this
-        
-            // the code above is temp after the fetch because the other parts isnt fleshed out yet
+            // if the fetch was successful then update the classes
+            if (res.ok) 
+            {
+                const data = await res.json();
+                setFilteredProfs(data);
+            }
+            else 
+            {
+                console.error('Fetch was unsuccessful');    
+            }
 
-        console.log("search: ", filteredClasses);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    const handleClassClick = (course) => {
-        // this will redirect to the class page
-        navigate(`/class/${course.id}`);
+    const handleProfClick = (prof) => {
+        // this will redirect to the Prof page
+
+        // get lowercase of name
+        prof = prof.toLowerCase();
+
+        // split the name into first and last
+        const last = prof.split(",")[0];
+
+        // in case of multiple "first" names
+        const first = prof.split(",")[1].split(' ')[0];
+        
+        navigate(`/professor/${last}-${first}`);
     }
 
 
@@ -56,11 +79,11 @@ const Search = () => {
                 <button type="submit" className="search-button">Search</button>
             </form>
 
-            {search && filteredClasses.length > 0 && (
+            {search && filteredProfs.length > 0 && (
                 <ul className="dropdown">
-                    {filteredClasses.map((course) => (
-                        <li key={course.id} onClick={() => handleClassClick(course)}>
-                            {course.name}
+                    {filteredProfs.slice(0,5).map((prof) => ( // only show the first 5 results bc we dont want to overload the user and system
+                        <li key={prof} onClick={() => handleProfClick(prof)}>
+                            {prof || 'Unnamed professor'}
                         </li>
                     ))}
                 </ul>

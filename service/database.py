@@ -91,4 +91,15 @@ def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
     return db.session.query(ClassData).with_entities(ClassData.class_nbr, ClassData.class_name).filter_by(class_name=class_name).all()
 
+def search_instructors(instructor_name: str):
+    # get all instructors (name) from database that match the string up to that point
+
+    # make them distinct
+    instructor_names = ClassData.query.with_entities(ClassData.instructor_name).filter(ClassData.instructor_name.ilike(f"%{instructor_name}%")).distinct().all()
+    
+    # convert to list of strings
+    instructor_names = [name[0] for name in instructor_names]
+
+    return instructor_names
+
 # ====================================
