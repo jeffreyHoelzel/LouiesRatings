@@ -1,6 +1,8 @@
 db-data/
 
 service/node_modules
+service/table.db
+service/__pycache__/
 web/node_modules
 
 .venv

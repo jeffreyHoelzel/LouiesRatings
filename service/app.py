@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data
+from database import *
 import threading
 import os
 import logging
@@ -70,11 +70,14 @@ def search():
         # Extract the search query from the JSON data
         search_query = data.get('query')
 
-        # usually a different return here 
-        users = [{'id': 1, 'username': 'Alice'}, {'id': 2, 'username': 'Bob'}, {'id': 3, 'username': search_query}]
+        classes = fetch_classes(search_query)
 
+
+        classes = {course.class_name : course.class_nbr for course in classes}
+
+        logger.info(f"Search query: {classes}")
         # Return the mock users to test and 200 means a successful request
-        return jsonify(users), 200
+        return jsonify(classes), 200
     
 @app.route('/add_user', methods=["GET", "POST"])
 def profile():
