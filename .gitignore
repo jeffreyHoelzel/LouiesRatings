@@ -12,8 +12,6 @@ web/.DS_Store
 web/public/.DS_Store
 web/src/.DS_Store
 
-database.cpython-39.pyc
-webscraper.cpython-39.pyc
 .db
-table.db
-__pycache__
+service/table.db
+service/__pycache__
