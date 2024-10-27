@@ -4,7 +4,6 @@ import Main from './components/Main';
 import Footer from './components/Footer';
 import Comment from './components/Comment';
 
-
 function App() {
   const [message, setMessage] = useState("Loading...");
 
@@ -33,7 +32,6 @@ function App() {
       <Footer />
       <p>{message}</p>
     </div>
-    
   );
 }
 
