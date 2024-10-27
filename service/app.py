@@ -94,27 +94,28 @@ def profile():
 
         return jsonify({'message': 'Data received!', 'data': {'name': username}}), 200
 
-@app.route('/comments', methods=[ "GET" ])
-def get_comments():
-    
-    # Retreive all comments from the database
-    comments = Comment.query.all()
-    serialized_comments = [comment.serialize() for comment in comments]
-    return jsonify( serialized_comments ), 200
+@app.route('/comments', methods=["GET", "POST"])
+def handle_comments():
+    if request.method == 'GET':
+        # Fetch all comments from the database
+        comments = Comment.query.all()
+        return jsonify([comment.serialize() for comment in comments]), 200
 
-# Route to create a new comment
-@app.route('/comments', methods=[ "POST" ])
-def post_comment():
+    elif request.method == 'POST':
+        data = request.json  # Get JSON data from the request
 
-    # Add a new comment to the database
-    data = request.get_json()
-    new_comment = Comment(
-        user_id=data['user_id'],
-        content=data['content']
-        )
-    db.session.add( new_comment )
-    db.session.commit()
-    return jsonify( new_comment.serialize()), 201
+        # Extract user_id and content from the request
+        user_id = data.get('user_id')
+        content = data.get('content')
+
+        # Create a new Comment object and store it in the database
+        if user_id is not None and content:
+            new_comment = Comment(user_id=user_id, content=content)
+            db.session.add(new_comment)
+            db.session.commit()
+            return jsonify({'message': 'Comment added!', 'comment': new_comment.serialize()}), 201
+
+        return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
 
 # Route to delete a comment by ID
 @app.route('/comments/<int:id>', methods=[ "DELETE" ])

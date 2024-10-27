@@ -1,91 +1,88 @@
 import React, { useState, useEffect } from 'react';
 
-const Comments = () => {
-    const [ comments, setComments ] = useState([]);
-    const [ userId, setUserId ] = useState( '' );
-    const [ content, setContent ] = useState( '' ); // Fixed variable name here
+const Comment = () => {
+  const [comments, setComments] = useState([]);
+  const [userId, setUserId] = useState(1); // Placeholder for user ID
+  const [content, setContent] = useState('');
+  const [message, setMessage] = useState('');
 
-    useEffect(() => {
-        fetchComments();
-    }, []);
+  const backendUrl = "service/comments"; // Ensure this matches your Flask route
 
-    const fetchComments = async () => {
-        try {
-            const response = await fetch( '/comments' );
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            } // Added missing closing brace here
-            const data = await response.json();
-            setComments(data);
-        } catch ( error ) {
-            console.error( 'Error fetching comments: ', error );
-        }
+  // Fetch comments when the component mounts
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const fetchComments = () => {
+    fetch(backendUrl)
+      .then(res => res.json())
+      .then(data => {
+        setComments(data); // Assuming the backend returns an array of comments
+        setMessage('');
+      })
+      .catch(err => {
+        console.error(err);
+        setMessage("Failed to load comments.");
+      });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Prepare the comment data
+    const newComment = {
+      user_id: userId,
+      content: content
     };
 
-    const handleSubmit = async ( e ) => {
-        e.preventDefault(); // Corrected the method name here
-        if ( !userId || !content ) { // Corrected variable name here
-            alert( 'Please enter both user ID and comment content.' );
-            return;
+    // Send the new comment to the backend
+    fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newComment)
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("Failed to submit comment");
         }
+        return res.json();
+      })
+      .then(data => {
+        setComments(prev => [...prev, data.comment]); // Update the comments list immediately
+        setContent(''); // Clear the input field
+        setMessage(data.message); // Set success message
+      })
+      .catch(err => {
+        console.error(err);
+        setMessage("Failed to submit comment.");
+      });
+  };
 
-        try {
-            const response = await fetch( '/comments', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }, // Added missing comma here
-                body: JSON.stringify({ user_id: userId, content: content }),
-            });
-
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            setUserId('');
-            setContent('');
-            fetchComments();
-        } catch ( error ) {
-            console.error( 'Error submitting comments: ', error );
-        }
-    };
-
-    // The return statement must be inside the Comments component
-    return (
-        <div>
-            <h2>Comments</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="userId">User ID:</label>
-                    <input
-                        type="number"
-                        id="userId"
-                        value={ userId }
-                        onChange={(e) => setUserId( e.target.value )}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="content">Comment:</label>
-                    <textarea
-                        id="content"
-                        value={ content }
-                        onChange={(e) => setContent( e.target.value )}
-                        required
-                    />
-                </div>
-                <button type="submit">Submit Comment</button>
-            </form>
-            <h3>Comment List</h3>
-            <ul>
-                {comments.map(( comment ) => (
-                    <li key={ comment.id }>
-                        <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+  return (
+    <div>
+      <h2>Comments</h2>
+      {message && <p>{message}</p>}
+      <form onSubmit={handleSubmit}>
+        <textarea 
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Leave a comment..."
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
+      <ul>
+        {comments.map(comment => (
+          <li key={comment.id}>
+            <p><strong>User {comment.user_id}:</strong> {comment.content}</p>
+            <p>{new Date(comment.timestamp).toLocaleString()}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
-export default Comments;
+export default Comment;
