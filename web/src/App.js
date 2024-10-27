@@ -3,6 +3,8 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
 import Comment from './components/Comment';
+import ProfessorPage from './components/ProfessorPage';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   const [message, setMessage] = useState("Loading...");
@@ -25,13 +27,18 @@ function App() {
 
   // changes the html content in /web/public/index.html
   return (
-    <div>
-      <Header />
-      <Main />
-      <Comment />
-      <Footer />
-      <p>{message}</p>
-    </div>
+    <Router>
+      <div>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/professor/:professorId" element={<ProfessorPage />} />
+        </Routes>
+        <Comment />
+        <Footer />
+        {/* <p>{message}</p> */}
+      </div>
+    </Router>
   );
 }
 

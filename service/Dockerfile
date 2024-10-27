@@ -2,6 +2,9 @@
 #FROM --platform=linux/amd64 python:3.9
 FROM python:3.9
 
+# For MacOS
+# FROM --platform=linux/amd64  python:3.9
+
 # add google chrome and chrome driver to executables for webscraping
 # Adding trusting keys to apt for repositories
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
