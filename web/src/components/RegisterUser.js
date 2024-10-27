@@ -32,7 +32,6 @@ const RegisterUser = () => {
 
     // try to get response from backend by requesting new user verification in json format
     try {
-      console.log(registrationData.username);
       const response = await fetch('/service/register', {
         method: "POST",
         headers: {

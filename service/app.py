@@ -100,12 +100,12 @@ def login():
 
 # ===============TESTING ONLY=====================
 
-    # add a mock user to db
-    mock_user = User(username='jeffhoelzel', password='jeff123')
+    # # add a mock user to db
+    # mock_user = User(username='jeffhoelzel', password='jeff123')
 
-    # save object to db
-    db.session.add(mock_user)
-    db.session.commit()
+    # # save object to db
+    # db.session.add(mock_user)
+    # db.session.commit()
 
 # ===============TESTING ONLY=====================
 
@@ -128,7 +128,7 @@ def login():
             return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 401
         else:
             logger.info('\nUser logged in successfully.')
-            return jsonify({'message': 'User logged in successfully.', "exists": True}), 200
+            return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
 
 # ====================================
 
