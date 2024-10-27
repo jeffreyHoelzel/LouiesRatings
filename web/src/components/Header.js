@@ -36,7 +36,7 @@ const Header = () => {
             <div className="container">
                 <div className="logo-box">
                     <a href="#">
-                        <img src="imgs/logo.png" alt="Logo" />
+                        <img src="/imgs/logo.png" alt="Logo" />
                     </a>
                 </div>
 

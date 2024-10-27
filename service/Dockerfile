@@ -1,6 +1,9 @@
 # service/Dockerfile
 FROM --platform=linux/amd64  python:3.9
 
+# For MacOS
+# FROM --platform=linux/amd64  python:3.9
+
 # add google chrome and chrome driver to executables for webscraping
 # Adding trusting keys to apt for repositories
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
@@ -25,7 +28,7 @@ RUN apt-get install -y google-chrome-stable
 
 # install chromedriver to bin
 # version may need to be changes
-RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/129.0.6668.89/linux64/chromedriver-linux64.zip \
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/130.0.6723.69/linux64/chromedriver-linux64.zip \
   && unzip chromedriver-linux64.zip && rm -dfr chromedriver_linux64.zip \
   && mv /chromedriver-linux64/chromedriver /usr/bin/chromedriver \
   && chmod +x /usr/bin/chromedriver
