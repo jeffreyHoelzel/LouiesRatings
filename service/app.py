@@ -159,37 +159,18 @@ def get_graph_data():
             # nothing found, so return empty data
             return jsonify({"grade": "empty", "sum":0})
         
-        # create pandas data frame user the data
-        grade_data_df= pd.DataFrame([
+        # create pandas data frame user the data, only get relevant information
+        grade_distributions= pd.DataFrame([
             {
-                'id': data.id,
-                'semester': data.semester,
-                'subject': data.subject,
-                'class_name': data.class_name,
-                'section': data.section,
-                'class_nbr': data.class_nbr,
-                'instructor_name': data.instructor_name,
-                'a': data.a,
-                'b': data.b,
-                'c': data.c,
-                'd': data.d,
-                'f': data.f,
-                'au': data.au,
-                'p': data.p,
-                'ng': data.ng,
-                'w': data.w,
-                'i': data.i,
-                'ip': data.ip,
-                'pending': data.pending,
-                'total': data.total
+                'A': data.a,
+                'B': data.b,
+                'C': data.c,
+                'D': data.d,
+                'F': data.f,
+                'P': data.p,
+                'W': data.w
             } for data in grade_data
         ])
-
-        # make all column names lower case
-        grade_data_df.columns = grade_data_df.columns.str.lower()
-
-        # extract only the grade distributions
-        grade_distributions = grade_data_df.filter(items=['a', 'b', 'c', 'd', 'f', 'au', 'p', 'ng', 'w', 'i', 'ip', 'pending'])
 
         # add row for column sums
         grade_distributions.loc["sum"] = grade_distributions.sum(numeric_only=True)
