@@ -73,12 +73,6 @@ def register():
         first_name = data.get('firstName')
         last_name = data.get('lastName')
 
-        logger.info('\nusername: %s', username)
-        logger.info('\npassword: %s', password)
-        logger.info('\nemail: %s', email)
-        logger.info('\nfirst name: %s', first_name)
-        logger.info('\nlast name: %s', last_name)
-
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
         if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
             new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
@@ -109,9 +103,6 @@ def login():
         data = request.json
         requested_username = data.get('username')
         requested_password = data.get('password')
-
-        logger.info('\nreq user: %s', requested_username)
-        logger.info('\nreq pass: %s', requested_password)
 
         # get username and password from database, if user DNE, user will be None
         user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
