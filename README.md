@@ -1,4 +1,4 @@
-# Louie's Ratings
+# Louie's Ratings 1.0.0
 ---
 
 ## Table of contens
