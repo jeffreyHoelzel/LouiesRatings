@@ -193,6 +193,7 @@ if __name__ == "__main__":
     suite.addTest(TestFrontend("test_professor_page"))
     suite.addTest(TestFrontend("test_user_registration"))
     suite.addTest(TestFrontend("test_user_login"))
+    suite.addTest(TestFrontend("test_search"))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
