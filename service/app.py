@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors, fetch_classes
+from database import db, User, ClassData, search_instructors, fetch_grade_distribution_data
 import threading
 import pandas as pd
 import os
