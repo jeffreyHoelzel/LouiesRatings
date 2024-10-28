@@ -1,6 +1,5 @@
 import React from 'react';
 import Search from './Search';
-import { Link } from 'react-router-dom';
 
 
 // make a header component for the website that contains the logo, search bar, and profile icon
@@ -11,9 +10,9 @@ const Header = () => {
         <header>
             <div className="container">
                 <div className="logo-box">
-                    <Link to="/">
+                    <a href="#">
                         <img src="/imgs/logo.png" alt="Logo" />
-                    </Link>
+                    </a>
                 </div>
 
                 <Search/>
