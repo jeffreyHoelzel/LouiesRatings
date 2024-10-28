@@ -1,0 +1,118 @@
+.login-popup {
+  position: fixed;
+  right: 5px;
+  top: 5px;
+  background-color: white;
+  color: #1A2852;
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+.login-popup-content {
+  margin: 5% auto;
+  padding: 20px;
+  max-width: 300px;
+}
+
+.close-popup {
+  color: black;
+  float: right;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.close-popup:hover {
+  text-decoration: none;
+  cursor: pointer;
+  color: red;
+}
+
+.close-popup:active {
+  transform: scale(0.95);
+  user-select: none;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+}
+
+.form-container input[type=text], 
+.form-container input[type=password],
+.form-container input[type=email] {
+  background-color: white;
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 20px 0;
+  border: 1px solid #1A2852;
+  border-radius: 3px;
+}
+
+.form-container input[type=text]:focus, 
+.form-container input[type=password]:focus,
+.form-container input[type=email]:focus {
+  background-color: #f4f4f4;
+  outline: none;
+}
+
+.option-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.login-btn,
+.sign-up-btn {
+  background-color: #1A2852;
+  color: white;
+  padding: 10px 30px;
+  width: 50%;
+  border: none;
+  border-radius: 3px;
+}
+
+.login-btn:hover {
+  background-color: #F4B51A;
+  cursor: pointer;
+}
+
+.login-btn:active {
+  transform: scale(0.95);
+}
+
+.new-account,
+.sign-out {
+  text-align: center;
+  width: 50%;
+  font-size: 16px;
+  text-decoration: none;
+  user-select: none;
+  color: #1A2852;
+}
+
+.sign-out {
+  margin-top: 20px;
+}
+
+.new-account:hover {
+  color: #F4B51A;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.new-account:active,
+.sign-out:active {
+  transform: scale(0.95);
+}
+
+.sign-out:hover {
+  color: red;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.successful-login {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+}

@@ -1,5 +1,4 @@
 # service/Dockerfile
-#FROM --platform=linux/amd64 python:3.9
 FROM python:3.9
 
 # For MacOS
@@ -41,5 +40,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8080
-CMD ["python", "app.py"]
+# used to wait for backend and frontend to be available before running test
+CMD ["./wait-for-it.sh", "frontend:3000", "--", "./wait-for-it.sh", "backend:8080", "--", "python", "test.py"]
