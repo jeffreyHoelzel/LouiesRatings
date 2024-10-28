@@ -10,17 +10,15 @@ db = SQLAlchemy()
 # DATABASE MODELS
 # ====================================
 class User(db.Model):
-    # id: Primary key for user
-    # username: Used to store the username if the user
-    # password: Used to store the password of the user
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(20), nullable=False)
+    username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.Integer, nullable=False)
+    first_name = db.Column(db.String(20), nullable=False)
+    last_name = db.Column(db.String(30), nullable=False)
+    email = db.Column(db.String(), nullable=False, unique=True)
 
-    # repr method represents how one object of this datatable
-    # will look like
     def __repr__(self):
-        return f"username : {self.username}, password : {self.password}"
+        return f"username : {self.username}, password : {self.password}, first_name : {self.first_name}, last_name : {self.last_name}, email : {self.email}"
 
 class ClassData(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
