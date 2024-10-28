@@ -35,6 +35,21 @@ services:
     secrets:
       - db_url
 
+  test:
+    container_name: test
+    build:
+      context: ./unittest
+      dockerfile: Dockerfile
+    volumes:
+      - ./unittest:/app
+    networks:
+      - louie_shared_network
+    depends_on:
+      - frontend
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 networks:
   louie_shared_network:
     external: true
