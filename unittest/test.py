@@ -53,15 +53,15 @@ class TestFrontend(unittest.TestCase):
         for _ in range(retries):
             # try to open profile
             try:
-                profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((by, value)))
-                profile_pic_btn.click()
+                btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((by, value)))
+                btn.click()
                 # exit upon success
                 return
             except (StaleElementReferenceException, ElementClickInterceptedException):
                 # retry if exception thrown
                 pass
         # throw exception if not found of stale state
-        raise Exception(f"Element not found or still in stale state after {retries} retries")
+        raise Exception(f"Element not found or still in stale state after {retries} retries, check to see if database has been deleted")
 
     def test_user_registration(self):
         # navigate to the homepage
@@ -82,7 +82,7 @@ class TestFrontend(unittest.TestCase):
         username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
         password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
 
-        # log in with demo user
+        # sign up with demo user
         first_name_field.send_keys("John")
         last_name_field.send_keys("Smith")
         email_field.send_keys("johnsmith123456@gmail.com")
@@ -101,10 +101,57 @@ class TestFrontend(unittest.TestCase):
 
         # username will have @ symbol for tagging
         self.assertEqual("@johnsmith", username_element.text, "New user has not been registered")
+
+    def test_user_login(self):
+        # navigate to the homepage
+        self.driver.get("http://host.docker.internal")
+
+        # open general login form
+        profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
+        profile_pic_btn.click()
+
+        # press the sign out button (since user should already be logged in)
+        # technically testing sign out functionality here too
+        sign_out_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-out")))
+        sign_out_btn.click()
+
+        self.__retry_click(By.CLASS_NAME, "sign-out")
+
+        # try to click button multiple times, otherwise exception raised
+        self.__retry_click(By.CLASS_NAME, "popup-form")
+
+        # get username and password fields
+        username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
+        password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
+
+        # log in with demo user
+        username_field.send_keys("johnsmith")
+        password_field.send_keys("sjc623&$!jmaa*")
+
+        # log the new user in
+        login_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "login-btn")))
+        login_btn.click()
+
+        # try to click button multiple times, otherwise exception raised
+        self.__retry_click(By.CLASS_NAME, "popup-form")
+
+        # wait for header to show and grab username
+        username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
+
+        # username will have @ symbol for tagging
+        self.assertEqual("@johnsmith", username_element.text, "User has not been logged in")
     
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    suite = unittest.TestSuite()
+    suite.addTest(TestFrontend("test_home_page"))
+    suite.addTest(TestFrontend("test_professor_page"))
+    suite.addTest(TestFrontend("test_user_registration"))
+    suite.addTest(TestFrontend("test_user_login"))
+
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
