@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data
-import sys
-import logging
+from database import *
 import threading
 import pandas as pd
 import os

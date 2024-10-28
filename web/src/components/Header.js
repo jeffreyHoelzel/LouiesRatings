@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Search from './Search';
 import Login from './Login';
 import AuthenticateUser from './AuthenticateUser';
+import { Link } from 'react-router-dom';
 
 // style imports
 import '../styles/login.css';
