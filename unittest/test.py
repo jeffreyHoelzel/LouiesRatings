@@ -45,6 +45,33 @@ class TestFrontend(unittest.TestCase):
         
         # navigate back to homepage
         self.driver.get("http://host.docker.internal")
+
+    def test_search(self):
+        # navigate to the homepage
+        self.driver.get("http://host.docker.internal")
+
+        # search for a professor
+        search_input = self.driver.find_element(By.CLASS_NAME, "search-bar")
+        search_input.send_keys("gerosa")
+        search_input.submit()
+
+        # wait up to 10 seconds for page to loading
+        WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "dropdown")))
+
+        # check that the professors name exists
+        header_element = self.driver.find_element(By.CLASS_NAME, "dropdown")
+        name = header_element.find_element(By.TAG_NAME, "li")
+        self.assertEqual("Gerosa,Marco Aurelio", name.text, "Search page not displaying expected name")
+
+        # click on the list item containing the name
+        name.click()
+
+        # wait for the new page to load (the professor page)
+        WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "professor-header")))
+
+        # verify the URL has the expected path
+        current_url = self.driver.current_url
+        self.assertIn("professor/gerosa-marco", current_url, "Routing did not work as expected")
     
     @classmethod
     def tearDownClass(cls):
