@@ -43,6 +43,14 @@ class ClassData(db.Model):
     pending = db.Column(db.Integer, nullable=False)
     total = db.Column(db.Integer, nullable=False)
 
+class ClassDetails(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    class_name = db.Column(db.String(10), nullable=False, unique=True) 
+    class_title = db.Column(db.String(20), nullable=False)
+    description = db.Column(db.String(255), nullable=True) 
+    instructor = db.Column(db.String(20), nullable=False)
+
+
 # ====================================
 
 # ====================================
