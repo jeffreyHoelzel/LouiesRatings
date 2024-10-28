@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
+from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException
 
 class TestFrontend(unittest.TestCase):
     @classmethod
@@ -45,6 +46,61 @@ class TestFrontend(unittest.TestCase):
         
         # navigate back to homepage
         self.driver.get("http://host.docker.internal")
+
+# helper functions =========================
+    def __retry_click(self, by, value, retries=3):
+        # loop over number of retries specified (3 is usually enough)
+        for _ in range(retries):
+            # try to open profile
+            try:
+                profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((by, value)))
+                profile_pic_btn.click()
+                # exit upon success
+                return
+            except (StaleElementReferenceException, ElementClickInterceptedException):
+                # retry if exception thrown
+                pass
+        # throw exception if not found of stale state
+        raise Exception(f"Element not found or still in stale state after {retries} retries")
+
+    def test_user_registration(self):
+        # navigate to the homepage
+        self.driver.get("http://host.docker.internal")
+
+        # open general login form
+        profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
+        profile_pic_btn.click()
+
+        # open registration form
+        register_form_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "new-account")))
+        register_form_btn.click()
+
+        # get first name, last name, email, username, and password fields
+        first_name_field = self.driver.find_element(By.CLASS_NAME, "first-name-field")
+        last_name_field = self.driver.find_element(By.CLASS_NAME, "last-name-field")
+        email_field = self.driver.find_element(By.CLASS_NAME, "email-field")
+        username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
+        password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
+
+        # log in with demo user
+        first_name_field.send_keys("John")
+        last_name_field.send_keys("Smith")
+        email_field.send_keys("johnsmith123456@gmail.com")
+        username_field.send_keys("johnsmith")
+        password_field.send_keys("sjc623&$!jmaa*")
+
+        # submit the new user form
+        sign_up_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-up-btn")))
+        sign_up_btn.click()
+
+        # try to click button multiple times, otherwise exception raised
+        self.__retry_click(By.CLASS_NAME, "popup-form")
+
+        # wait for header to show and grab username
+        username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
+
+        # username will have @ symbol for tagging
+        self.assertEqual("@johnsmith", username_element.text, "New user has not been registered")
     
     @classmethod
     def tearDownClass(cls):
