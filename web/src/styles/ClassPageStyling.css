@@ -1,0 +1,93 @@
+/* Main container for the class page */
+.class-page { 
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    min-height: 80vh;
+    background-color: #f9f9f9; 
+    border-radius: 10px; 
+}
+
+/* Class header styling */
+.class-header {
+    align-items: flex-start;
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: #fff; 
+    border-radius: 8px; 
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px; 
+}
+
+/* Title styles */
+.class-header h1 {
+    font-size: 2.5rem;
+    color: #1A2852; 
+    margin: 0; 
+}
+
+/* Description styling */
+.class-header p {
+    font-size: 1.2rem; 
+    color: #555; 
+    margin-top: 5px; 
+}
+
+/* Instructor styling */
+.instructor-info {
+    margin-top: 20px; 
+}
+
+/* Info sections layout */
+.info-sections {
+    display: flex;
+    justify-content: space-between; 
+    gap: 20px; 
+    margin: 40px 0;
+}
+
+/* Styles for individual sections */
+.grade-distribution,
+.grade-distribution-graph,
+.pass-fail-rates,
+.instructor-info {
+    flex: 1; 
+    background-color: #fff; 
+    padding: 20px;
+    border-radius: 8px; 
+    border: 1px solid #ddd; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+/* Heading styles for sections */
+.grade-distribution h2,
+.instructor-info h2,
+.pass-fail-rates h2,
+.grade-distribution-graph h2 {
+    font-size: 1.8rem;
+    color: #1A2852; 
+    margin-bottom: 10px;
+    border-bottom: 2px solid #F4B51A; 
+    padding-bottom: 5px;
+}
+
+/* Styles for reviews section */
+.reviews {
+    background-color: #F9F9F9; 
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 5px; 
+    border: 1px solid #ddd; 
+    width: 100%;
+}
+
+/* Specific styles for pass-fail rates and grade distribution sections */
+.grade-distribution {
+    align-self: flex-start;
+}
+
+.pass-fail-rates {
+    align-self: flex-end;
+}
