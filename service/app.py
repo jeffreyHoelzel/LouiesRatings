@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors
+from database import db, User, ClassData, ClassDetails, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors
 import threading
 import pandas as pd
 import os
@@ -172,6 +172,53 @@ def get_professor_data():
 
     # Include the full instructor name in the response
     return jsonify({"professor": full_instructor_name, "courses": course_data})
+
+@app.route('/class', methods=['GET'])
+def get_class_data():
+    class_id = request.args.get('classId') 
+    if not class_id:
+        return jsonify({"error": "Class ID is required"}), 400
+
+    # Fetch class data from the database
+    class_data = ClassData.query.filter_by(class_name=class_id).first() 
+
+    if class_data:
+        return jsonify({"class": {
+            "title": f"{class_data.subject} {class_data.class_name}",
+            "code": class_data.class_name,
+            "instructor": class_data.instructor_name,
+            "grades": {
+                "A": class_data.a,
+                "B": class_data.b,
+                "C": class_data.c,
+                "D": class_data.d,
+                "F": class_data.f,
+                "P": class_data.p,
+                "W": class_data.w,
+            },
+        }}), 200
+    else:
+        return jsonify({"error": "Class not found"}), 404
+    
+@app.route('/class/details', methods=['GET'])
+def get_class_details():
+    class_name = request.args.get('classId')
+    
+    # Find class by class_name
+    class_data = ClassDetails.query.filter_by(class_name=class_name).first()
+
+    if class_data:
+        return jsonify({
+            "class": {
+                "title": class_data.class_title,
+                "description": class_data.description,
+                "instructor": class_data.instructor
+            }
+        }), 200
+    else:
+        return jsonify({"error": "Class not found"}), 404
+
+
 
 @app.route('/get_graph_data', methods=["GET", "POST"])
 def get_graph_data():
