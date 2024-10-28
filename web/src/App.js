@@ -35,7 +35,6 @@ function App() {
           <Route path="/professor/:professorId" element={<ProfessorPage />} />
         </Routes>
         <Footer />
-        {/* <p>{message}</p> */}
       </div>
     </Router>
     
