@@ -5,7 +5,7 @@ import Main from './components/Main';
 import Footer from './components/Footer';
 import ClassPage from './components/ClassPage'; 
 import Comment from './components/Comment';
-import ProfessorPage from './components/ProfessorPage';
+//import ProfessorPage from './components/ProfessorPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
