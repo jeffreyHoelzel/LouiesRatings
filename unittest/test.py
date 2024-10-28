@@ -60,6 +60,29 @@ class TestFrontend(unittest.TestCase):
         
         # navigate back to homepage
         self.driver.get("http://host.docker.internal") 
+
+    def test_charts(self):
+        # test that charts were found for a specific professor page and class page
+        for i in range(2):
+            if i == 0:
+                # navigate to specific professor page
+                self.driver.get("http://host.docker.internal/professor/gerosa-marco")
+                testing_page = "professor"
+            else:
+                # navigate to specific professor page
+                self.driver.get("http://host.docker.internal/class/cs-386")
+                testing_page = "class"
+
+            # wait up to 10 seconds for page to loading
+            WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_all_elements_located((By.CSS_SELECTOR, ".recharts-cartesian-axis-tick-value")))
+
+            # check that the professors name is being displayed correctly
+            all_axis_labels = self.driver.find_elements(By.CSS_SELECTOR, ".recharts-cartesian-axis-tick-value")
+            x_axis_labels = [label.text for label in all_axis_labels[0:7]]
+            self.assertEqual(['A', 'B', 'C', 'D', 'F', 'P', 'W'], x_axis_labels, f"Chart on {testing_page} page not displaying correctly")
+        
+        # navigate back to homepage
+        self.driver.get("http://host.docker.internal")
     
     @classmethod
     def tearDownClass(cls):
