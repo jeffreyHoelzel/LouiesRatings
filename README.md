@@ -45,4 +45,4 @@ n/a
 
 ## License
 ---
-n/a
+This project is licensed under the [MIT License](./LICENSE).
