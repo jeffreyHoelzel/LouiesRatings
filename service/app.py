@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, Comment
+from database import db, Person, ClassData, Comment
 from database import add_comment, fetch_comment, delete_comment, search_instructors
 import pandas as pd
 import logging
@@ -85,13 +85,13 @@ def register():
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
         # if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
         if all([username, password, email, first_name, last_name]):
-            new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            new_user = Person(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         else:
             logger.info('\nServer was provided with incomplete information.')
             return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
 
         # search for username and email in database
-        user_db = db.session.query(User).filter_by(username=username, email=email).first()
+        user_db = db.session.query(Person).filter_by(username=username, email=email).first()
 
         # if either are in use, send 403 response (already exists)
         if user_db is not None:
@@ -115,7 +115,7 @@ def login():
         requested_password = data.get('password')
 
         # get username and password from database, if user DNE, user will be None
-        user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
+        user = db.session.query(Person).filter_by(username=requested_username, password=requested_password).first();
 
         # check if user DNE
         if user is None:
