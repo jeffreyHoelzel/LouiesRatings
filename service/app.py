@@ -180,7 +180,7 @@ def get_class_data():
         return jsonify({"error": "Class ID is required"}), 400
 
     # Fetch class data from the database
-    class_data = ClassData.query.filter_by(class_name=class_id).first() 
+    class_data = ClassData.query.filter_by(class_name=class_id).first()
 
     if class_data:
         return jsonify({"class": {
@@ -194,31 +194,11 @@ def get_class_data():
                 "D": class_data.d,
                 "F": class_data.f,
                 "P": class_data.p,
-                "W": class_data.w,
+                "W": class_data.w
             },
         }}), 200
     else:
         return jsonify({"error": "Class not found"}), 404
-    
-@app.route('/class/details', methods=['GET'])
-def get_class_details():
-    class_name = request.args.get('classId')
-    
-    # Find class by class_name
-    class_data = ClassDetails.query.filter_by(class_name=class_name).first()
-
-    if class_data:
-        return jsonify({
-            "class": {
-                "title": class_data.class_title,
-                "description": class_data.description,
-                "instructor": class_data.instructor
-            }
-        }), 200
-    else:
-        return jsonify({"error": "Class not found"}), 404
-
-
 
 @app.route('/get_graph_data', methods=["GET", "POST"])
 def get_graph_data():

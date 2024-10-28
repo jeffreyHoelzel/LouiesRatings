@@ -6,7 +6,6 @@ import Chart from './Chart';
 const ClassPage = () => {
   const { classId } = useParams();
   const [classData, setClassData] = useState(null);
-  const [classDetails, setClassDetails] = useState(null);
   const [error, setError] = useState(null);
 
   const formatClassId = (id) => {
@@ -29,20 +28,7 @@ const ClassPage = () => {
       }
     };
 
-    // Fetch class details (title, description, instructor)
-    const fetchClassDetails = async () => {
-      try {
-        const response = await fetch(`/service/class/details?classId=${encodeURIComponent(formattedClassId)}`);
-        if (!response.ok) throw new Error("Class details not found.");
-        const data = await response.json();
-        setClassDetails(data.class);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
     fetchClassData();
-    fetchClassDetails();
   }, [formattedClassId]);
 
   if (error) return <p>{error}</p>;
