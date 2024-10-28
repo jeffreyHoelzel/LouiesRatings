@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import *
+from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors, fetch_classes
 import threading
 import pandas as pd
 import os
@@ -181,6 +181,39 @@ def get_graph_data():
         grade_distributions = grade_distributions.T.reset_index(drop=False).rename(columns={"index":"grade"})
         
         return jsonify(grade_distributions.to_json(orient='records'))
+
+@app.route('/comments', methods=["GET", "POST"])
+def handle_comments():
+    if request.method == 'GET':
+        # Fetch all comments from the database
+        comments = Comment.query.all()
+        return jsonify([comment.serialize() for comment in comments]), 200
+
+    elif request.method == 'POST':
+        data = request.json  # Get JSON data from the request
+
+        # Extract user_id and content from the request
+        user_id = data.get('user_id')
+        content = data.get('content')
+
+        # Use the add_comment function to create a new comment
+        new_comment = add_comment(user_id, content)
+
+        if new_comment:
+            return jsonify({'message': 'Comment added!', 'comment': new_comment.serialize()}), 201
+
+        return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
+
+# Route to delete a comment by ID
+@app.route('/comments/<int:id>', methods=[ "DELETE" ])
+def delete_comment( id ):
+    comment = fetch_comment( id )
+    if not comment:
+        return jsonify({ 'message': 'Comment not found' }), 404
+
+    delete_comment( comment )
+    return jsonify({ 'message': 'Comment deleted successfully' }), 200
+
 
 # ====================================
 

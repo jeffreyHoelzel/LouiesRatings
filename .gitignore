@@ -15,5 +15,5 @@ web/public/.DS_Store
 web/src/.DS_Store
 
 .db
-table.db
-__pycache__
+service/table.db
+service/__pycache__
