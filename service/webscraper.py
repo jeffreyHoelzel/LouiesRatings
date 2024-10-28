@@ -170,6 +170,9 @@ def get_all_grade_distribution_data_parallel():
     col_headers = ["Semester", "Subject", "Class", "Section", "Class NBR ", "Instructor Name", "A", "B", "C", "D", "F", "AU", "P", "NG", "W", "I", "IP", "Pending", "Total"]
     class_distr_table = pd.DataFrame(all_class_distr_data, columns=col_headers)
 
+    class_distr_table["Instructor Name"] = class_distr_table["Instructor Name"].str.split('/')
+    class_distr_table = class_distr_table.explode("Instructor Name").reset_index()
+
     # exit driver
     driver.quit()
 

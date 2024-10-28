@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Search from './Search';
+import { Link } from 'react-router-dom';
 import Login from './Login';
 import AuthenticateUser from './AuthenticateUser';
-import { Link } from 'react-router-dom';
 
 // style imports
 import '../styles/login.css';
@@ -35,9 +35,9 @@ const Header = () => {
         <header>
             <div className="container">
                 <div className="logo-box">
-                    <a href="#">
+                    <Link to="/">
                         <img src="/imgs/logo.png" alt="Logo" />
-                    </a>
+                    </Link>
                 </div>
 
                 <Search/>
