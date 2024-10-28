@@ -13,7 +13,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger("service")
 
 # turn to true to start filling the database with class information when the server starts
-FILL_DB_WITH_CLASS_DATA = True
+FILL_DB_WITH_CLASS_DATA = False
 
 # only fill if sqlite database does not already exists on start up
 if not os.path.isfile('table.db'):
@@ -275,8 +275,6 @@ def handle_comments():
 def remove_comment():
 
     id = request.args.get('id')
-
-    logger.info(f"\nDeleting comment with id: {id}")
 
     comment = fetch_comment( id )
 
