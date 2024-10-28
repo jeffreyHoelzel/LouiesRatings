@@ -1,88 +1,109 @@
 import React, { useState, useEffect } from 'react';
 
-const Comment = () => {
-  const [commentsList, setCommentsList] = useState([]); // Renamed from comments to commentsList
-  const [currentUserId, setCurrentUserId] = useState(1); // Renamed from userId to currentUserId
-  const [commentContent, setCommentContent] = useState(''); // Renamed from content to commentContent
-  const [statusMessage, setStatusMessage] = useState(''); // Renamed from message to statusMessage
+const Comments = () => {
+    const [ comments, setComments ] = useState([]);
+    const [ userId, setUserId ] = useState( '' );
+    const [ content, setContent ] = useState( '' ); // Fixed variable name here
 
-  const backendUrl = "service/comments";
+    useEffect(() => {
+        fetchComments();
+    }, []);
 
-  // Fetch comments when the component mounts
-  useEffect(() => {
-    fetchComments();
-  }, []);
+    const fetchComments = async () => {
+        try {
+            const response = await fetch( 'service/comments' );
 
-  const fetchComments = () => {
-    fetch(backendUrl)
-      .then(response => response.json())
-      .then(data => {
-        setCommentsList(data);
-        setStatusMessage(''); // Reset message after fetching comments
-      })
-      .catch(error => {
-        console.error(error);
-        setStatusMessage("Failed to load comments.");
-      });
-  };
+            if ( !response.ok ) {
+                throw new Error( 'Network response was not ok' );
+            }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    
-    // Prepare the comment data
-    const newCommentData = {
-      user_id: currentUserId,
-      content: commentContent
+            const data = await response.json();
+            setComments(data);
+
+        } catch ( error ) {
+            console.error( 'Error fetching comments: ', error );
+        }
     };
 
-    // Send the new comment to the backend
-    fetch(backendUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newCommentData)
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Failed to submit comment");
+    const handleSubmit = async ( e ) => {
+        e.preventDefault(); // Corrected the method name here
+        if ( !userId || !content ) { // Corrected variable name here
+            alert( 'Please enter both user ID and comment content.' );
+            return;
         }
-        return response.json();
-      })
-      .then(data => {
-        setCommentsList(prevComments => [...prevComments, data.comment]); // Update the comments list
-        setCommentContent(''); // Clear the input field
-        setStatusMessage(data.message); // Set success message
-      })
-      .catch(error => {
-        console.error(error);
-        setStatusMessage("Failed to submit comment.");
-      });
-  };
 
-  return (
-    <div>
-      <h2>Comments</h2>
-      {statusMessage && <p>{statusMessage}</p>}
-      <form onSubmit={handleSubmit}>
-        <textarea 
-          value={commentContent}
-          onChange={(event) => setCommentContent(event.target.value)}
-          placeholder="Leave a comment..."
-          required
-        />
-        <button type="submit">Submit</button>
-      </form>
-      <ul>
-        {commentsList.map(comment => (
-          <li key={comment.id}>
-            <p><strong>User {comment.user_id}:</strong> {comment.content}</p>
-            <p>{new Date(comment.timestamp).toLocaleString()}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+        try {
+            const response = await fetch( 'service/comments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }, // Added missing comma here
+                body: JSON.stringify({ user_id: userId, content: content }),
+            });
+
+            if ( !response.ok ) {
+                throw new Error( 'Network response was not ok' );
+            }
+
+            setUserId('');
+            setContent('');
+            fetchComments();
+
+        } catch ( error ) {
+            console.error( 'Error submitting comments: ', error );
+        }
+    };
+
+    const handleDeleteComment = async ( id ) => {
+        try {
+            const response = await fetch( `service/comments/delete?id=${encodeURIComponent(id)}`, {
+                method: 'POST',
+            });
+
+            if ( !response.ok ) {
+                throw new Error( 'Network response was not ok' );
+            }
+
+            fetchComments();
+
+        } catch ( error ) {
+            console.error( 'Error deleting comment: ', error );
+        }
+    }
+
+    // The return statement must be inside the Comments component
+    return (
+        <div>
+            <h2>Comments</h2>
+            <form onSubmit={handleSubmit}>
+                    <label htmlFor="userId">User ID:</label>
+                    <input
+                        type="number"
+                        id="userId"
+                        value={ userId }
+                        onChange={(e) => setUserId( e.target.value )}
+                        required
+                    />
+                    <label htmlFor="content">Comment:</label>
+                    <textarea
+                        id="content"
+                        value={ content }
+                        onChange={(e) => setContent( e.target.value )}
+                        required
+                    />
+                <button id="submit" type="submit">Submit Comment</button>
+            </form>
+            <h3>Comment List</h3>
+            <ul id="comment-list">
+                {comments.map(( comment ) => (
+                    <li className="comments" id={ `${comment.user_id}` } key={comment.id}>
+                        <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
+                        <button class="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 };
 
-export default Comment;
+export default Comments;

@@ -167,6 +167,56 @@ class TestFrontend(unittest.TestCase):
         # verify the URL has the expected path
         current_url = self.driver.current_url
         self.assertIn("professor/gerosa-marco", current_url, "Routing did not work as expected")
+
+    def test_comments(self):
+        # navigate to specific professor page
+        self.driver.get("http://host.docker.internal")
+
+        WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "comments")))
+
+        # get latest userId
+        comment_list = self.driver.find_element(By.ID, "comment-list")
+        comments = comment_list.find_elements(By.TAG_NAME, "li")
+
+        user_id = 0
+
+        if len(comments):
+            latest_comment = comments[-1]
+            user_id = latest_comment.get_attribute("id")
+            user_id = int(user_id) + 1
+
+        # find user input fields
+        user_input = self.driver.find_element(By.ID, "userId")
+        user_input.send_keys(f"{user_id}")
+
+        # find comment input fields
+        comment_input = self.driver.find_element(By.ID, "content")
+        comment_input.send_keys("This is a test comment")
+
+        # hit submit button
+        submit_button = self.driver.find_element(By.ID, "submit")
+        submit_button.click()
+
+        # wait until comment is added
+        WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.ID, f"{user_id}")))
+
+        # check that the comment was added
+        latest_comment = self.driver.find_element(By.ID, f"{user_id}")
+
+        self.assertTrue(user_id == int(latest_comment.get_attribute("id")), f"Comment was not added {user_id} != {latest_comment.get_attribute('id')}")
+
+        # delete the comment
+        delete_button = latest_comment.find_element(By.CLASS_NAME, "trash-can")
+        delete_button.click()
+
+        # wait until comment is deleted
+        WebDriverWait(self.driver, 10).until(expected_conditions.staleness_of(latest_comment))
+
+        # check that the comment was deleted    
+        comments = comment_list.find_elements(By.TAG_NAME, "li")
+        latest_comment = comments[-1]
+
+        self.assertTrue(user_id != int(latest_comment.get_attribute("id")), f"Comment was not deleted {user_id} == {latest_comment.get_attribute('id')}")
     
     def test_class_page(self):
         # navigate to specific professor page
@@ -182,6 +232,29 @@ class TestFrontend(unittest.TestCase):
         
         # navigate back to homepage
         self.driver.get("http://host.docker.internal") 
+
+    def test_charts(self):
+        # test that charts were found for a specific professor page and class page
+        for i in range(2):
+            if i == 0:
+                # navigate to specific professor page
+                self.driver.get("http://host.docker.internal/professor/gerosa-marco")
+                testing_page = "professor"
+            else:
+                # navigate to specific professor page
+                self.driver.get("http://host.docker.internal/class/cs-386")
+                testing_page = "class"
+
+            # wait up to 10 seconds for page to loading
+            WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_all_elements_located((By.CSS_SELECTOR, ".recharts-cartesian-axis-tick-value")))
+
+            # check that the professors name is being displayed correctly
+            all_axis_labels = self.driver.find_elements(By.CSS_SELECTOR, ".recharts-cartesian-axis-tick-value")
+            x_axis_labels = [label.text for label in all_axis_labels[0:7]]
+            self.assertEqual(['A', 'B', 'C', 'D', 'F', 'P', 'W'], x_axis_labels, f"Chart on {testing_page} page not displaying correctly")
+        
+        # navigate back to homepage
+        self.driver.get("http://host.docker.internal")
     
     @classmethod
     def tearDownClass(cls):
