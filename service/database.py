@@ -116,9 +116,6 @@ def add_comment(user_id, content):
         # Roll back the session in case of error
         db.session.rollback()
         
-        # Log the error
-        logger.error(f"Error adding comment: {database_error}")
-        
         return None
 
 def fetch_comment(comment_id):

@@ -40,6 +40,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-# wait-for-it.sh from https://github.com/vishnubob/wait-for-it/tree/master
 # used to wait for backend and frontend to be available before running test
 CMD ["./wait-for-it.sh", "frontend:3000", "--", "./wait-for-it.sh", "backend:8080", "--", "python", "test.py"]
