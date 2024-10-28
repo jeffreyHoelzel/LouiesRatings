@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors
+from database import db, User, ClassData, fetch_grade_distribution_data, Comment
+from database import add_comment, fetch_comment, delete_comment, search_instructors
 import threading
 import pandas as pd
 import os
@@ -270,9 +271,13 @@ def handle_comments():
         return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
 
 # Route to delete a comment by ID
-@app.route('/comments/<int:id>', methods=[ "DELETE" ])
-def delete_comment( id ):
+@app.route('/comments/delete', methods=[ "POST" ])
+def remove_comment():
+
+    id = request.args.get('id')
+
     comment = fetch_comment( id )
+
     if not comment:
         return jsonify({ 'message': 'Comment not found' }), 404
 
