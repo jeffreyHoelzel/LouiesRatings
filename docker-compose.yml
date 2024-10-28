@@ -29,26 +29,24 @@ services:
     environment:
       - FLASK_ENV=development  
     volumes:
-      - ./service:/app  
-#    depends_on:
-#      - db
+      - ./service:/app
     networks:
       - louie_shared_network
 
-#  db:
-#    container_name: db
-#    image: postgres:13
-#    environment:
-#      - POSTGRES_DB=mydb
-#      - POSTGRES_USER=user
-#      - POSTGRES_PASSWORD=password
-#    volumes:
-#      - db-data:/var/lib/postgresql/data 
-#    networks:
-#      - louie_shared_network
-
-#volumes:
-#  db-data:
+  test:
+    container_name: test
+    build:
+      context: ./unittest
+      dockerfile: Dockerfile
+    volumes:
+      - ./unittest:/app
+    networks:
+      - louie_shared_network
+    depends_on:
+      - frontend
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   louie_shared_network:

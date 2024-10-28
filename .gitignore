@@ -1,6 +1,8 @@
 db-data/
 
 service/node_modules
+service/table.db
+service/__pycache__/
 web/node_modules
 
 .venv
@@ -11,3 +13,7 @@ venv
 web/.DS_Store
 web/public/.DS_Store
 web/src/.DS_Store
+
+.db
+service/table.db
+service/__pycache__

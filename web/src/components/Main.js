@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 // make a main component for the website that contains the main content (class and professor ratings)
 const Main = () => {
   return (
