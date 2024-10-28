@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors, fetch_classes
+from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors
 import threading
 import pandas as pd
 import os
@@ -58,6 +58,24 @@ def send_message():
     # we cannot send render templates as we are not using flask python templates on the frontend
     return jsonify(message="Hello From Backend"), 200
 
+@app.route('/search', methods=['POST'])
+def search():
+
+    # checks if the request is a get type also think Post as a way to send data to the backend to make changes to the data 
+    # or just get data from the backend in this case
+    if request.method == 'POST':
+
+        # Get the JSON data from the request
+        data = request.get_json() 
+
+        # Extract the search query from the JSON data
+        search_query = data.get('query')
+
+        instructors = search_instructors(search_query)
+        
+        # Return the mock users to test and 200 means a successful request
+        return jsonify(instructors), 200
+    
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':

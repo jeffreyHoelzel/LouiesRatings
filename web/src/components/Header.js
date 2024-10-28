@@ -7,7 +7,6 @@ import AuthenticateUser from './AuthenticateUser';
 // style imports
 import '../styles/login.css';
 
-
 // make a header component for the website that contains the logo, search bar, and profile icon
 const Header = () => {
     // set up use state for displaying login popup
