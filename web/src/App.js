@@ -36,7 +36,6 @@ function App() {
         </Routes>
         <Comment />
         <Footer />
-        {/* <p>{message}</p> */}
       </div>
     </Router>
   );

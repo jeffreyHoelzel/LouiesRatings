@@ -43,7 +43,11 @@ class ClassData(db.Model):
     ip = db.Column(db.Integer, nullable=False)
     pending = db.Column(db.Integer, nullable=False)
     total = db.Column(db.Integer, nullable=False)
-
+     
+    # method to convert the object to a dictionary
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+      
 class Comment(db.Model):
     id = db.Column( db.Integer, primary_key=True, autoincrement = True )
     user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
@@ -57,7 +61,7 @@ class Comment(db.Model):
             'content': self.content,
             'timestamp': self.timestamp.isoformat()
         }
-
+      
 # ====================================
 
 # ====================================
@@ -125,5 +129,19 @@ def fetch_comment(comment_id):
 def delete_comment(comment):
     db.session.delete(comment)
     db.session.commit()
+    
+def fetch_classes(class_name: str):
+    # get all classes (id, name) from database that match the string up to that point
+    return db.session.query(ClassData).with_entities(ClassData.class_nbr, ClassData.class_name).filter_by(class_name=class_name).all()
 
-# ====================================
+def search_instructors(instructor_name: str):
+    # get all instructors (name) from database that match the string up to that point
+
+    # make them distinct
+    instructor_names = ClassData.query.with_entities(ClassData.instructor_name).filter(ClassData.instructor_name.ilike(f"%{instructor_name}%")).distinct().all()
+    
+    # convert to list of strings
+    instructor_names = [name[0] for name in instructor_names]
+
+    return instructor_names
+  # ====================================
