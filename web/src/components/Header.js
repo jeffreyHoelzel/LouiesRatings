@@ -7,6 +7,7 @@ import AuthenticateUser from './AuthenticateUser';
 // style imports
 import '../styles/login.css';
 
+
 // make a header component for the website that contains the logo, search bar, and profile icon
 const Header = () => {
     // set up use state for displaying login popup
@@ -42,7 +43,7 @@ const Header = () => {
                 <Search/>
 
                 <div className="profile-box">
-                    <a onClick={toggleLoginPopup}>
+                    <a className="popup-form" onClick={toggleLoginPopup}>
                         <img src="imgs/profile.jpeg" alt="Profile Icon" />
                     </a>
                 </div>
@@ -51,7 +52,7 @@ const Header = () => {
                     loginPopup &&
                     <div className="login-popup" id="popup">
                         <div className="login-popup-content">
-                            <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
+                            <span onClick={toggleLoginPopup} class="close-popup">&times;</span>
                                 <Login />
                         </div>
                     </div>
@@ -59,9 +60,9 @@ const Header = () => {
                     loginPopup && 
                     <div className="login-popup" id="popup">
                         <div className="login-popup-content">
-                            <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
+                            <span onClick={toggleLoginPopup} class="close-popup">&times;</span>
                             <div className="successful-login">
-                                <h2>@{username}</h2>
+                                <h2 className="username">@{username}</h2>
                                 <a className="sign-out" onClick={logout}>Sign out</a>
                             </div>
                         </div>
