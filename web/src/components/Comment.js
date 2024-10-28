@@ -11,12 +11,15 @@ const Comments = () => {
 
     const fetchComments = async () => {
         try {
-            const response = await fetch( '/comments' );
+            const response = await fetch( 'service/comments' );
+
             if ( !response.ok ) {
                 throw new Error( 'Network response was not ok' );
-            } // Added missing closing brace here
+            }
+
             const data = await response.json();
             setComments(data);
+
         } catch ( error ) {
             console.error( 'Error fetching comments: ', error );
         }
@@ -30,7 +33,7 @@ const Comments = () => {
         }
 
         try {
-            const response = await fetch( '/comments', {
+            const response = await fetch( 'service/comments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,17 +48,34 @@ const Comments = () => {
             setUserId('');
             setContent('');
             fetchComments();
+
         } catch ( error ) {
             console.error( 'Error submitting comments: ', error );
         }
     };
+
+    const handleDeleteComment = async ( id ) => {
+        try {
+            const response = await fetch( `service/comments/delete?id=${encodeURIComponent(id)}`, {
+                method: 'POST',
+            });
+
+            if ( !response.ok ) {
+                throw new Error( 'Network response was not ok' );
+            }
+
+            fetchComments();
+
+        } catch ( error ) {
+            console.error( 'Error deleting comment: ', error );
+        }
+    }
 
     // The return statement must be inside the Comments component
     return (
         <div>
             <h2>Comments</h2>
             <form onSubmit={handleSubmit}>
-                <div>
                     <label htmlFor="userId">User ID:</label>
                     <input
                         type="number"
@@ -64,8 +84,6 @@ const Comments = () => {
                         onChange={(e) => setUserId( e.target.value )}
                         required
                     />
-                </div>
-                <div>
                     <label htmlFor="content">Comment:</label>
                     <textarea
                         id="content"
@@ -73,14 +91,14 @@ const Comments = () => {
                         onChange={(e) => setContent( e.target.value )}
                         required
                     />
-                </div>
-                <button type="submit">Submit Comment</button>
+                <button id="submit" type="submit">Submit Comment</button>
             </form>
             <h3>Comment List</h3>
-            <ul>
+            <ul id="comment-list">
                 {comments.map(( comment ) => (
-                    <li key={ comment.id }>
+                    <li className="comments" id={ `${comment.user_id}` } key={comment.id}>
                         <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
+                        <button class="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
                     </li>
                 ))}
             </ul>

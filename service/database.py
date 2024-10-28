@@ -51,6 +51,14 @@ class Comment(db.Model):
     user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
+
+    def serialize( self ):
+        return {
+            'id' : self.id,
+            'user_id': self.user_id,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
       
 # ====================================
 
@@ -117,8 +125,10 @@ def fetch_comment(comment_id):
     return Comment.query.get(comment_id)
 
 def delete_comment(comment):
+    # Check if the comment exists
     db.session.delete(comment)
     db.session.commit()
+    return True
     
 def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
