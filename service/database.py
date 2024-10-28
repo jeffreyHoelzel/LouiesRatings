@@ -51,14 +51,6 @@ class Comment(db.Model):
     user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
-
-    def serialize( self ):
-        return {
-            'id' : self.id,
-            'user_id': self.user_id,
-            'content': self.content,
-            'timestamp': self.timestamp.isoformat()
-        }
       
 # ====================================
 

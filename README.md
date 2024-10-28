@@ -1,4 +1,4 @@
-# Louie's Ratings
+# Louie's Ratings 1.0.0
 ---
 
 ## Table of contens
@@ -45,4 +45,4 @@ n/a
 
 ## License
 ---
-n/a
+This project is licensed under the [MIT License](./LICENSE).

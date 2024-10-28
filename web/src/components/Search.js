@@ -31,7 +31,7 @@ const Search = () => {
 
         // make a fetch request to the API to get the search results
         try {
-            const res = await fetch(`service/search`, { 
+            const res = await fetch(`http:/service/search`, {  // Needs to be whole url as header is consistent with all pages
                 method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json'
