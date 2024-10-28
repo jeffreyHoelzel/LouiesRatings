@@ -146,7 +146,6 @@ class TestFrontend(unittest.TestCase):
         cls.driver.quit()
 
 if __name__ == "__main__":
-    # unittest.main()
     suite = unittest.TestSuite()
     suite.addTest(TestFrontend("test_home_page"))
     suite.addTest(TestFrontend("test_professor_page"))
