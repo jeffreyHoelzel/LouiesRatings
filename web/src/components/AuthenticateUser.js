@@ -15,10 +15,6 @@ const AuthenticateUser = () => {
       // set status to true as bool and username
       setLoginStatus(true);
       setUsername(storedUsername);
-    } else {
-      // set status to false as bool and empty string to username
-      setLoginStatus(false);
-      setUsername("");
     }
   });
 

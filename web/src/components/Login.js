@@ -52,7 +52,7 @@ const Login = () => {
 
     } catch (error) {
       console.log("Error:", error);
-      setMessage("Trouble connecting to backend.");
+      setMessage("Error logging in.");
     }
 
     // check if status true

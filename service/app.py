@@ -74,7 +74,8 @@ def register():
         last_name = data.get('lastName')
 
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
-        if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
+        # if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
+        if all([username, password, email, first_name, last_name]):
             new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         else:
             logger.info('\nServer was provided with incomplete information.')
