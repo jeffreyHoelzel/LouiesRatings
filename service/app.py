@@ -1,24 +1,14 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, Comment, fetch_grade_distribution_data, add_comment, fetch_comment, delete_comment, search_instructors
-import threading
+from database import db, Person, ClassData, Comment
+from database import add_comment, fetch_comment, delete_comment, search_instructors
 import pandas as pd
-import os
 import logging
 import sys
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger("service")
-
-# turn to true to start filling the database with class information when the server starts
-FILL_DB_WITH_CLASS_DATA = False
-
-# only fill if sqlite database does not already exists on start up
-if not os.path.isfile('table.db'):
-    FILL_DB_WITH_CLASS_DATA = True
-
-# For testing only
 
 # ====================================
 # Create app
@@ -26,10 +16,16 @@ if not os.path.isfile('table.db'):
 app = Flask(__name__)
 CORS(app)
 
+app.config['SQLALCHEMY_POOL_SIZE'] = 20
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 30
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 60
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# maybe change from sqlite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///table.db'
+# get secret database url
+with open("/run/secrets/db_url", 'r') as secret_file:
+    DATABASE_URL = secret_file.readline()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
 # bind the database to backend
 db.init_app(app)
@@ -92,13 +88,13 @@ def register():
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
         # if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
         if all([username, password, email, first_name, last_name]):
-            new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            new_user = Person(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         else:
             logger.info('\nServer was provided with incomplete information.')
             return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
 
         # search for username and email in database
-        user_db = db.session.query(User).filter_by(username=username, email=email).first()
+        user_db = db.session.query(Person).filter_by(username=username, email=email).first()
 
         # if either are in use, send 403 response (already exists)
         if user_db is not None:
@@ -122,7 +118,7 @@ def login():
         requested_password = data.get('password')
 
         # get username and password from database, if user DNE, user will be None
-        user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
+        user = db.session.query(Person).filter_by(username=requested_username, password=requested_password).first();
 
         # check if user DNE
         if user is None:
@@ -270,9 +266,13 @@ def handle_comments():
         return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
 
 # Route to delete a comment by ID
-@app.route('/comments/<int:id>', methods=[ "DELETE" ])
-def delete_comment( id ):
+@app.route('/comments/delete', methods=[ "POST" ])
+def remove_comment():
+
+    id = request.args.get('id')
+
     comment = fetch_comment( id )
+
     if not comment:
         return jsonify({ 'message': 'Comment not found' }), 404
 
@@ -282,16 +282,5 @@ def delete_comment( id ):
 
 # ====================================
 
-def fill_db_with_class_data():
-    logger.info("\nWebscraper running...")
-    # only run this to fill database with class data
-    with app.app_context():
-        fetch_grade_distribution_data(db)
-    logger.info("\nWebscraper finished...")
-
 if __name__ == '__main__':
-    if FILL_DB_WITH_CLASS_DATA:
-        thread = threading.Thread(target=fill_db_with_class_data)
-        thread.start()
-
     app.run(host='0.0.0.0', port=8080)

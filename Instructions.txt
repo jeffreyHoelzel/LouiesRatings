@@ -5,10 +5,8 @@ You will see lots of red errors but trust the process. Once it is done you shoul
 and localhost:3000 for frontend. I set up some code to test it out and you should see that the message from the backend is sent to the front end
 via an api call. If it works then you did it and now you have a working docker enviroment.
 
-The database will fill with class data on startup if table.db does not already exist. The webscraper is parallelized, so the semesters will be out of order.
-It still takes a while to fill up, but it is done once you see everything in the database (you can use the SQLite Viewer extension).
-Also, since it is parallelized, the server is slower while webscraping, which is not ideal, but I will keep it like that for now since I want it
-to get done as quick as possible.
+The database is using PostgreSQL, and is already filled with class data. The webscraping script is detached and can be ran locally, and it will overwrite the current class data table.
+It is important that you have db_url.txt in your repository when you build inorder for the database to be accessed.
 
 To view the basic professor page go to localhost/professor/lastname-firstname. If the last name and first name are within a name in the database 
 (i.e a professor with 2 first names) or its a direct match the website should render a page for that professor. Right now it'll just update the name accordingly

@@ -71,9 +71,9 @@ const Login = () => {
         <form action="" className="form-container">
           <h2>Login</h2>
           <label for="username"><b>Username</b></label>
-          <input type="text" placeholder="Enter username" name="username" onChange={(e) => setUsername(e.target.value)} required />
+          <input type="text" placeholder="Enter username" name="username" className="username-field" onChange={(e) => setUsername(e.target.value)} required />
           <label for="password"><b>Password</b></label>
-          <input type="password" placeholder="Enter password" name="password" onChange={(e) => setPassword(e.target.value)} required />
+          <input type="password" placeholder="Enter password" name="password" className="password-field" onChange={(e) => setPassword(e.target.value)} required />
           <div className="option-container">
             <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>
             <a className="new-account" id="create-new-account" onClick={toggleRegistrationPopup}>Register</a>

@@ -29,9 +29,11 @@ services:
     environment:
       - FLASK_ENV=development  
     volumes:
-      - ./service:/app
+      - ./service:/app  
     networks:
       - louie_shared_network
+    secrets:
+      - db_url
 
   test:
     container_name: test
@@ -51,3 +53,7 @@ services:
 networks:
   louie_shared_network:
     external: true
+  
+secrets:
+  db_url:
+    file: ./db_url.txt

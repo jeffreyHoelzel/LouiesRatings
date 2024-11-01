@@ -1,6 +1,5 @@
 # For accessing webscraping script
 from flask_sqlalchemy import SQLAlchemy
-from webscraper import get_all_grade_distribution_data_parallel
 from datetime import datetime
 
 # create sqlalchemy object
@@ -9,7 +8,7 @@ db = SQLAlchemy()
 # ====================================
 # DATABASE MODELS
 # ====================================
-class User(db.Model):
+class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(30), nullable=False)
@@ -27,7 +26,7 @@ class ClassData(db.Model):
     class_name = db.Column(db.String(10), nullable=False)
     section = db.Column(db.String(5), nullable=False)
     class_nbr = db.Column(db.Integer, nullable=False)
-    instructor_name = db.Column(db.String(20), nullable=False)
+    instructor_name = db.Column(db.String(100), nullable=False)
     a = db.Column(db.Integer, nullable=False)
     b = db.Column(db.Integer, nullable=False)
     c = db.Column(db.Integer, nullable=False)
@@ -51,46 +50,23 @@ class Comment(db.Model):
     user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
+
+    def serialize( self ):
+        return {
+            'id' : self.id,
+            'user_id': self.user_id,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
       
 # ====================================
+
+
+
 
 # ====================================
 # DATABASE FUNCTIONS
 # ====================================
-def fetch_grade_distribution_data(db: SQLAlchemy):
-    grade_distribution_df = get_all_grade_distribution_data_parallel()
-
-    data_to_add = []
-    
-    # create database object for each row
-    # note: I want to use .tosql, but it won't work
-    for idx, row in grade_distribution_df.iterrows():
-        data = ClassData(
-            semester = row["Semester"],
-            subject = row["Subject"],
-            class_name = row["Class"],
-            section = row["Section"],
-            class_nbr = int(row["Class NBR "]),
-            instructor_name = row["Instructor Name"],
-            a = int(row["A"]),
-            b = int(row["B"]),
-            c = int(row["C"]),
-            d = int(row["D"]),
-            f = int(row["F"]),
-            au = int(row["AU"]),
-            p = int(row["P"]),
-            ng = int(row["NG"]),
-            w = int(row["W"]),
-            i = int(row["I"]),
-            ip = int(row["IP"]),
-            pending = int(row["Pending"]),
-            total = int(row["Total"])
-        )
-        data_to_add.append(data)
-
-    # add all data objects to database
-    db.session.bulk_save_objects(data_to_add)
-    db.session.commit()
 
 def add_comment(user_id, content):
     try:
@@ -114,8 +90,10 @@ def fetch_comment(comment_id):
     return Comment.query.get(comment_id)
 
 def delete_comment(comment):
+    # Check if the comment exists
     db.session.delete(comment)
     db.session.commit()
+    return True
     
 def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
