@@ -27,6 +27,9 @@ if not os.path.isfile('table.db'):
 app = Flask(__name__)
 CORS(app)
 
+app.config['SQLALCHEMY_POOL_SIZE'] = 20
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 30
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 60
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # maybe change from sqlite
