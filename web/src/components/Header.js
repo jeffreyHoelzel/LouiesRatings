@@ -44,7 +44,7 @@ const Header = () => {
 
                 <div className="profile-box">
                     <a className="popup-form" onClick={toggleLoginPopup}>
-                        <img src="imgs/profile.jpeg" alt="Profile Icon" />
+                        <img src="/imgs/profile.jpeg" alt="Profile Icon" />
                     </a>
                 </div>
                 <div>

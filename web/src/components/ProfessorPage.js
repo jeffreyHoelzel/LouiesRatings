@@ -5,7 +5,9 @@ import Chart from './Chart';
 
 const ProfessorPage = () => {
   const { professorId } = useParams();
-  const [professorData, setProfessorData] = useState(null);
+  const [professorData, setProfessorData] = useState(null); // Stores course data
+  const [instructorName, setInstructorName] = useState(""); // Exact name from DB
+  const [passFailData, setPassFailData] = useState({ passRate: 0, failRate: 0 });
   const [error, setError] = useState(null);
 
   // Format professorId to "Last Name, First Name" for query
@@ -16,51 +18,74 @@ const ProfessorPage = () => {
     return `${lastName.charAt(0).toUpperCase() + lastName.slice(1)}, ${firstName.charAt(0).toUpperCase() + firstName.slice(1)}`;
   };
 
-  const instructorName = formatName(professorId);
+  const formattedInstructorName = formatName(professorId);
 
+  // Fetch professor data
   useEffect(() => {
-    // Fetch professor data from the backend
     const fetchProfessorData = async () => {
       try {
-        const response = await fetch(`/service/professor?name=${encodeURIComponent(instructorName)}`);
+        // Call professor endpoint with formatted name
+        const response = await fetch(`/service/professor?name=${encodeURIComponent(formattedInstructorName)}`);
         if (!response.ok) throw new Error("Professor not found.");
-
-        if (response.status === 404) {
-          setError("Professor not found");
-          return;
-        }
         
         const data = await response.json();
-        setProfessorData(data.professor);
+        setProfessorData(data.courses);
+        setInstructorName(data.professor);
       } catch (err) {
         setError(err.message);
       }
     };
 
     fetchProfessorData();
+  }, [formattedInstructorName]);
+
+  // Fetch pass/fail rate data
+  useEffect(() => {
+    if (instructorName) {
+      const fetchPassFailRate = async () => {
+        try {
+          // Call pass/fail rate endpoint searching with instructor name
+          const passFailResponse = await fetch('/service/get_pass_fail_rate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ search_by: 'instructor_name', instructor_name: instructorName })
+          });
+
+          if (passFailResponse.ok) {
+            const passFailData = await passFailResponse.json();
+            setPassFailData({ passRate: passFailData.pass_rate, failRate: passFailData.fail_rate });
+          } else {
+            console.error('Error fetching pass/fail data');
+          }
+        } catch (err) {
+          console.error('Error fetching pass/fail data', err);
+        }
+      };
+
+      fetchPassFailRate();
+    }
   }, [instructorName]);
 
   if (error) return <p>{error}</p>;
   if (!professorData) return <p>Loading...</p>;
 
-  // If professor data is successfully fetched, render the professor page
-
   return (
     <main className="professor-page container">
       <header className="professor-header">
-        <h1>{professorData}</h1>
+        <h1>{instructorName}</h1>
+        <hr class="professor-line"></hr>
       </header>
       
-      {/* Lots of basic placeholders until we implement these features */}
       <div className="info-sections">
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
-          <Chart className="CS 249" instructorName={professorData} searchBy="instructor_name" />
+          <Chart className="CS 249" instructorName={instructorName} searchBy="instructor_name" key={professorId}/>
         </section>
 
         <section className="pass-fail-rates">
           <h2>Pass/Fail Rates</h2>
-          <p>Simplified data on pass/fail rates.</p>
+          <p>Pass Rate: {passFailData.passRate.toFixed(2)}%</p>
+          <p>Fail Rate: {passFailData.failRate.toFixed(2)}%</p>
         </section>
       </div>
 
@@ -76,7 +101,6 @@ const ProfessorPage = () => {
         <textarea placeholder="Write your review here..." rows="5"></textarea>
         <button type="submit">Submit Review</button>
       </section>
-
     </main>
   );
 }

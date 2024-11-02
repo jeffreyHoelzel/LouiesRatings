@@ -8,7 +8,8 @@
 
 .info-sections {
     display: flex;
-    justify-content: space-between; 
+    flex-wrap: wrap;
+    justify-content: space-around; 
     gap: 25vh;
     margin: 40px 0;
 }
@@ -48,18 +49,8 @@
     width: 100%;
 }
 
-.grade-distribution{
-    align-self: flex-start;
-}
 
-.pass-fail-rates {
-    align-self: flex-end;
-}
-
-.grade-distribution h2,
-.reviews h2,
-.pass-fail-rates h2 
-.grade-distribution-graph h2 {
+h2 {
     font-size: 1.8rem;
     color: #1A2852;
     margin-bottom: 10px;
@@ -109,4 +100,29 @@
 .leave-review button:hover {
     background-color: #F4B51A;
     color: #1A2852;
+}
+
+.pass-fail-rates p {
+    font-size: larger;
+    font-weight: 500;
+}
+
+.pass-fail-rates {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    min-width: 40vh;
+    height: 30vh;
+}
+
+.grade-distribution-graph {
+    max-width: 500px;
+    min-height: 375px;
+}
+
+.professor-line {
+    border: none;
+    height: 4px;
+    background-color: #F4B51A;
 }

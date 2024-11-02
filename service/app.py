@@ -174,6 +174,68 @@ def get_professor_data():
     # Include the full instructor name in the response
     return jsonify({"professor": full_instructor_name, "courses": course_data})
 
+@app.route('/get_pass_fail_rate', methods=['POST'])
+def get_pass_fail_rate():
+    app.logger.debug("Received request to /get_pass_fail_rate")
+
+    # Step 1: Capture incoming request data
+    data = request.json
+    app.logger.debug(f"Request data: {data}")
+
+    if not data:
+        app.logger.error("No JSON data received in the request")
+        return jsonify({"error": "No JSON data received"}), 400
+
+    # Step 2: Extract search criteria from the request
+    search_by = data.get('search_by')
+    search_name = data.get(search_by)
+    app.logger.debug(f"Search by: {search_by}, Search name: {search_name}")
+
+    if not search_by or not search_name:
+        app.logger.error("Invalid search criteria provided")
+        return jsonify({"error": "Invalid search criteria"}), 400
+
+    # Step 3: Fetch grade data based on search criteria
+    try:
+        if search_by == 'class_name':
+            grade_data = ClassData.query.filter_by(class_name=search_name).all()
+        elif search_by == 'instructor_name':
+            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+        else:
+            app.logger.error("Invalid search criteria in data")
+            return jsonify({"error": "Invalid search criteria"}), 400
+
+        if not grade_data:
+            app.logger.info(f"No grade data found for {search_by}: {search_name}")
+            return jsonify({"pass_rate": 0, "fail_rate": 0}), 404
+        app.logger.debug(f"Fetched grade data: {grade_data}")
+
+    except Exception as e:
+        app.logger.error(f"Database query failed: {e}")
+        return jsonify({"error": "Database query failed"}), 500
+
+    # Step 4: Process grade data to calculate pass/fail rates
+    grade_distributions = pd.DataFrame([{
+        'A': data.a,
+        'B': data.b,
+        'C': data.c,
+        'D': data.d,
+        'F': data.f,
+        'P': data.p,
+    } for data in grade_data])
+
+    grade_sums = grade_distributions.sum(numeric_only=True)
+    total_pass = grade_sums['A'] + grade_sums['B'] + grade_sums['C'] + grade_sums['P']
+    total_fail = grade_sums['D'] + grade_sums['F']
+    total_grades = total_pass + total_fail
+
+    pass_rate = (total_pass / total_grades * 100) if total_grades > 0 else 0
+    fail_rate = (total_fail / total_grades * 100) if total_grades > 0 else 0
+
+    # Step 5: Log the calculated pass/fail rates and return the response
+    app.logger.debug(f"Calculated pass_rate: {pass_rate}, fail_rate: {fail_rate}")
+    return jsonify({"pass_rate": pass_rate, "fail_rate": fail_rate}), 200
+
 @app.route('/class', methods=['GET'])
 def get_class_data():
     class_id = request.args.get('classId') 
