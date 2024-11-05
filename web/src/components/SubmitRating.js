@@ -39,7 +39,7 @@ const SubmitRating = ({instructorName}) => {
             window.alert(data.message);
 
             // refresh page
-            location.reload();
+            window.location.reload();
 
         } catch ( error ) {
             console.error( 'Error submitting rating: ', error );
