@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Rating } from 'react-simple-star-rating'
+import React, { useEffect, useState } from 'react';
+import StarRatings from 'react-star-ratings';
+import '../styles/Ratings.css';
 
 export const NUM_STARS = 5;
 
@@ -33,12 +34,15 @@ const DisplayAverageRating = ({instructorName}) => {
     return (
     <div className='rating'>
         {/* set average rating for that professor */}
-        <Rating 
-            initialValue={rating * NUM_STARS} 
-            readonly={true} 
-            allowFraction={true}
-            iconsCount={NUM_STARS}
+        <StarRatings 
+            rating={rating * NUM_STARS}
+            starRatedColor="#F4B51A"
+            numberOfStars={NUM_STARS}
+            isSelectable={false}
+            starDimension={"50px"}
+            starSpacing={"4px"}
         />
+        <p>{Math.round(rating * NUM_STARS * 10)/10} / {NUM_STARS}</p>
     </div>
     )
 }

@@ -2,7 +2,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 10px;;
+}
+
+.rating p {
+    font-size: 1rem;
+    font-weight: bolder;
+    color: #1A2852;
 }
 
 .rating button {
