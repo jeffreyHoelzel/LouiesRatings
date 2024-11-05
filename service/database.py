@@ -59,7 +59,14 @@ class Comment(db.Model):
             'content': self.content,
             'timestamp': self.timestamp.isoformat()
         }
-      
+
+class InstructorRating(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    instructor_name = db.Column(db.String(20), nullable=False)
+    # rating saved as percentage (allows for dynamic stars)
+    rating = db.Column(db.Float, nullable=False)
+
 # ====================================
 
 
@@ -144,4 +151,22 @@ def search_instructors(instructor_name: str):
     instructor_names = [name[0] for name in instructor_names]
 
     return instructor_names
+
+def add_rating(user_id, instructor_name, rating):
+    try:
+        # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
+        new_rating = InstructorRating(user_id=user_id, instructor_name=instructor_name, rating=rating)
+        
+        # Add the new rating to the database session
+        db.session.add(new_rating)
+        
+        # Commit the session to save changes
+        db.session.commit()
+        
+        return new_rating  # Return the newly created comment
+    except Exception as database_error:
+        # Roll back the session in case of error
+        db.session.rollback()
+        
+        return None
   # ====================================

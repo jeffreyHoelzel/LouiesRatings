@@ -29,7 +29,7 @@ RUN apt-get install -y google-chrome-stable
 
 # install chromedriver to bin
 # version may need to be changes
-RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/130.0.6723.69/linux64/chromedriver-linux64.zip \
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/130.0.6723.91/linux64/chromedriver-linux64.zip \
   && unzip chromedriver-linux64.zip && rm -dfr chromedriver_linux64.zip \
   && mv /chromedriver-linux64/chromedriver /usr/bin/chromedriver \
   && chmod +x /usr/bin/chromedriver
