@@ -154,19 +154,36 @@ def search_instructors(instructor_name: str):
 
 def add_rating(user_id, instructor_name, rating):
     try:
-        # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
-        new_rating = InstructorRating(user_id=user_id, instructor_name=instructor_name, rating=rating)
-        
-        # Add the new rating to the database session
-        db.session.add(new_rating)
-        
+        # Check if user has already made a rating for this instructor
+        rating_row = rating_exists(user_id, instructor_name)
+        if rating_exists(user_id, instructor_name):
+            # overwrite current rating
+            rating_row.rating = rating
+
+            success_message = 'Previous rating overwritten!'
+        else:
+            # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
+            rating_row = InstructorRating(user_id=user_id, instructor_name=instructor_name, rating=rating)
+            
+            # Add the new rating to the database session
+            db.session.add(rating_row)
+
+            success_message = 'Rating added!'
+
         # Commit the session to save changes
         db.session.commit()
         
-        return new_rating  # Return the newly created comment
+        # return new/overwritted rating and success mesage
+        return rating_row, success_message
+    
     except Exception as database_error:
         # Roll back the session in case of error
         db.session.rollback()
         
-        return None
+        return None, None
+
+def rating_exists(user_id, instructor_name):
+    # return if the user has already given a rating to this instructor
+    return InstructorRating.query.filter_by(user_id=user_id, instructor_name=instructor_name).first()
+
   # ====================================

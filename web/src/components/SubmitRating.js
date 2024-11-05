@@ -32,6 +32,12 @@ const SubmitRating = ({instructorName}) => {
                 throw new Error( 'Network response was not ok' );
             }
             
+            const data = await response.json();
+
+            // let user know whether message was added or overwritten
+            // TODO: make this a brief pop up message
+            window.alert(data.message);
+
             // refresh page
             location.reload();
 
@@ -55,7 +61,7 @@ const SubmitRating = ({instructorName}) => {
                     onChange={(e) => setUserId( e.target.value )}
                     required
                 />
-            <button type="submit" onClick={handleSubmit}>Submit Review</button>
+            <button type="submit" onClick={handleSubmit}>Submit Rating</button>
         </div>
     )
 }

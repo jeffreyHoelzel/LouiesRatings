@@ -321,17 +321,16 @@ def post_rating():
         instructor_name = data.get('instructor_name')
         rating = data.get('rating')
 
-        logger.info(f"\n{user_id}, {instructor_name}, {rating}")
-
         # Check if rating is a valid percentage
         if rating > 0 and rating <= 1:
             # Use the add_rating function to create a new rating
-            new_rating = add_rating(user_id, instructor_name, rating)
+            new_rating, success_message = add_rating(user_id, instructor_name, rating)
 
+            # Check if rating was successfully added
             if new_rating:
-                return jsonify({'message': 'Rating added!'}), 201
-            else:
-                return jsonify({'message': 'Failed to add rating. Check user_id andinstructor_name.'}), 400
+                return jsonify({'message': success_message}), 201
+            
+            return jsonify({'message': 'Failed to add rating. Check user id and instructor name.'}), 400
             
         return jsonify({'message': 'Failed to add rating. Rating not a valid percentage.'}), 400
 
