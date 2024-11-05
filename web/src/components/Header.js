@@ -35,7 +35,7 @@ const Header = () => {
         window.location.href = '/';
 
         // reload page
-        window.location.reload();
+        window.reload();
     }
 
     // TODO: we should add a route to the logo to lead to main!
