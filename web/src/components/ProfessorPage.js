@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/ProfessorPageStyling.css';
 import Chart from './Chart';
+import DisplayAverageRating from './DisplayAverageRating.js';
+import SubmitRating from './SubmitRating.js';
 
 const ProfessorPage = () => {
   const { professorId } = useParams();
@@ -50,6 +52,8 @@ const ProfessorPage = () => {
       <header className="professor-header">
         <h1>{professorData}</h1>
       </header>
+
+      <DisplayAverageRating instructorName={professorData} />
       
       {/* Lots of basic placeholders until we implement these features */}
       <div className="info-sections">
@@ -63,6 +67,8 @@ const ProfessorPage = () => {
           <p>Simplified data on pass/fail rates.</p>
         </section>
       </div>
+
+      <SubmitRating instructorName={professorData} />
 
       <section className="reviews">
         <h2>Student Reviews</h2>

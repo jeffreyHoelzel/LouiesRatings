@@ -41,6 +41,16 @@ header {
     max-height: 100%;
 }
 
+.logo-box button {
+    background-color: #F4B51A;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logo-box button:hover {
+    background-color: #ffc637;
+}
+
 .search-bar-box {
     display: flex;
     justify-content: flex-start;
