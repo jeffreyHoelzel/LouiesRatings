@@ -93,7 +93,10 @@ const ProfessorPage = () => {
         </section>
       </div>
 
-      <SubmitRating instructorName={professorData} />
+      <section className="reviews">
+        <h2>Leave a Rating</h2>
+        <SubmitRating instructorName={professorData} />
+      </section>
 
       <section className="reviews">
         <h2>Student Reviews</h2>
