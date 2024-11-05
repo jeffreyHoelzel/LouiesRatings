@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { Rating } from 'react-simple-star-rating'
-import { NUM_STARS } from './DisplayAverageRating'
+import React, { useEffect, useState } from 'react';
+import StarRatings from 'react-star-ratings';
+import { NUM_STARS } from './DisplayAverageRating';
 import '../styles/Ratings.css';
 
 const SubmitRating = ({instructorName}) => {
     const [ userId, setUserId ] = useState( '' );
-    const [rating, setRating] = useState(0)
+    const [rating, setRating] = useState(0);
 
     // Catch Rating value
-    const handleRating = (rate) => {
-        setRating(rate)
+    const handleRating = (newRating, name) => {
+        setRating(newRating)
     };
 
     const handleSubmit = async ( e ) => {
@@ -47,11 +47,14 @@ const SubmitRating = ({instructorName}) => {
     };
     return (
         <div className='rating'>
-            <Rating
-                iconsCount={NUM_STARS}
-                onClick={handleRating}
-                ratingValue={rating}
-                disableFillHover={true}
+            <StarRatings
+                numberOfStars={NUM_STARS}
+                changeRating={handleRating}
+                rating={rating}
+                starRatedColor={"rgb(244,181,26)"}
+                starHoverColor={"rgb(244,181,26)"}
+                starDimension={"25px"}
+                starSpacing={"2px"}
             />
              <label htmlFor="userId">User ID:</label>
                 <input
