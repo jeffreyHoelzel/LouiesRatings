@@ -41,7 +41,13 @@ const SubmitRating = ({instructorName}) => {
     };
     return (
         <div className='rating'>
-            <label htmlFor="userId">User ID:</label>
+            <Rating
+                iconsCount={NUM_STARS}
+                onClick={handleRating}
+                ratingValue={rating}
+                disableFillHover={true}
+            />
+             <label htmlFor="userId">User ID:</label>
                 <input
                     type="number"
                     id="userId"
@@ -49,12 +55,6 @@ const SubmitRating = ({instructorName}) => {
                     onChange={(e) => setUserId( e.target.value )}
                     required
                 />
-            <Rating
-                iconsCount={NUM_STARS}
-                onClick={handleRating}
-                ratingValue={rating}
-                disableFillHover={true}
-            />
             <button type="submit" onClick={handleSubmit}>Submit Review</button>
         </div>
     )
