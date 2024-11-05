@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/ProfessorPageStyling.css';
 import Chart from './Chart';
+import DisplayAverageRating from './DisplayAverageRating.js';
+import SubmitRating from './SubmitRating.js';
 
 const ProfessorPage = () => {
   const { professorId } = useParams();
@@ -75,6 +77,8 @@ const ProfessorPage = () => {
         <h1>{instructorName}</h1>
         <hr class="professor-line"></hr>
       </header>
+
+      <DisplayAverageRating instructorName={professorData} />
       
       <div className="info-sections">
         <section className="grade-distribution-graph">
@@ -88,6 +92,8 @@ const ProfessorPage = () => {
           <p>Fail Rate: {passFailData.failRate.toFixed(2)}%</p>
         </section>
       </div>
+
+      <SubmitRating instructorName={professorData} />
 
       <section className="reviews">
         <h2>Student Reviews</h2>

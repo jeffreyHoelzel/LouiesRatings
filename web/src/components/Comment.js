@@ -26,7 +26,7 @@ const Comments = () => {
     };
 
     const handleSubmit = async ( e ) => {
-        e.preventDefault(); // Corrected the method name here
+        e.preventDefault(); // Corrected the method name here <- Chat is that you?!?!!?
         if ( !userId || !content ) { // Corrected variable name here
             alert( 'Please enter both user ID and comment content.' );
             return;

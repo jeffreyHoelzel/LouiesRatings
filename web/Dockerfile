@@ -9,6 +9,7 @@ RUN npm install --save-dev prettier
 RUN npm install react-dom
 RUN npm install react-router-dom
 RUN npm install recharts
+RUN npm install react-simple-star-rating
 
 COPY . .
 

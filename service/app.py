@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data, Comment
-from database import add_comment, fetch_comment, delete_comment, search_instructors
+from database import db, User, ClassData, fetch_grade_distribution_data, Comment, InstructorRating
+from database import add_comment, fetch_comment, delete_comment, search_instructors, add_rating
 import threading
 import pandas as pd
 import os
@@ -107,8 +107,12 @@ def register():
             return jsonify({'message': 'Username or email already in use.', 'error': True}), 403
         
         # otherwise, add user to database
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except Exception as database_error:
+            # Roll back the session in case of error
+            db.session.rollback()
 
         # return success message and 200 response (ok)
         logger.info('\nNew user successfully added.')
@@ -151,7 +155,7 @@ def get_professor_data():
 
     # Extract full instructor name from the first matched course, add space following comma
     full_instructor_name = courses[0].instructor_name
-
+    
     course_data = [
         {
             "semester": course.semester,
@@ -273,7 +277,7 @@ def get_graph_data():
 
         if len(grade_data) == 0:
             # nothing found, so return empty data
-            return jsonify({"grade": "empty", "sum":0})
+            return jsonify({"grade": "empty", "sum":0}), 404
         
         # create pandas data frame user the data, only get relevant information
         grade_distributions= pd.DataFrame([
@@ -297,7 +301,7 @@ def get_graph_data():
         # transpose, and make the index a column for grades
         grade_distributions = grade_distributions.T.reset_index(drop=False).rename(columns={"index":"grade"})
         
-        return jsonify(grade_distributions.to_json(orient='records'))
+        return jsonify(grade_distributions.to_json(orient='records')), 200
 
 @app.route('/comments', methods=["GET", "POST"])
 def handle_comments():
@@ -335,6 +339,51 @@ def remove_comment():
     delete_comment( comment )
     return jsonify({ 'message': 'Comment deleted successfully' }), 200
 
+# Route to get total average rating for a professor
+@app.route('/ratings/get_rating', methods=["POST"])
+def get_rating():
+    if request.method == 'POST':
+        # Get JSON data from the request
+        data = request.json
+
+        # get instructor name
+        instructor_name = data.get('instructor_name')
+
+        if not instructor_name:
+            return jsonify({"error": "Instructor name is required"}), 400
+
+        # Fetch all ratings on instructor from the database
+        ratings = InstructorRating.query.filter_by(instructor_name=instructor_name).all()
+        
+        # get average rating if there are some existing
+        average_rating = 0
+        if len(ratings) > 0:
+            average_rating = (sum([rating.rating for rating in ratings])/len(ratings))
+        return jsonify({'rating': average_rating}), 200
+    
+# Route to add rating for a professor
+@app.route('/ratings/post_rating', methods=["POST"])
+def post_rating():
+    if request.method == 'POST':
+        data = request.json  # Get JSON data from the request
+
+        # Extract user_id and content from the request
+        user_id = data.get('user_id')
+        instructor_name = data.get('instructor_name')
+        rating = data.get('rating')
+
+        # Check if rating is a valid percentage
+        if rating > 0 and rating <= 1:
+            # Use the add_rating function to create a new rating
+            new_rating, success_message = add_rating(user_id, instructor_name, rating)
+
+            # Check if rating was successfully added
+            if new_rating:
+                return jsonify({'message': success_message}), 201
+            
+            return jsonify({'message': 'Failed to add rating. Check user id and instructor name.'}), 400
+            
+        return jsonify({'message': 'Failed to add rating. Rating not a valid percentage.'}), 400
 
 # ====================================
 

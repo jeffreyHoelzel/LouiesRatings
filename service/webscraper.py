@@ -280,4 +280,4 @@ def fetch_info_single_term(term):
     return term_class_distr_data
 
 if __name__ == "__main__":
-    get_all_grade_distribution_data_parallel()
+    print(get_all_grade_distribution_data_parallel())
