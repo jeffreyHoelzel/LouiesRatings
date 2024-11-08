@@ -2,6 +2,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from webscraper import get_all_grade_distribution_data_parallel
 from datetime import datetime
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # create sqlalchemy object
 db = SQLAlchemy()
@@ -141,16 +146,25 @@ def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
     return db.session.query(ClassData).with_entities(ClassData.class_nbr, ClassData.class_name).filter_by(class_name=class_name).all()
 
-def search_instructors(instructor_name: str):
-    # get all instructors (name) from database that match the string up to that point
+def search_for(search: str):
+    # check if string has a number signifying a class 
+    if any(char.isdigit() for char in search):
 
-    # make them distinct
-    instructor_names = ClassData.query.with_entities(ClassData.instructor_name).filter(ClassData.instructor_name.ilike(f"%{instructor_name}%")).distinct().all()
-    
-    # convert to list of strings
-    instructor_names = [name[0] for name in instructor_names]
+        # remove spaces
+        search = search.replace(" ", "")
 
-    return instructor_names
+        # search for class name ONLY WORKS FOR CURRENT CS IMPLEMENTATION
+        search_results = ClassData.query.with_entities(ClassData.class_name).filter(ClassData.class_name.ilike(f"%{search[:2]} {search[2:]}%")).distinct().all()
+        search_results = [name[0] for name in search_results]
+        return [search_results, "class"]
+
+    # assume name and make them distinct
+    instructor_names = ClassData.query.with_entities(ClassData.instructor_name).filter(ClassData.instructor_name.ilike(f"%{search}%")).distinct().all()
+
+    # combine the two lists into search_results
+    search_results = [name[0] for name in instructor_names]
+
+    return [search_results, "instructor"]
 
 def add_rating(user_id, instructor_name, rating):
     try:
