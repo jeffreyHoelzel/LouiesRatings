@@ -78,7 +78,7 @@ const ProfessorPage = () => {
         <hr class="professor-line"></hr>
       </header>
 
-      <DisplayAverageRating instructorName={professorData} />
+      <DisplayAverageRating instructorName={instructorName} />
       
       <div className="info-sections">
         <section className="grade-distribution-graph">
@@ -95,7 +95,7 @@ const ProfessorPage = () => {
 
       <section className="reviews">
         <h2>Leave a Rating</h2>
-        <SubmitRating instructorName={professorData} />
+        <SubmitRating instructorName={instructorName} />
       </section>
 
       <section className="reviews">
