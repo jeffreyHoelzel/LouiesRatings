@@ -5,6 +5,7 @@ from database import db, User, ClassData, fetch_grade_distribution_data, Comment
 from database import add_comment, fetch_comment, delete_comment, search_instructors, add_rating
 import threading
 import pandas as pd
+import bcrypt as bc
 import os
 import logging
 import sys
@@ -90,10 +91,16 @@ def register():
         first_name = data.get('firstName')
         last_name = data.get('lastName')
 
+        # convert password to byte string
+        byte_password = password.encode('utf-8')
+        # generate salt
+        salt = bc.gensalt()
+        # get hashed password with salt
+        hashed_password = bc.hashpw(byte_password, salt)
+
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
-        # if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
         if all([username, password, email, first_name, last_name]):
-            new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            new_user = User(username=username, password=hashed_password, email=email, first_name=first_name, last_name=last_name)
         else:
             logger.info('\nServer was provided with incomplete information.')
             return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
