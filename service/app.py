@@ -133,23 +133,22 @@ def login():
         requested_username = data.get('username')
         requested_password = data.get('password')
 
-        # convert requested password to byte string
-        byte_requested_password = requested_password.encode('utf-8')
-        # generate salt
-        salt = bc.gensalt()
-        # get hashed requested password with salt
-        hashed_requested_password = bc.hashpw(byte_requested_password, salt) 
+        # get user from database using username
+        user = db.session.query(User).filter_by(username=requested_username).first()
+        db_password = user.password
 
-        # get username and password from database, if user DNE, user will be None
-        user = db.session.query(User).filter_by(username=requested_username, password=hashed_requested_password).first();
-
-        # check if user DNE
-        if user is None:
-            logger.info('\nThe username or password doesn\'t match our records. Please try again')
-            return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 401
+        # check if user exists if a valid password is present
+        if user is not None and db_password:
+            # verify password
+            if bc.checkpw(requested_password.encode('utf-8'), db_password):
+                logger.info('\nPasswords match. User logged in successfully.')
+                return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
+            else:
+                logger.info('\nIncorrect password. Please try again.')
+                return jsonify({'message': 'Incorrect password. Please try again.', 'exists': False}), 401
         else:
-            logger.info('\nUser logged in successfully.')
-            return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
+            logger.info('\nThe user specified does not exist.')
+            return jsonify({'message': 'The user specified does not exist. Please try again.', 'exists': False}), 401
     
 @app.route('/professor', methods=['GET'])
 def get_professor_data():
