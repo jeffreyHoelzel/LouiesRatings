@@ -133,8 +133,15 @@ def login():
         requested_username = data.get('username')
         requested_password = data.get('password')
 
+        # convert requested password to byte string
+        byte_requested_password = requested_password.encode('utf-8')
+        # generate salt
+        salt = bc.gensalt()
+        # get hashed requested password with salt
+        hashed_requested_password = bc.hashpw(byte_requested_password, salt) 
+
         # get username and password from database, if user DNE, user will be None
-        user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
+        user = db.session.query(User).filter_by(username=requested_username, password=hashed_requested_password).first();
 
         # check if user DNE
         if user is None:
