@@ -178,6 +178,57 @@ def get_professor_data():
     # Include the full instructor name in the response
     return jsonify({"professor": full_instructor_name, "courses": course_data})
 
+@app.route('/get_pass_fail_rate', methods=['POST'])
+def get_pass_fail_rate():
+
+    data = request.json
+
+    if not data:
+        return jsonify({"error": "No JSON data received"}), 400
+
+    search_by = data.get('search_by')
+    search_name = data.get(search_by)
+
+    if not search_by or not search_name:
+        return jsonify({"error": "Invalid search criteria"}), 400
+
+    # Fetch grade data from database, setup to work with class or instructor
+    try:
+        if search_by == 'class_name':
+            grade_data = ClassData.query.filter_by(class_name=search_name).all()
+        elif search_by == 'instructor_name':
+            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+        else:
+            return jsonify({"error": "Invalid search criteria"}), 400
+
+        if not grade_data:
+            return jsonify({"pass_rate": 0, "fail_rate": 0}), 404
+
+    except Exception as e:
+        return jsonify({"error": "Database query failed"}), 500
+
+    # Create a pandas DataFrame from the grade data to calculate pass/fail rates
+    grade_distributions = pd.DataFrame([{
+        'A': data.a,
+        'B': data.b,
+        'C': data.c,
+        'D': data.d,
+        'F': data.f,
+        'P': data.p,
+    } for data in grade_data])
+
+    grade_sums = grade_distributions.sum(numeric_only=True)
+    total_pass = grade_sums['A'] + grade_sums['B'] + grade_sums['C'] + grade_sums['P']
+    total_fail = grade_sums['D'] + grade_sums['F']
+    total_grades = total_pass + total_fail
+
+    # Calculate final pass/fail rates
+    pass_rate = (total_pass / total_grades * 100) if total_grades > 0 else 0
+    fail_rate = (total_fail / total_grades * 100) if total_grades > 0 else 0
+
+
+    return jsonify({"pass_rate": pass_rate, "fail_rate": fail_rate}), 200
+
 @app.route('/class', methods=['GET'])
 def get_class_data():
     class_id = request.args.get('classId') 
