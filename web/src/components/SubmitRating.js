@@ -3,7 +3,7 @@ import StarRatings from 'react-star-ratings';
 import { NUM_STARS } from './DisplayAverageRating';
 import '../styles/Ratings.css';
 
-const SubmitRating = ({instructorName}) => {
+const SubmitRating = ({className, instructorName, searchBy}) => {
     const [ userId, setUserId ] = useState( '' );
     const [rating, setRating] = useState(0);
 
@@ -25,7 +25,7 @@ const SubmitRating = ({instructorName}) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ user_id: userId, instructor_name: instructorName, rating: rating/NUM_STARS }),
+                body: JSON.stringify({ user_id: userId, class_name: className, instructor_name: instructorName, search_by: searchBy, rating: rating/NUM_STARS }),
             });
 
             if ( !response.ok ) {
