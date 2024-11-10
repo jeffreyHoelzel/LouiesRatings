@@ -78,12 +78,12 @@ const ProfessorPage = () => {
         <hr class="professor-line"></hr>
       </header>
 
-      <DisplayAverageRating className="None" instructorName={instructorName} searchBy="instructor_name" />
+      <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
       
       <div className="info-sections">
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
-          <Chart className="None" instructorName={instructorName} searchBy="instructor_name" />
+          <Chart className={null} instructorName={instructorName} searchBy="instructor_name" />
         </section>
 
         <section className="pass-fail-rates">
@@ -95,7 +95,7 @@ const ProfessorPage = () => {
 
       <section className="reviews">
         <h2>Leave a Rating</h2>
-        <SubmitRating className="None" instructorName={instructorName} searchBy="instructor_name" />
+        <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
       </section>
 
       <section className="reviews">

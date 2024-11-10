@@ -44,7 +44,7 @@ const ClassPage = () => {
         <h2>{classData.class_title || 'No Title Available'}</h2>
       </header>
 
-      <DisplayAverageRating className={classData.code} instructorName="None" searchBy="class_name" />
+      <DisplayAverageRating className={classData.code} instructorName={null} searchBy="class_name" />
 
       <div className="class-description">
         <p>{classData.description || 'No Description Available'}</p>
@@ -58,7 +58,7 @@ const ClassPage = () => {
       <div className="info-sections">
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
-          <Chart className={classData.code} instructorName="None" searchBy="class_name" />
+          <Chart className={classData.code} instructorName={null} searchBy="class_name" />
         </section>
       
 
@@ -70,7 +70,7 @@ const ClassPage = () => {
 
       <section className="reviews">
         <h2>Leave a Rating</h2>
-        <SubmitRating className={classData.code} instructorName="None" searchBy="class_name" />
+        <SubmitRating className={classData.code} instructorName={null} searchBy="class_name" />
       </section>
 
     </main>
