@@ -294,7 +294,7 @@ class TestFrontend(unittest.TestCase):
             WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_all_elements_located((By.CLASS_NAME, "star-ratings")))
 
             # check that the both average ratings and ratings submit are being displayed correctly
-            ratings = self.driver.find_elements(By.CSS_SELECTOR, "star-ratings")
+            ratings = self.driver.find_elements(By.CLASS_NAME, "star-ratings")
             self.assertEqual(2, len(ratings), f"Chart on {testing_page} page not displaying correctly")
     
     @classmethod
