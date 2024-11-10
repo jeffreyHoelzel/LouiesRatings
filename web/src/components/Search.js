@@ -1,12 +1,14 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
 
+import '../styles/Search.css';
+
 const Search = () => {
     // make a tied variable and mutator for string inputted
     const [search, setSearch] = React.useState("");
 
     // this pair will hold the classes from search and the other will update the classes
-    const [filteredProfs, setFilteredProfs] = React.useState([]);
+    const [filteredResults, setFilteredResults] = React.useState([]);
 
     // this will set up the navigation to the class page
     const navigate = useNavigate();
@@ -43,7 +45,7 @@ const Search = () => {
             if (res.ok) 
             {
                 const data = await res.json();
-                setFilteredProfs(data);
+                setFilteredResults(data);
             }
             else 
             {
@@ -55,39 +57,52 @@ const Search = () => {
         }
     }
 
-    const handleProfClick = (prof) => {
-        // this will redirect to the Prof page
-
-        // get lowercase of name
-        prof = prof.toLowerCase();
-
-        // split the name into first and last
-        const last = prof.split(",")[0];
-
-        // in case of multiple "first" names
-        const first = prof.split(",")[1].split(' ')[0];
+    const handleItemClick = async (item, type) => {
         
-        navigate(`/professor/${last}-${first}`);
+        if(type === "instructor") {
+            // this will redirect to the Prof page
+            // get lowercase of name
+            const prof = item.toLowerCase();
+
+            // split the name into first and last
+            const last = prof.split(",")[0];
+
+            // in case of multiple "first" names
+            const first = prof.split(",")[1].split(' ')[0];
+            
+            await navigate(`/professor/${last}-${first}`);
+        }
+        else if(type === "class") {
+            // this will redirect to the class page
+            await navigate(`/class/${item}`);
+
+        }
+
+        // clear the search bar
+
+        // refresh the page
+        window.location.reload();
     }
 
 
     return (
         <div className="search-bar-box">
             <h1>Louie's Ratings</h1>
-            <form onSubmit={handleSearch}>
-                <input type="text" className="search-bar" placeholder="Search..." value={search} onChange={handleInputChange}/>
-                <button type="submit" className="search-button">Search</button>
-            </form>
 
-            {search && filteredProfs.length > 0 && (
-                <ul className="dropdown">
-                    {filteredProfs.slice(0,5).map((prof) => ( // only show the first 5 results bc we dont want to overload the user and system
-                        <li key={prof} onClick={() => handleProfClick(prof)}>
-                            {prof || 'Unnamed professor'}
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <div className="search-container">
+                <input type="text" className="search-bar" placeholder="Search..." value={search} onChange={handleInputChange}/>
+
+                
+                {search && filteredResults.length > 0 && filteredResults[0].length > 0 && (
+                    <ul className="dropdown">
+                        {filteredResults[0].slice(0,5).map((Item) => ( // only show the first 5 results bc we dont want to overload the user and system
+                            <li key={Item} onClick={() => handleItemClick(Item, filteredResults[1])}>
+                                {Item || 'Unnamed Item'}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
 
         </div>
     );

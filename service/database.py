@@ -147,14 +147,21 @@ def fetch_classes(class_name: str):
     return db.session.query(ClassData).with_entities(ClassData.class_nbr, ClassData.class_name).filter_by(class_name=class_name).all()
 
 def search_for(search: str):
-    # check if string has a number signifying a class 
-    if any(char.isdigit() for char in search):
+    # find the first digit in the string
+    numIndex = 0
+    for index, char in enumerate(search):
+        if char.isdigit():
+            numIndex = index
+            break
+
+    # if there is a number, search for class name
+    if numIndex:
 
         # remove spaces
         search = search.replace(" ", "")
 
-        # search for class name ONLY WORKS FOR CURRENT CS IMPLEMENTATION
-        search_results = ClassData.query.with_entities(ClassData.class_name).filter(ClassData.class_name.ilike(f"%{search[:2]} {search[2:]}%")).distinct().all()
+        # search for class name 
+        search_results = ClassData.query.with_entities(ClassData.class_name).filter(ClassData.class_name.ilike(f"%{search[:numIndex]} {search[numIndex:]}%")).distinct().all()
         search_results = [name[0] for name in search_results]
         return [search_results, "class"]
 
