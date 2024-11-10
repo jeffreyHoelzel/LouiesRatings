@@ -144,7 +144,7 @@ def login():
                 logger.info('\nPasswords match. User logged in successfully.')
                 return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
             else:
-                logger.info('\nIncorrect password. Please try again.')
+                logger.info('\nIncorrect password.')
                 return jsonify({'message': 'Incorrect password. Please try again.', 'exists': False}), 401
         else:
             logger.info('\nThe user specified does not exist.')
