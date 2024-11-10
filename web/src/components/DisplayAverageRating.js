@@ -4,7 +4,8 @@ import '../styles/Ratings.css';
 
 export const NUM_STARS = 5;
 
-const DisplayAverageRating = ({instructorName}) => {
+const DisplayAverageRating = ({className, instructorName, searchBy}) => {
+    const requestData = { class_name: className, instructor_name: instructorName, search_by: searchBy };
     // initialize as 0 rating
     const [rating, setRating] = useState(0)
 
@@ -19,7 +20,7 @@ const DisplayAverageRating = ({instructorName}) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ instructor_name: instructorName }),
+            body: JSON.stringify(requestData),
         });
 
         if ( !response.ok ) {
