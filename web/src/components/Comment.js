@@ -98,7 +98,7 @@ const Comments = () => {
                 {comments.map(( comment ) => (
                     <li className="comments" id={ `${comment.user_id}` } key={comment.id}>
                         <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
-                        <button class="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
+                        <button className="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
                     </li>
                 ))}
             </ul>

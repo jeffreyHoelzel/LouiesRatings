@@ -5,6 +5,7 @@ from database import db, User, ClassData, fetch_grade_distribution_data, Comment
 from database import add_comment, fetch_comment, delete_comment, search_for, add_rating
 import threading
 import pandas as pd
+import bcrypt as bc
 import os
 import logging
 import sys
@@ -90,10 +91,16 @@ def register():
         first_name = data.get('firstName')
         last_name = data.get('lastName')
 
+        # convert password to byte string
+        byte_password = password.encode('utf-8')
+        # generate salt
+        salt = bc.gensalt()
+        # get hashed password with salt
+        hashed_password = bc.hashpw(byte_password, salt)
+
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
-        # if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
         if all([username, password, email, first_name, last_name]):
-            new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            new_user = User(username=username, password=hashed_password, email=email, first_name=first_name, last_name=last_name)
         else:
             logger.info('\nServer was provided with incomplete information.')
             return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
@@ -126,16 +133,22 @@ def login():
         requested_username = data.get('username')
         requested_password = data.get('password')
 
-        # get username and password from database, if user DNE, user will be None
-        user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
+        # get user from database using username
+        user = db.session.query(User).filter_by(username=requested_username).first()
+        db_password = user.password
 
-        # check if user DNE
-        if user is None:
-            logger.info('\nThe username or password doesn\'t match our records. Please try again')
-            return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 401
+        # check if user exists if a valid password is present
+        if user is not None and db_password:
+            # verify password
+            if bc.checkpw(requested_password.encode('utf-8'), db_password):
+                logger.info('\nPasswords match. User logged in successfully.')
+                return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
+            else:
+                logger.info('\nIncorrect password.')
+                return jsonify({'message': 'Incorrect password. Please try again.', 'exists': False}), 401
         else:
-            logger.info('\nUser logged in successfully.')
-            return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
+            logger.info('\nThe user specified does not exist.')
+            return jsonify({'message': 'The user specified does not exist. Please try again.', 'exists': False}), 401
     
 @app.route('/professor', methods=['GET'])
 def get_professor_data():

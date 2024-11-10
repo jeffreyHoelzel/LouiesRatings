@@ -79,19 +79,19 @@ const RegisterUser = () => {
     <div>
       <form action="" className="form-container">
         <h2>New account</h2>
-        <label for="firstName"><b>First name</b></label>
+        <label htmlFor="firstName"><b>First name</b></label>
         <input type="text" placeholder="Enter first name" name="firstName" className="first-name-field" onChange={handleChange} required />
 
-        <label for="lastName"><b>Last name</b></label>
+        <label htmlFor="lastName"><b>Last name</b></label>
         <input type="text" placeholder="Enter last name" name="lastName" className="last-name-field" onChange={handleChange} required />
 
-        <label for="email"><b>Email</b></label>
+        <label htmlFor="email"><b>Email</b></label>
         <input type="email" placeholder="Enter email" name="email" className="email-field" onChange={handleChange} required />
 
-        <label for="username"><b>Username</b></label>
+        <label htmlFor="username"><b>Username</b></label>
         <input type="text" placeholder="Enter username" name="username" className="username-field" onChange={handleChange} required />
 
-        <label for="password"><b>Password</b></label>
+        <label htmlFor="password"><b>Password</b></label>
         <input type="password" placeholder="Enter password" name="password" className="password-field" onChange={handleChange} required />
 
         <div className="option-container">
