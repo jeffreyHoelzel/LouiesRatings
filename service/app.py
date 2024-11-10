@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data, Comment, InstructorRating
-from database import add_comment, fetch_comment, delete_comment, search_instructors, add_rating
+from database import add_comment, fetch_comment, delete_comment, search_for, add_rating
 import threading
 import pandas as pd
 import os
@@ -72,10 +72,10 @@ def search():
         # Extract the search query from the JSON data
         search_query = data.get('query')
 
-        instructors = search_instructors(search_query)
+        results = search_for(search_query)
         
         # Return the mock users to test and 200 means a successful request
-        return jsonify(instructors), 200
+        return jsonify(results), 200
     
 @app.route('/register', methods=['POST'])
 def register():
