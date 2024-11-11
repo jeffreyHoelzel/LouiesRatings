@@ -1,4 +1,5 @@
 import unittest
+import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -7,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException
+from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException, TimeoutException
 
 class TestFrontend(unittest.TestCase):
     @classmethod
@@ -93,14 +94,21 @@ class TestFrontend(unittest.TestCase):
         sign_up_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-up-btn")))
         sign_up_btn.click()
 
-        # try to click button multiple times, otherwise exception raised
-        self.__retry_click(By.CLASS_NAME, "popup-form")
+        profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
 
-        # wait for header to show and grab username
-        username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
+        try:
+            # check if user already exists with that username/email
+            user_exists = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "status-message")))
 
-        # username will have @ symbol for tagging
-        self.assertEqual("@johnsmith", username_element.text, "New user has not been registered")
+            # assert user is already in database using status message
+            self.assertEqual("Username or email already in use.", user_exists.text, "Something went wrong fetching span element")
+
+        except TimeoutException:
+            # wait for header to show and grab username
+            username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
+
+            # username will have @ symbol for tagging
+            self.assertEqual("@johnsmith", username_element.text, "New user has not been registered")
 
     def test_user_login(self):
         # navigate to the homepage
@@ -110,30 +118,42 @@ class TestFrontend(unittest.TestCase):
         profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
         profile_pic_btn.click()
 
-        # press the sign out button (since user should already be logged in)
-        # technically testing sign out functionality here too
-        sign_out_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-out")))
-        sign_out_btn.click()
+        # try to sign in with new account, otherwise, try signing out first since registration test was just ran
+        try:
+            # get username and password fields
+            username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
+            password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
 
-        self.__retry_click(By.CLASS_NAME, "sign-out")
+            # log in with demo user
+            username_field.send_keys("johnsmith")
+            password_field.send_keys("sjc623&$!jmaa*")
+        except TimeoutException:
+            # press the sign out button (since user should already be logged in)
+            sign_out_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-out")))
+            sign_out_btn.click()
 
-        # try to click button multiple times, otherwise exception raised
-        self.__retry_click(By.CLASS_NAME, "popup-form")
+            # open general login form
+            profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
+            profile_pic_btn.click()
 
-        # get username and password fields
-        username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
-        password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
+            # get username and password fields
+            username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
+            password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
 
-        # log in with demo user
-        username_field.send_keys("johnsmith")
-        password_field.send_keys("sjc623&$!jmaa*")
+            # log in with demo user
+            username_field.send_keys("johnsmith")
+            password_field.send_keys("sjc623&$!jmaa*")
 
         # log the new user in
         login_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "login-btn")))
         login_btn.click()
 
-        # try to click button multiple times, otherwise exception raised
-        self.__retry_click(By.CLASS_NAME, "popup-form")
+        # wait for refresh
+        time.sleep(5)
+
+        # open general login form
+        profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
+        profile_pic_btn.click()
 
         # wait for header to show and grab username
         username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))

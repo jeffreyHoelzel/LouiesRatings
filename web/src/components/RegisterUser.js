@@ -69,9 +69,7 @@ const RegisterUser = () => {
     // check if status true
     if (localStorage.getItem("status") === "true") {
       // refresh page to reflect correct user
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      window.location.reload();
     }
   }
 
@@ -97,7 +95,7 @@ const RegisterUser = () => {
         <div className="option-container">
           <button type="submit" className="sign-up-btn" onClick={handleSubmit}>Sign up</button>
         </div>
-        {error && <span style={{color: 'red'}}>{message}</span>}
+        {error && <span className="status-message" style={{color: 'red'}}>{message}</span>}
       </form>
     </div>
   );

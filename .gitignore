@@ -17,3 +17,5 @@ web/src/.DS_Store
 .db
 service/table.db
 service/__pycache__
+
+unittest/*_test.py

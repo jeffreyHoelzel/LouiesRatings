@@ -58,9 +58,7 @@ const Login = () => {
     // check if status true
     if (localStorage.getItem("status") === "true") {
       // refresh page to reflect correct user
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      window.location.reload();
     }
   }
 
