@@ -196,7 +196,7 @@ class TestFrontend(unittest.TestCase):
         # make a new search
         search_input.send_keys("cs386")
 
-        # force wait one second
+        # force wait two second
         self.driver.implicitly_wait(2)
 
         # wait up to 10 seconds for page to loading

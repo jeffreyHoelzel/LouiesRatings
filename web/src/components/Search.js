@@ -28,8 +28,6 @@ const Search = () => {
     // Define a function to call setSearch function to update the search variable
     const handleSearch = async (input) => {
 
-        console.log(input);
-
         // make a fetch request to the API to get the search results
         try {
             const res = await fetch(`http:/service/search`, {  // Needs to be whole url as header is consistent with all pages
