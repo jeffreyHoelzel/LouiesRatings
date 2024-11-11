@@ -147,6 +147,10 @@ def fetch_classes(class_name: str):
     return db.session.query(ClassData).with_entities(ClassData.class_nbr, ClassData.class_name).filter_by(class_name=class_name).all()
 
 def search_for(search: str):
+        
+    # strip any non-alphanumeric characters
+    search = ''.join(e for e in search if e.isalnum())
+
     # find the first digit in the string
     numIndex = 0
     for index, char in enumerate(search):
@@ -156,9 +160,6 @@ def search_for(search: str):
 
     # if there is a number, search for class name
     if numIndex:
-
-        # remove spaces
-        search = search.replace(" ", "")
 
         # search for class name 
         search_results = ClassData.query.with_entities(ClassData.class_name).filter(ClassData.class_name.ilike(f"%{search[:numIndex]} {search[numIndex:]}%")).distinct().all()
