@@ -58,9 +58,7 @@ const Login = () => {
     // check if status true
     if (localStorage.getItem("status") === "true") {
       // refresh page to reflect correct user
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      window.location.reload();
     }
   }
 
@@ -70,9 +68,9 @@ const Login = () => {
       {!registrationPopup ? (
         <form action="" className="form-container">
           <h2>Login</h2>
-          <label for="username"><b>Username</b></label>
+          <label htmlFor="username"><b>Username</b></label>
           <input type="text" placeholder="Enter username" name="username" className="username-field" onChange={(e) => setUsername(e.target.value)} required />
-          <label for="password"><b>Password</b></label>
+          <label htmlFor="password"><b>Password</b></label>
           <input type="password" placeholder="Enter password" name="password" className="password-field" onChange={(e) => setPassword(e.target.value)} required />
           <div className="option-container">
             <button type="submit" className="login-btn" onClick={handleSubmit}>Login</button>

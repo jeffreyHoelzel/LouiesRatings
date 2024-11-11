@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/ClassPageStyling.css';
 import Chart from './Chart';
+import DisplayAverageRating from './DisplayAverageRating.js';
+import SubmitRating from './SubmitRating.js';
 
 const ClassPage = () => {
   const { classId } = useParams();
@@ -42,6 +44,8 @@ const ClassPage = () => {
         <h2>{classData.class_title || 'No Title Available'}</h2>
       </header>
 
+      <DisplayAverageRating className={classData.code} instructorName={null} searchBy="class_name" />
+
       <div className="class-description">
         <p>{classData.description || 'No Description Available'}</p>
       </div>
@@ -54,7 +58,7 @@ const ClassPage = () => {
       <div className="info-sections">
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
-          <Chart className={classData.code} instructorName={classData.instructor} searchBy="class_name" />
+          <Chart className={classData.code} instructorName={null} searchBy="class_name" />
         </section>
       
 
@@ -63,6 +67,11 @@ const ClassPage = () => {
           <p>Simplified data on pass/fail rates for this class.</p>
         </section>
       </div>
+
+      <section className="reviews">
+        <h2>Leave a Rating</h2>
+        <SubmitRating className={classData.code} instructorName={null} searchBy="class_name" />
+      </section>
 
     </main>
   );

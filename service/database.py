@@ -17,7 +17,7 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(30), nullable=False)
+    password = db.Column(db.LargeBinary, nullable=False) # hashed password as byte string (don't have to mess with encode/decode)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(), nullable=False, unique=True)
@@ -69,6 +69,13 @@ class InstructorRating(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
     instructor_name = db.Column(db.String(20), nullable=False)
+    # rating saved as percentage (allows for dynamic stars)
+    rating = db.Column(db.Float, nullable=False)
+
+class ClassRating(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    class_name = db.Column(db.String(10), nullable=False)
     # rating saved as percentage (allows for dynamic stars)
     rating = db.Column(db.Float, nullable=False)
 
@@ -174,18 +181,23 @@ def search_for(search: str):
 
     return [search_results, "instructor"]
 
-def add_rating(user_id, instructor_name, rating):
+def add_rating(user_id, search_name, rating, by):
     try:
-        # Check if user has already made a rating for this instructor
-        rating_row = rating_exists(user_id, instructor_name)
-        if rating_exists(user_id, instructor_name):
+        # Check if user has already made a rating for this instructor/class
+        rating_row = rating_exists(user_id, search_name, by=by)
+        if rating_row:
             # overwrite current rating
             rating_row.rating = rating
 
             success_message = 'Previous rating overwritten!'
         else:
-            # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
-            rating_row = InstructorRating(user_id=user_id, instructor_name=instructor_name, rating=rating)
+
+            if by == 'class_name':
+                # Create a new ClassRating object with the provided user_id, class_name, and rating
+                rating_row = ClassRating(user_id=user_id, class_name=search_name, rating=rating)
+            else:
+                # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
+                rating_row = InstructorRating(user_id=user_id, instructor_name=search_name, rating=rating)
             
             # Add the new rating to the database session
             db.session.add(rating_row)
@@ -204,8 +216,12 @@ def add_rating(user_id, instructor_name, rating):
         
         return None, None
 
-def rating_exists(user_id, instructor_name):
-    # return if the user has already given a rating to this instructor
-    return InstructorRating.query.filter_by(user_id=user_id, instructor_name=instructor_name).first()
+def rating_exists(user_id, search_name, by):
+    if by == 'class_name':
+        # return if the user has already given a rating to this class
+        return ClassRating.query.filter_by(user_id=user_id, class_name=search_name).first()
+    else:
+        # return if the user has already given a rating to this instructor
+        return InstructorRating.query.filter_by(user_id=user_id, instructor_name=search_name).first()
 
   # ====================================

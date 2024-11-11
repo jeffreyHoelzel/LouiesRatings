@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data, Comment, InstructorRating
+from database import db, User, ClassData, fetch_grade_distribution_data, Comment, InstructorRating, ClassRating
 from database import add_comment, fetch_comment, delete_comment, search_for, add_rating
 import threading
 import pandas as pd
+import bcrypt as bc
 import os
 import logging
 import sys
@@ -90,10 +91,16 @@ def register():
         first_name = data.get('firstName')
         last_name = data.get('lastName')
 
+        # convert password to byte string
+        byte_password = password.encode('utf-8')
+        # generate salt
+        salt = bc.gensalt()
+        # get hashed password with salt
+        hashed_password = bc.hashpw(byte_password, salt)
+
         # if all credentials are not empty strings, create a new user object, otherwise, throw error
-        # if username != '' and password != '' and email != '' and first_name != '' and last_name != '':
         if all([username, password, email, first_name, last_name]):
-            new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+            new_user = User(username=username, password=hashed_password, email=email, first_name=first_name, last_name=last_name)
         else:
             logger.info('\nServer was provided with incomplete information.')
             return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
@@ -126,16 +133,22 @@ def login():
         requested_username = data.get('username')
         requested_password = data.get('password')
 
-        # get username and password from database, if user DNE, user will be None
-        user = db.session.query(User).filter_by(username=requested_username, password=requested_password).first();
+        # get user from database using username
+        user = db.session.query(User).filter_by(username=requested_username).first()
+        db_password = user.password
 
-        # check if user DNE
-        if user is None:
-            logger.info('\nThe username or password doesn\'t match our records. Please try again')
-            return jsonify({'message': 'The username or password doesn\'t match our records. Please try again.', 'exists': False}), 401
+        # check if user exists if a valid password is present
+        if user is not None and db_password:
+            # verify password
+            if bc.checkpw(requested_password.encode('utf-8'), db_password):
+                logger.info('\nPasswords match. User logged in successfully.')
+                return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
+            else:
+                logger.info('\nIncorrect password.')
+                return jsonify({'message': 'Incorrect password. Please try again.', 'exists': False}), 401
         else:
-            logger.info('\nUser logged in successfully.')
-            return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
+            logger.info('\nThe user specified does not exist.')
+            return jsonify({'message': 'The user specified does not exist. Please try again.', 'exists': False}), 401
     
 @app.route('/professor', methods=['GET'])
 def get_professor_data():
@@ -346,14 +359,17 @@ def get_rating():
         # Get JSON data from the request
         data = request.json
 
-        # get instructor name
-        instructor_name = data.get('instructor_name')
+        # get 
+        search_by = data.get('search_by')
+        search_name = data.get(search_by)
 
-        if not instructor_name:
-            return jsonify({"error": "Instructor name is required"}), 400
-
-        # Fetch all ratings on instructor from the database
-        ratings = InstructorRating.query.filter_by(instructor_name=instructor_name).all()
+        # Fetch all ratings on instructor/class from the database
+        if search_by == 'class_name':
+            ratings = ClassRating.query.filter_by(class_name=search_name).all()
+        elif search_by == 'instructor_name':
+            ratings = InstructorRating.query.filter_by(instructor_name=search_name).all()
+        else:
+            return jsonify({"error": "Search by instructor or class name is required"}), 400
         
         # get average rating if there are some existing
         average_rating = 0
@@ -367,15 +383,15 @@ def post_rating():
     if request.method == 'POST':
         data = request.json  # Get JSON data from the request
 
-        # Extract user_id and content from the request
+        # Extract content from the request
         user_id = data.get('user_id')
-        instructor_name = data.get('instructor_name')
         rating = data.get('rating')
+        search_by = data.get('search_by')
+        search_name = data.get(search_by)
 
         # Check if rating is a valid percentage
         if rating > 0 and rating <= 1:
-            # Use the add_rating function to create a new rating
-            new_rating, success_message = add_rating(user_id, instructor_name, rating)
+            new_rating, success_message = add_rating(user_id, search_name, rating, by=search_by)
 
             # Check if rating was successfully added
             if new_rating:

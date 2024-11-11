@@ -1,4 +1,5 @@
 import unittest
+import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -7,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException
+from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException, TimeoutException
 
 class TestFrontend(unittest.TestCase):
     @classmethod
@@ -30,7 +31,7 @@ class TestFrontend(unittest.TestCase):
         self.driver.get("http://host.docker.internal")
 
         # check that title is correct
-        self.assertEqual("Scalable Homepage", self.driver.title, "Homepage title not displayed as \"Scalable Homepage\"")
+        self.assertEqual("Louie's Ratings", self.driver.title, "Homepage title not displayed as \"Louie's Ratings\"")
 
     def test_professor_page(self):
         # navigate to specific professor page
@@ -93,14 +94,21 @@ class TestFrontend(unittest.TestCase):
         sign_up_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-up-btn")))
         sign_up_btn.click()
 
-        # try to click button multiple times, otherwise exception raised
-        self.__retry_click(By.CLASS_NAME, "popup-form")
+        profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
 
-        # wait for header to show and grab username
-        username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
+        try:
+            # check if user already exists with that username/email
+            user_exists = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "status-message")))
 
-        # username will have @ symbol for tagging
-        self.assertEqual("@johnsmith", username_element.text, "New user has not been registered")
+            # assert user is already in database using status message
+            self.assertEqual("Username or email already in use.", user_exists.text, "Something went wrong fetching span element")
+
+        except TimeoutException:
+            # wait for header to show and grab username
+            username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
+
+            # username will have @ symbol for tagging
+            self.assertEqual("@johnsmith", username_element.text, "New user has not been registered")
 
     def test_user_login(self):
         # navigate to the homepage
@@ -110,30 +118,42 @@ class TestFrontend(unittest.TestCase):
         profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
         profile_pic_btn.click()
 
-        # press the sign out button (since user should already be logged in)
-        # technically testing sign out functionality here too
-        sign_out_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-out")))
-        sign_out_btn.click()
+        # try to sign in with new account, otherwise, try signing out first since registration test was just ran
+        try:
+            # get username and password fields
+            username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
+            password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
 
-        self.__retry_click(By.CLASS_NAME, "sign-out")
+            # log in with demo user
+            username_field.send_keys("johnsmith")
+            password_field.send_keys("sjc623&$!jmaa*")
+        except TimeoutException:
+            # press the sign out button (since user should already be logged in)
+            sign_out_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "sign-out")))
+            sign_out_btn.click()
 
-        # try to click button multiple times, otherwise exception raised
-        self.__retry_click(By.CLASS_NAME, "popup-form")
+            # open general login form
+            profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
+            profile_pic_btn.click()
 
-        # get username and password fields
-        username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
-        password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
+            # get username and password fields
+            username_field = self.driver.find_element(By.CLASS_NAME, "username-field")
+            password_field = self.driver.find_element(By.CLASS_NAME, "password-field")
 
-        # log in with demo user
-        username_field.send_keys("johnsmith")
-        password_field.send_keys("sjc623&$!jmaa*")
+            # log in with demo user
+            username_field.send_keys("johnsmith")
+            password_field.send_keys("sjc623&$!jmaa*")
 
         # log the new user in
         login_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "login-btn")))
         login_btn.click()
 
-        # try to click button multiple times, otherwise exception raised
-        self.__retry_click(By.CLASS_NAME, "popup-form")
+        # wait for refresh
+        time.sleep(5)
+
+        # open general login form
+        profile_pic_btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "popup-form")))
+        profile_pic_btn.click()
 
         # wait for header to show and grab username
         username_element = WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h2.username")))
@@ -260,9 +280,6 @@ class TestFrontend(unittest.TestCase):
         header_element = self.driver.find_element(By.CLASS_NAME, "class-header")
         name = header_element.find_element(By.TAG_NAME, "h1")
         self.assertEqual("CS 386", name.text, "Class page not displaying expected class name in title")
-        
-        # navigate back to homepage
-        self.driver.get("http://host.docker.internal") 
 
     def test_charts(self):
         # test that charts were found for a specific professor page and class page
@@ -283,9 +300,25 @@ class TestFrontend(unittest.TestCase):
             all_axis_labels = self.driver.find_elements(By.CSS_SELECTOR, ".recharts-cartesian-axis-tick-value")
             x_axis_labels = [label.text for label in all_axis_labels[0:7]]
             self.assertEqual(['A', 'B', 'C', 'D', 'F', 'P', 'W'], x_axis_labels, f"Chart on {testing_page} page not displaying correctly")
-        
-        # navigate back to homepage
-        self.driver.get("http://host.docker.internal")
+
+    def test_ratings(self):
+        # test that average rating and rating submit were found for a specific professor page and class page
+        for i in range(2):
+            if i == 0:
+                # navigate to specific professor page
+                self.driver.get("http://host.docker.internal/professor/gerosa-marco")
+                testing_page = "professor"
+            else:
+                # navigate to specific professor page
+                self.driver.get("http://host.docker.internal/class/cs-386")
+                testing_page = "class"
+
+            # wait up to 10 seconds for page to loading
+            WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_all_elements_located((By.CLASS_NAME, "star-ratings")))
+
+            # check that the both average ratings and ratings submit are being displayed correctly
+            ratings = self.driver.find_elements(By.CLASS_NAME, "star-ratings")
+            self.assertEqual(2, len(ratings), f"Chart on {testing_page} page not displaying correctly")
     
     @classmethod
     def tearDownClass(cls):
@@ -298,6 +331,7 @@ if __name__ == "__main__":
     suite.addTest(TestFrontend("test_user_registration"))
     suite.addTest(TestFrontend("test_user_login"))
     suite.addTest(TestFrontend("test_search"))
+    suite.addTest(TestFrontend("test_ratings"))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
