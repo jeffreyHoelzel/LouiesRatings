@@ -196,6 +196,9 @@ class TestFrontend(unittest.TestCase):
         # make a new search
         search_input.send_keys("cs386")
 
+        # force wait two second
+        self.driver.implicitly_wait(2)
+
         # wait up to 10 seconds for page to loading
         WebDriverWait(self.driver, 10).until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "dropdown")))
 
@@ -212,7 +215,7 @@ class TestFrontend(unittest.TestCase):
 
         # verify the URL has the expected path
         current_url = self.driver.current_url
-        self.assertIn("class/CS 386", current_url, "Routing did not work as expected")
+        self.assertIn("class/CS-386", current_url, "Routing did not work as expected")
 
         
 

@@ -14,22 +14,19 @@ const Search = () => {
     const navigate = useNavigate();
 
     // set up a function to update the value when it is changes
-    const handleInputChange = (input) => {
+    const handleInputChange = async(input) => {
         // this will set the form data to the search variable and call the mutator search function
-        // side note this might change to be dynamic with the search idk how big our data set yet is
-        setSearch(input.target.value);
-
-        // if char count greater tham 3 then call the search function
-        if (input.target.value.length > 3) {
-            handleSearch(input);
+        const newValue = input.target.value;
+        setSearch(newValue);
+        
+        // if char count greater than 3 then call the search function
+        if (newValue.length > 3) {
+            await handleSearch(newValue);
         }
     }
 
     // Define a function to call setSearch function to update the search variable
     const handleSearch = async (input) => {
-
-        // prevents enter from refreshing the page
-        input.preventDefault(); 
 
         // make a fetch request to the API to get the search results
         try {
@@ -38,7 +35,7 @@ const Search = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({query: search}) 
+                body: JSON.stringify({query: input}) 
             })
 
             // if the fetch was successful then update the classes
@@ -73,6 +70,9 @@ const Search = () => {
             await navigate(`/professor/${last}-${first}`);
         }
         else if(type === "class") {
+            // replace space with -
+            item = item.replace(' ', '-');
+
             // this will redirect to the class page
             await navigate(`/class/${item}`);
 
