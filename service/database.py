@@ -1,6 +1,11 @@
 # For accessing webscraping script
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # create sqlalchemy object
 db = SQLAlchemy()
@@ -11,7 +16,7 @@ db = SQLAlchemy()
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(30), nullable=False)
+    password = db.Column(db.LargeBinary, nullable=False) # hashed password as byte string (don't have to mess with encode/decode)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(), nullable=False, unique=True)
@@ -58,7 +63,21 @@ class Comment(db.Model):
             'content': self.content,
             'timestamp': self.timestamp.isoformat()
         }
-      
+
+class InstructorRating(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    instructor_name = db.Column(db.String(20), nullable=False)
+    # rating saved as percentage (allows for dynamic stars)
+    rating = db.Column(db.Float, nullable=False)
+
+class ClassRating(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    class_name = db.Column(db.String(10), nullable=False)
+    # rating saved as percentage (allows for dynamic stars)
+    rating = db.Column(db.Float, nullable=False)
+
 # ====================================
 
 
@@ -99,14 +118,75 @@ def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
     return db.session.query(ClassData).with_entities(ClassData.class_nbr, ClassData.class_name).filter_by(class_name=class_name).all()
 
-def search_instructors(instructor_name: str):
-    # get all instructors (name) from database that match the string up to that point
+def search_for(search: str):
+        
+    # strip any non-alphanumeric characters
+    search = ''.join(e for e in search if e.isalnum())
 
-    # make them distinct
-    instructor_names = ClassData.query.with_entities(ClassData.instructor_name).filter(ClassData.instructor_name.ilike(f"%{instructor_name}%")).distinct().all()
+    # find the first digit in the string
+    numIndex = 0
+    for index, char in enumerate(search):
+        if char.isdigit():
+            numIndex = index
+            break
+
+    # if there is a number, search for class name
+    if numIndex:
+
+        # search for class name 
+        search_results = ClassData.query.with_entities(ClassData.class_name).filter(ClassData.class_name.ilike(f"%{search[:numIndex]} {search[numIndex:]}%")).distinct().all()
+        search_results = [name[0] for name in search_results]
+        return [search_results, "class"]
+
+    # assume name and make them distinct
+    instructor_names = ClassData.query.with_entities(ClassData.instructor_name).filter(ClassData.instructor_name.ilike(f"%{search}%")).distinct().all()
+
+    # combine the two lists into search_results
+    search_results = [name[0] for name in instructor_names]
+
+    return [search_results, "instructor"]
+
+def add_rating(user_id, search_name, rating, by):
+    try:
+        # Check if user has already made a rating for this instructor/class
+        rating_row = rating_exists(user_id, search_name, by=by)
+        if rating_row:
+            # overwrite current rating
+            rating_row.rating = rating
+
+            success_message = 'Previous rating overwritten!'
+        else:
+
+            if by == 'class_name':
+                # Create a new ClassRating object with the provided user_id, class_name, and rating
+                rating_row = ClassRating(user_id=user_id, class_name=search_name, rating=rating)
+            else:
+                # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
+                rating_row = InstructorRating(user_id=user_id, instructor_name=search_name, rating=rating)
+            
+            # Add the new rating to the database session
+            db.session.add(rating_row)
+
+            success_message = 'Rating added!'
+
+        # Commit the session to save changes
+        db.session.commit()
+        
+        # return new/overwritted rating and success mesage
+        return rating_row, success_message
     
-    # convert to list of strings
-    instructor_names = [name[0] for name in instructor_names]
+    except Exception as database_error:
+        # Roll back the session in case of error
+        db.session.rollback()
+        
+        return None, None
 
-    return instructor_names
+def rating_exists(user_id, search_name, by):
+    if by == 'class_name':
+        # return if the user has already given a rating to this class
+        return ClassRating.query.filter_by(user_id=user_id, class_name=search_name).first()
+    else:
+        # return if the user has already given a rating to this instructor
+        return InstructorRating.query.filter_by(user_id=user_id, instructor_name=search_name).first()
+
   # ====================================

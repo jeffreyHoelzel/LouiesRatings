@@ -1,0 +1,28 @@
+.rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;;
+}
+
+.rating p {
+    font-size: 1rem;
+    font-weight: bolder;
+    color: #1A2852;
+}
+
+.rating button {
+    background-color: #1A2852;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 150px;
+}
+
+.rating button:hover {
+    background-color: #F4B51A;
+    color: #1A2852;
+}

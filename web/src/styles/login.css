@@ -71,12 +71,14 @@
   border-radius: 3px;
 }
 
-.login-btn:hover {
+.login-btn:hover, 
+.sign-up-btn:hover {
   background-color: #F4B51A;
   cursor: pointer;
 }
 
-.login-btn:active {
+.login-btn:active, 
+.sign-up-btn:active {
   transform: scale(0.95);
 }
 
@@ -115,4 +117,17 @@
   display: flex;
   flex-direction: column;
   margin-top: 0;
+}
+
+@media (max-height: 650px) {
+  .login-popup, 
+  .login-popup-content {
+    max-height: fit-content;
+  }
+
+  .form-container input[type=text], 
+  .form-container input[type=password],
+  .form-container input[type=email] {
+    height: 35px;
+  }
 }
