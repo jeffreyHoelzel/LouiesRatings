@@ -75,7 +75,7 @@ const ProfessorPage = () => {
     <main className="professor-page container">
       <header className="professor-header">
         <h1>{instructorName}</h1>
-        <hr class="professor-line"></hr>
+        <hr className="professor-line"></hr>
       </header>
 
       <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
