@@ -28,23 +28,31 @@ const Header = () => {
         setTimeout(() => {
             window.location.reload();
         }, 1000);
-      }
+      };
+
+    const directToHomepage = () => {
+        // direct to homepage
+        window.location.href = '/';
+
+        // reload page
+        window.reload();
+    }
 
     // TODO: we should add a route to the logo to lead to main!
     return (
         <header>
             <div className="container">
                 <div className="logo-box">
-                    <Link to="/">
+                    <button onClick={directToHomepage}>
                         <img src="/imgs/logo.png" alt="Logo" />
-                    </Link>
+                    </button>
                 </div>
 
                 <Search/>
 
                 <div className="profile-box">
                     <a className="popup-form" onClick={toggleLoginPopup}>
-                        <img src="imgs/profile.jpeg" alt="Profile Icon" />
+                        <img src="/imgs/profile.jpeg" alt="Profile Icon" />
                     </a>
                 </div>
                 <div>

@@ -26,7 +26,7 @@ const Comments = () => {
     };
 
     const handleSubmit = async ( e ) => {
-        e.preventDefault(); // Corrected the method name here
+        e.preventDefault(); // Corrected the method name here <- Chat is that you?!?!!?
         if ( !userId || !content ) { // Corrected variable name here
             alert( 'Please enter both user ID and comment content.' );
             return;
@@ -98,7 +98,7 @@ const Comments = () => {
                 {comments.map(( comment ) => (
                     <li className="comments" id={ `${comment.user_id}` } key={comment.id}>
                         <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
-                        <button class="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
+                        <button className="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
