@@ -35,7 +35,6 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F4B51A;
 }
 
 .logo-box img {
@@ -44,13 +43,13 @@ header {
 }
 
 .logo-box button {
-    background-color: #F4B51A;
+    background-color: #1A2852;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .logo-box button:hover {
-    background-color: #ffc637;
+    background-color: #243463;
 }
 
 .search-bar-box {
