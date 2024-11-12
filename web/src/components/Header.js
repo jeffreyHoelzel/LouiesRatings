@@ -44,7 +44,7 @@ const Header = () => {
             <div className="container">
                 <div className="logo-box">
                     <button onClick={directToHomepage}>
-                        <img src="/imgs/logo.png" alt="Logo" />
+                        <img src="/imgs/LouiesRatingsLogo.png" alt="Logo" />
                     </button>
                 </div>
 
