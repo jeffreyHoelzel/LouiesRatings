@@ -68,7 +68,7 @@ class Comment(db.Model):
 class InstructorRating(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
-    instructor_name = db.Column(db.String(20), nullable=False)
+    instructor_name = db.Column(db.String(50), nullable=False)
     # rating saved as percentage (allows for dynamic stars)
     rating = db.Column(db.Float, nullable=False)
 
