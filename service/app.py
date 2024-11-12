@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data, Comment, InstructorRating, ClassRating
-from database import add_comment, fetch_comment, delete_comment, search_for, add_rating
+from database import add_comment, fetch_comment, delete_comment, search_for, add_rating, fetch_user_id
 import threading
 import pandas as pd
 import bcrypt as bc
@@ -384,10 +384,16 @@ def post_rating():
         data = request.json  # Get JSON data from the request
 
         # Extract content from the request
-        user_id = data.get('user_id')
+        username = data.get('username')
         rating = data.get('rating')
         search_by = data.get('search_by')
         search_name = data.get(search_by)
+
+        if username:
+            # Get the user id from username
+            user_id = fetch_user_id(username)
+        else:
+            return jsonify({'message': 'Username parameter missing or not provided.'}), 400
 
         # Check if rating is a valid percentage
         if rating > 0 and rating <= 1:
@@ -397,7 +403,7 @@ def post_rating():
             if new_rating:
                 return jsonify({'message': success_message}), 201
             
-            return jsonify({'message': 'Failed to add rating. Check user id and instructor name.'}), 400
+            return jsonify({'message': 'Failed to add rating. Check username and instructor name.'}), 400
             
         return jsonify({'message': 'Failed to add rating. Rating not a valid percentage.'}), 400
 

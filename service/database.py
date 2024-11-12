@@ -223,5 +223,12 @@ def rating_exists(user_id, search_name, by):
     else:
         # return if the user has already given a rating to this instructor
         return InstructorRating.query.filter_by(user_id=user_id, instructor_name=search_name).first()
+    
+
+def fetch_user_id(username):
+    # get user from database using username
+    user = User.query.filter_by(username=username).first()
+    # return user id
+    return user.id
 
   # ====================================
