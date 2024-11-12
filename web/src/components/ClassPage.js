@@ -8,6 +8,7 @@ import SubmitRating from './SubmitRating.js';
 const ClassPage = () => {
   const { classId } = useParams();
   const [classData, setClassData] = useState(null);
+  const [passFailData, setPassFailData] = useState({ passRate: 0, failRate: 0 });
   const [error, setError] = useState(null);
 
   const formatClassId = (id) => {
@@ -31,6 +32,32 @@ const ClassPage = () => {
     };
 
     fetchClassData();
+  }, [formattedClassId]);
+
+  // Fetch pass/fail rate data
+  useEffect(() => {
+    if (formattedClassId) {
+      const fetchPassFailRate = async () => {
+        try {
+          const passFailResponse = await fetch('/service/get_pass_fail_rate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ search_by: 'class_name', class_name: formattedClassId })
+          });
+
+          if (passFailResponse.ok) {
+            const passFailData = await passFailResponse.json();
+            setPassFailData({ passRate: passFailData.pass_rate, failRate: passFailData.fail_rate });
+          } else {
+            console.error('Error fetching pass/fail data');
+          }
+        } catch (err) {
+          console.error('Error fetching pass/fail data', err);
+        }
+      };
+
+      fetchPassFailRate();
+    }
   }, [formattedClassId]);
 
   if (error) return <p>{error}</p>;
@@ -64,7 +91,8 @@ const ClassPage = () => {
 
         <section className="pass-fail-rates">
           <h2>Pass/Fail Rates</h2>
-          <p>Simplified data on pass/fail rates for this class.</p>
+          <p>Pass Rate: {passFailData.passRate.toFixed(2)}%</p>
+          <p>Fail Rate: {passFailData.failRate.toFixed(2)}%</p>        
         </section>
       </div>
 
