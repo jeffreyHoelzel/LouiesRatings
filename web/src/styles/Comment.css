@@ -1,4 +1,46 @@
+.reviews-container {
+  width: 100%;
+}
+
 .review-list {
   margin: 30px auto;
   color: #333;
+}
+
+.review-list ul {
+  list-style: none;
+}
+
+.new-review,
+.review-list ul {
+  background-color: #F9F9F9;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.new-review textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+.new-review button {
+  background-color: #1A2852;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.new-review button:hover {
+  background-color: #F4B51A;
+  color: #1A2852;
 }

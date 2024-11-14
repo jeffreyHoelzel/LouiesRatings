@@ -67,22 +67,26 @@ const Comment = ({instructorName}) => {
   }
 
   return (
-    <div>
-      <h2>Student Reviews</h2>
-      <div className="review-list">
-        <ul>
-          {comments.map((comment) => (
-            <li key={comment.id} className="comment">
-              <strong>@{username}</strong> {comment.content}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <h2>Leave a Review</h2>
-      <div className="new-review">
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your review here..." rows="5"></textarea>
-        <button type="submit" onClick={handleSubmit}>Submit Review</button>
-      </div>
+    <div className="reviews-container">
+      <section className="reviews">
+        <h2>Student Reviews</h2>
+        <div className="review-list">
+          <ul>
+            {comments.map((comment) => (
+              <li key={comment.id} className="comment">
+                <strong>@{username}</strong> {comment.content}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <section className="reviews">
+        <h2>Leave a Review</h2>
+        <div className="new-review">
+          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your review here..." rows="5"></textarea>
+          <button type="submit" onClick={handleSubmit}>Submit Review</button>
+        </div>
+      </section>
     </div>
   );
 }
