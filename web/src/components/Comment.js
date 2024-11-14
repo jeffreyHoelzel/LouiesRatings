@@ -1,109 +1,95 @@
-import React, { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 
-const Comments = () => {
-    const [ comments, setComments ] = useState([]);
-    const [ userId, setUserId ] = useState( '' );
-    const [ content, setContent ] = useState( '' ); // Fixed variable name here
+const Comment = ({instructorName}) => {
+  const [ comments, setComments ] = useState([]);
+  const {loginStatus, username} = AuthenticateUser();
+  const [ content, setContent ] = useState('');
 
-    useEffect(() => {
-        fetchComments();
-    }, []);
+  // Format professorId to "Last Name, First Name" for query --> thank you Will for this function!!!
+  const formatName = (id) => {
+    if (!id) return null;
+    const [lastName, firstName] = id.split('-');
+    if (!lastName || !firstName) return null;
+    return `${lastName.charAt(0).toUpperCase() + lastName.slice(1)}, ${firstName.charAt(0).toUpperCase() + firstName.slice(1)}`;
+  };
 
+  const formattedInstructorName = formatName(instructor);
+
+  // get all comments for a specific instructor's page
+  useEffect(() => {
     const fetchComments = async () => {
-        try {
-            const response = await fetch( 'service/comments' );
+      try {
+        const response = await fetch(`service/comment/load_comments?instructor=${encodeURIComponent(formattedInstructorName)}`);
 
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            const data = await response.json();
-            setComments(data);
-
-        } catch ( error ) {
-            console.error( 'Error fetching comments: ', error );
-        }
-    };
-
-    const handleSubmit = async ( e ) => {
-        e.preventDefault(); // Corrected the method name here <- Chat is that you?!?!!?
-        if ( !userId || !content ) { // Corrected variable name here
-            alert( 'Please enter both user ID and comment content.' );
-            return;
+        if (!response.ok) {
+          throw new Error('Fetching comments failed.');
         }
 
-        try {
-            const response = await fetch( 'service/comments', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }, // Added missing comma here
-                body: JSON.stringify({ user_id: userId, content: content }),
-            });
-
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            setUserId('');
-            setContent('');
-            fetchComments();
-
-        } catch ( error ) {
-            console.error( 'Error submitting comments: ', error );
-        }
-    };
-
-    const handleDeleteComment = async ( id ) => {
-        try {
-            const response = await fetch( `service/comments/delete?id=${encodeURIComponent(id)}`, {
-                method: 'POST',
-            });
-
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            fetchComments();
-
-        } catch ( error ) {
-            console.error( 'Error deleting comment: ', error );
-        }
+        const data = await response.json();
+        setComments(data.comments);
+      } catch (e) {
+        console.error('Error fetching comments: ', e);
+      }
     }
 
-    // The return statement must be inside the Comments component
-    return (
-        <div>
-            <h2>Comments</h2>
-            <form onSubmit={handleSubmit}>
-                    <label htmlFor="userId">User ID:</label>
-                    <input
-                        type="number"
-                        id="userId"
-                        value={ userId }
-                        onChange={(e) => setUserId( e.target.value )}
-                        required
-                    />
-                    <label htmlFor="content">Comment:</label>
-                    <textarea
-                        id="content"
-                        value={ content }
-                        onChange={(e) => setContent( e.target.value )}
-                        required
-                    />
-                <button id="submit" type="submit">Submit Comment</button>
-            </form>
-            <h3>Comment List</h3>
-            <ul id="comment-list">
-                {comments.map(( comment ) => (
-                    <li className="comments" id={ `${comment.user_id}` } key={comment.id}>
-                        <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
-                        <button className="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
+    fetchComments();
+  }, []);
 
-export default Comments;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // check if user logged in
+    if (!loginStatus) {
+      alert('Please log in to submit a rating.');
+      return;
+    }
+
+    // check if user typed anything
+    if (!content) {
+      alert('Enter a comment to submit.');
+      return;
+    }
+
+    // submit a comment
+    try {
+      const response = await fetch('service/comment/post_comment', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({"username": username, "instructor": instructor, "content": content})
+      });
+
+      if (!response.ok) {
+        console.error('Submitting new comment failed.');
+      }
+
+      // comment processed, now display it
+      window.location.reload();
+    } catch (e) {
+      console.error('Error submitting comment: ', e);
+    }
+  }
+
+  return (
+    <div>
+      <h2>Student Reviews</h2>
+      <div className="review-list">
+        <ul>
+          {comments.map((comment) => {
+            <li className="comment">
+              <strong>@{username}</strong> {comment}
+            </li>
+          })}
+        </ul>
+      </div>
+      <h2>Leave a Review</h2>
+      <div className="new-review">
+        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your review here..." rows="5"></textarea>
+        <button type="submit" onClick={handleSubmit}>Submit Review</button>
+      </div>
+    </div>
+  );
+}
+
+export default Comment;
