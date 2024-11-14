@@ -1,39 +1,33 @@
 import {useState, useEffect} from 'react';
+import '../styles/Comment.css';
+import AuthenticateUser from './AuthenticateUser';
 
 const Comment = ({instructorName}) => {
-  const [ comments, setComments ] = useState([]);
+  const [comments, setComments] = useState([]);
   const {loginStatus, username} = AuthenticateUser();
-  const [ content, setContent ] = useState('');
-
-  // Format professorId to "Last Name, First Name" for query --> thank you Will for this function!!!
-  const formatName = (id) => {
-    if (!id) return null;
-    const [lastName, firstName] = id.split('-');
-    if (!lastName || !firstName) return null;
-    return `${lastName.charAt(0).toUpperCase() + lastName.slice(1)}, ${firstName.charAt(0).toUpperCase() + firstName.slice(1)}`;
-  };
-
-  const formattedInstructorName = formatName(instructor);
+  const [content, setContent] = useState('');
 
   // get all comments for a specific instructor's page
   useEffect(() => {
+    if (!instructorName) return;
+
     const fetchComments = async () => {
       try {
-        const response = await fetch(`service/comment/load_comments?instructor=${encodeURIComponent(formattedInstructorName)}`);
+        const response = await fetch(`/service/comment/load_comments?instructorName=${encodeURIComponent(instructorName)}`);
 
         if (!response.ok) {
           throw new Error('Fetching comments failed.');
         }
 
         const data = await response.json();
-        setComments(data.comments);
+        setComments(data);
       } catch (e) {
-        console.error('Error fetching comments: ', e);
+        console.error('Error fetching comments:', e);
       }
     }
 
     fetchComments();
-  }, []);
+  }, [instructorName]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,12 +46,12 @@ const Comment = ({instructorName}) => {
 
     // submit a comment
     try {
-      const response = await fetch('service/comment/post_comment', {
+      const response = await fetch('/service/comment/post_comment', {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({"username": username, "instructor": instructor, "content": content})
+        body: JSON.stringify({"username": username, "instructorName": instructorName, "content": content})
       });
 
       if (!response.ok) {
@@ -65,9 +59,10 @@ const Comment = ({instructorName}) => {
       }
 
       // comment processed, now display it
-      window.location.reload();
+      setComments((prevComments) => [...prevComments, {username, content}]);
+      setContent('');
     } catch (e) {
-      console.error('Error submitting comment: ', e);
+      console.error('Error submitting comment:', e);
     }
   }
 
@@ -76,11 +71,11 @@ const Comment = ({instructorName}) => {
       <h2>Student Reviews</h2>
       <div className="review-list">
         <ul>
-          {comments.map((comment) => {
-            <li className="comment">
-              <strong>@{username}</strong> {comment}
+          {comments.map((comment) => (
+            <li key={comment.id} className="comment">
+              <strong>@{username}</strong> {comment.content}
             </li>
-          })}
+          ))}
         </ul>
       </div>
       <h2>Leave a Review</h2>

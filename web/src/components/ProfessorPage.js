@@ -4,7 +4,7 @@ import '../styles/ProfessorPageStyling.css';
 import Chart from './Chart';
 import DisplayAverageRating from './DisplayAverageRating.js';
 import SubmitRating from './SubmitRating.js';
-import Comment2 from './Comment.js';
+import Comment from './Comment.js';
 
 const ProfessorPage = () => {
   const { professorId } = useParams();
@@ -76,7 +76,7 @@ const ProfessorPage = () => {
     <main className="professor-page container">
       <header className="professor-header">
         <h1>{instructorName}</h1>
-        <hr class="professor-line"></hr>
+        <hr className="professor-line"></hr>
       </header>
 
       <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />

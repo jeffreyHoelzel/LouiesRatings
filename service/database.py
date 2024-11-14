@@ -54,6 +54,7 @@ class ClassData(db.Model):
 class Comment(db.Model):
     id = db.Column( db.Integer, primary_key=True, autoincrement = True )
     user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
+    instructor_name = db.Column(db.String(20), nullable=False)
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
 
@@ -61,6 +62,7 @@ class Comment(db.Model):
         return {
             'id' : self.id,
             'user_id': self.user_id,
+            'instructor_name': self.instructor_name,
             'content': self.content,
             'timestamp': self.timestamp.isoformat()
         }
@@ -122,10 +124,13 @@ def fetch_grade_distribution_data(db: SQLAlchemy):
     db.session.bulk_save_objects(data_to_add)
     db.session.commit()
 
-def add_comment(user_id, content):
+def add_comment(username, instructor_name, content):
     try:
-        # Create a new Comment object with the provided user_id and content
-        new_comment = Comment(user_id=user_id, content=content)
+        # Get user id by provided username
+        user_id = fetch_user_id(username)
+
+        # Create a new Comment object with user_id, instructor name, and content
+        new_comment = Comment(user_id=user_id, instructor_name=instructor_name, content=content)
         
         # Add the new comment to the database session
         db.session.add(new_comment)
@@ -142,6 +147,9 @@ def add_comment(user_id, content):
 
 def fetch_comment(comment_id):
     return Comment.query.get(comment_id)
+
+def fetch_instructor_comments(instructor_name):
+    return Comment.query.filter_by(instructor_name=instructor_name).all()
 
 def delete_comment(comment):
     # Check if the comment exists
