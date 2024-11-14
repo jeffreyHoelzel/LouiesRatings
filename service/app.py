@@ -316,54 +316,27 @@ def get_graph_data():
         
         return jsonify(grade_distributions.to_json(orient='records')), 200
 
-# @app.route('/comments', methods=["GET", "POST"])
-# def handle_comments():
-#     if request.method == 'GET':
-#         # Fetch all comments from the database
-#         comments = Comment.query.all()
-#         return jsonify([comment.serialize() for comment in comments]), 200
-
-#     elif request.method == 'POST':
-#         data = request.json  # Get JSON data from the request
-
-#         # Extract user_id and content from the request
-#         user_id = data.get('user_id')
-#         content = data.get('content')
-
-#         # Use the add_comment function to create a new comment
-#         new_comment = add_comment(user_id, content)
-
-#         if new_comment:
-#             return jsonify({'message': 'Comment added!', 'comment': new_comment.serialize()}), 201
-
-#         return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
-
 @app.route('/comment/load_comments', methods=['GET'])
 def load_comments():
     if request.method == 'GET':
         instructor = request.args.get('instructorName')
-        logger.info('\ninstructor: %s', instructor)
         comments = fetch_instructor_comments(instructor)
 
         if comments:
-            logger.info('\nLoading comments')
             return jsonify([comment.serialize() for comment in comments]), 200
         
 @app.route('/comment/post_comment', methods=['POST'])
 def post_comment():
     if request.method == 'POST':
         data = request.json
-        logger.info('\nData method post?')
 
         # get username, instructor name, and content of comment
         username = data.get('username')
         instructor_name = data.get('instructorName')
         content = data.get('content')
-        logger.info('%s, %s, %s', username, instructor_name, content)
 
         if all([username, instructor_name, content]):
             new_comment = add_comment(username, instructor_name, content)
-            logger.info('\nNew comment: %s', new_comment.serialize())
 
             if new_comment:
                 return jsonify({'message': 'Comment added successfully.', 'comment': new_comment.serialize()}), 201

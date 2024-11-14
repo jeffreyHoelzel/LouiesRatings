@@ -74,7 +74,7 @@ const Comment = ({instructorName}) => {
           <ul>
             {comments.map((comment) => (
               <li key={comment.id} className="comment">
-                <strong>@{username}</strong> {comment.content}
+                <strong>@{comment.username}</strong> {comment.content}
               </li>
             ))}
           </ul>

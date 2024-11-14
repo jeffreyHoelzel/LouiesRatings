@@ -59,9 +59,13 @@ class Comment(db.Model):
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
 
     def serialize( self ):
+        # get username from id for display
+        username = fetch_username(self.user_id)
+
         return {
             'id' : self.id,
             'user_id': self.user_id,
+            'username': username,
             'instructor_name': self.instructor_name,
             'content': self.content,
             'timestamp': self.timestamp.isoformat()
@@ -239,4 +243,9 @@ def fetch_user_id(username):
     # return user id
     return user.id
 
+
+def fetch_username(user_id):
+    user = User.query.filter_by(id=user_id).first()
+
+    return user.username
   # ====================================
