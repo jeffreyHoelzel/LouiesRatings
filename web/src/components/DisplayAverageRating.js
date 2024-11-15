@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import StarRatings from 'react-star-ratings';
-import '../styles/Ratings.css';
+import '../styles/main.css';
 
 export const NUM_STARS = 5;
 

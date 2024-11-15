@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, Person, ClassData, Comment, InstructorRating, ClassRating
-from database import add_comment, fetch_comment, delete_comment, search_for, add_rating
+from database import db, Person, ClassData, InstructorRating, ClassRating
+from database import add_comment, search_for, add_rating, fetch_user_id, fetch_comments
 import threading
 import pandas as pd
 import bcrypt as bc
@@ -266,26 +266,34 @@ def get_class_data():
     else:
         return jsonify({"error": "Class not found"}), 404
 
-@app.route('/get_graph_data', methods=["GET", "POST"])
+@app.route('/get_graph_data', methods=["POST"])
 def get_graph_data():
     if request.method == 'POST':
         request_data = request.json  # Get JSON data from the request
 
         # get specfic class data
         search_by = request_data.get('search_by')
-
-        # get specific data from search name
-        grade_data = list()
-
         search_name = request_data.get(search_by)
+        option = request_data.get('option')
 
+        # initialize the query
+        query = ClassData.query
+
+        # build the filter conditions
         if search_by == 'class_name':
-            grade_data = ClassData.query.filter_by(class_name=search_name).all()
-
+            query = query.filter_by(class_name=search_name)
+            if option != "All":
+                query = query.filter_by(instructor_name=option)
+                
         else:
-            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+            query = query.filter_by(instructor_name=search_name)
+            if option != "All":
+                query = query.filter_by(class_name=option)
 
-        if len(grade_data) == 0:
+        # execute the query and get the result
+        class_data = query.all()
+
+        if len(class_data) == 0:
             # nothing found, so return empty data
             return jsonify({"grade": "empty", "sum":0}), 404
         
@@ -299,7 +307,7 @@ def get_graph_data():
                 'F': data.f,
                 'P': data.p,
                 'W': data.w
-            } for data in grade_data
+            } for data in class_data
         ])
 
         # add row for column sums
@@ -313,41 +321,75 @@ def get_graph_data():
         
         return jsonify(grade_distributions.to_json(orient='records')), 200
 
-@app.route('/comments', methods=["GET", "POST"])
-def handle_comments():
+@app.route('/get_graph_options', methods=["POST"])
+def get_graph_options():
+    if request.method == 'POST':
+        request_data = request.json  # Get JSON data from the request
+
+        # get specfic class data
+        search_by = request_data.get('search_by')
+        search_name = request_data.get(search_by)
+
+        # default option
+        options = ["All"]
+
+        if search_by == 'class_name':
+            class_data = ClassData.query.filter_by(class_name=search_name).all()
+            new_options = [data.instructor_name for data in class_data]
+        else:
+            class_data = ClassData.query.filter_by(instructor_name=search_name).all()
+            new_options = [data.class_name for data in class_data]
+
+        # make unqiue and sort
+        new_options = sorted(list(set(new_options)))
+
+        options += new_options
+        
+        return jsonify(options), 200
+
+@app.route('/comment/load_comments', methods=['GET'])
+def load_comments():
     if request.method == 'GET':
-        # Fetch all comments from the database
-        comments = Comment.query.all()
-        return jsonify([comment.serialize() for comment in comments]), 200
+        review_type = request.args.get('review_type')
+        
+        comments = fetch_comments(review_type)
 
-    elif request.method == 'POST':
-        data = request.json  # Get JSON data from the request
+        if comments:
+            return jsonify([comment.serialize() for comment in comments]), 200
+    
+        return jsonify([]), 400
+        
+@app.route('/comment/post_comment', methods=['POST'])
+def post_comment():
+    if request.method == 'POST':
+        data = request.json
 
-        # Extract user_id and content from the request
-        user_id = data.get('user_id')
+        # get username, instructor/course name, and content of comment
+        username = data.get('username')
+        review_type = data.get('reviewType')
         content = data.get('content')
 
-        # Use the add_comment function to create a new comment
-        new_comment = add_comment(user_id, content)
+        if all([username, review_type, content]):
+            new_comment = add_comment(username, review_type, content)
 
-        if new_comment:
-            return jsonify({'message': 'Comment added!', 'comment': new_comment.serialize()}), 201
-
-        return jsonify({'message': 'Failed to add comment. Check user_id and content.'}), 400
+            if new_comment:
+                return jsonify({'message': 'Comment added successfully.', 'comment': new_comment.serialize()}), 200
+            
+            return jsonify({'message': 'Comment not added. Check content.'}), 400
 
 # Route to delete a comment by ID
-@app.route('/comments/delete', methods=[ "POST" ])
-def remove_comment():
+# @app.route('/comments/delete', methods=[ "POST" ])
+# def remove_comment():
 
-    id = request.args.get('id')
+#     id = request.args.get('id')
 
-    comment = fetch_comment( id )
+#     comment = fetch_comment( id )
 
-    if not comment:
-        return jsonify({ 'message': 'Comment not found' }), 404
+#     if not comment:
+#         return jsonify({ 'message': 'Comment not found' }), 404
 
-    delete_comment( comment )
-    return jsonify({ 'message': 'Comment deleted successfully' }), 200
+#     delete_comment( comment )
+#     return jsonify({ 'message': 'Comment deleted successfully' }), 200
 
 # Route to get total average rating for a professor
 @app.route('/ratings/get_rating', methods=["POST"])
@@ -381,10 +423,16 @@ def post_rating():
         data = request.json  # Get JSON data from the request
 
         # Extract content from the request
-        user_id = data.get('user_id')
+        username = data.get('username')
         rating = data.get('rating')
         search_by = data.get('search_by')
         search_name = data.get(search_by)
+
+        if username:
+            # Get the user id from username
+            user_id = fetch_user_id(username)
+        else:
+            return jsonify({'message': 'Username parameter missing or not provided.'}), 400
 
         # Check if rating is a valid percentage
         if rating > 0 and rating <= 1:
@@ -394,7 +442,7 @@ def post_rating():
             if new_rating:
                 return jsonify({'message': success_message}), 201
             
-            return jsonify({'message': 'Failed to add rating. Check user id and instructor name.'}), 400
+            return jsonify({'message': 'Failed to add rating. Check username and instructor name.'}), 400
             
         return jsonify({'message': 'Failed to add rating. Rating not a valid percentage.'}), 400
 

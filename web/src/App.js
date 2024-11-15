@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './styles/App.css';
+import './styles/main.css';
 import Header from './components/Header';
 import Main from './components/Main';
 import Footer from './components/Footer';
 import ClassPage from './components/ClassPage'; 
-import Comment from './components/Comment';
 import ProfessorPage from './components/ProfessorPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -35,7 +34,6 @@ function App() {
           <Route path="/professor/:professorId" element={<ProfessorPage />} />
           <Route path="/class/:classId" element={<ClassPage />} /> 
         </Routes>
-        <Comment />
         <Footer />
       </div>
     </Router>

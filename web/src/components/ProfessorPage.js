@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../styles/ProfessorPageStyling.css';
+import '../styles/main.css';
 import Chart from './Chart';
 import DisplayAverageRating from './DisplayAverageRating.js';
 import SubmitRating from './SubmitRating.js';
+import Comment from './Comment.js';
 
 const ProfessorPage = () => {
   const { professorId } = useParams();
@@ -73,10 +74,10 @@ const ProfessorPage = () => {
 
   return (
     <main className="professor-page container">
-      <header className="professor-header">
+      <div className="professor-header">
         <h1>{instructorName}</h1>
         <hr className="professor-line"></hr>
-      </header>
+      </div>
 
       <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
       
@@ -98,18 +99,7 @@ const ProfessorPage = () => {
         <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
       </section>
 
-      <section className="reviews">
-        <h2>Student Reviews</h2>
-        <div className="review-list">
-          <p>No reviews yet. Be the first to leave one!</p>
-        </div>
-      </section>
-
-      <section className="leave-review">
-        <h3>Leave a Review</h3>
-        <textarea placeholder="Write your review here..." rows="5"></textarea>
-        <button type="submit">Submit Review</button>
-      </section>
+      <Comment reviewType={instructorName} />
     </main>
   );
 }

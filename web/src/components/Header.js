@@ -5,7 +5,7 @@ import Login from './Login';
 import AuthenticateUser from './AuthenticateUser';
 
 // style imports
-import '../styles/login.css';
+import '../styles/main.css';
 
 
 // make a header component for the website that contains the logo, search bar, and profile icon
@@ -60,7 +60,7 @@ const Header = () => {
                     loginPopup &&
                     <div className="login-popup" id="popup">
                         <div className="login-popup-content">
-                            <span onClick={toggleLoginPopup} class="close-popup">&times;</span>
+                            <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
                                 <Login />
                         </div>
                     </div>
@@ -68,7 +68,7 @@ const Header = () => {
                     loginPopup && 
                     <div className="login-popup" id="popup">
                         <div className="login-popup-content">
-                            <span onClick={toggleLoginPopup} class="close-popup">&times;</span>
+                            <span onClick={toggleLoginPopup} className="close-popup">&times;</span>
                             <div className="successful-login">
                                 <h2 className="username">@{username}</h2>
                                 <a className="sign-out" onClick={logout}>Sign out</a>

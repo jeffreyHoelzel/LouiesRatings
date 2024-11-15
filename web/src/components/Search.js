@@ -1,7 +1,7 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
 
-import '../styles/Search.css';
+import '../styles/main.css';
 
 const Search = () => {
     // make a tied variable and mutator for string inputted
