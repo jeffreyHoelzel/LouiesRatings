@@ -175,9 +175,6 @@ def add_comment(username, review_type, content):
         
         return None
 
-# def fetch_comment(comment_id):
-#     return Comment.query.get(comment_id)
-
 def fetch_comments(search_by):
     logger.info('\nsearch by: %s', search_by)
     if len(search_by) <= MAX_COURSE_NUM_LEN:
@@ -186,11 +183,11 @@ def fetch_comments(search_by):
 
     return InstructorComment.query.filter_by(instructor_name=search_by).all()
 
-def delete_comment(comment):
-    # Check if the comment exists
-    db.session.delete(comment)
-    db.session.commit()
-    return True
+# def delete_comment(comment):
+#     # Check if the comment exists
+#     db.session.delete(comment)
+#     db.session.commit()
+#     return True
     
 def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
