@@ -230,13 +230,13 @@ def rating_exists(user_id, search_name, by):
 
 def fetch_user_id(username):
     # get user from database using username
-    user = User.query.filter_by(username=username).first()
+    user = Person.query.filter_by(username=username).first()
     # return user id
     return user.id
 
 
 def fetch_username(user_id):
-    user = User.query.filter_by(id=user_id).first()
+    user = Person.query.filter_by(id=user_id).first()
 
     return user.username
   # ====================================
