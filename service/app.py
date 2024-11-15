@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, ClassData, fetch_grade_distribution_data, Comment, InstructorRating, ClassRating
-from database import add_comment, fetch_comment, delete_comment, search_for, add_rating, fetch_user_id, fetch_instructor_comments
+from database import db, User, ClassData, fetch_grade_distribution_data, InstructorRating, ClassRating
+from database import add_comment, search_for, add_rating, fetch_user_id, fetch_comments
 import threading
 import pandas as pd
 import bcrypt as bc
@@ -319,43 +319,46 @@ def get_graph_data():
 @app.route('/comment/load_comments', methods=['GET'])
 def load_comments():
     if request.method == 'GET':
-        instructor = request.args.get('instructorName')
-        comments = fetch_instructor_comments(instructor)
+        review_type = request.args.get('review_type')
+        logger.info('\ntype: %s', review_type)
+        comments = fetch_comments(review_type)
 
         if comments:
             return jsonify([comment.serialize() for comment in comments]), 200
+    
+        return jsonify([]), 400
         
 @app.route('/comment/post_comment', methods=['POST'])
 def post_comment():
     if request.method == 'POST':
         data = request.json
 
-        # get username, instructor name, and content of comment
+        # get username, instructor/course name, and content of comment
         username = data.get('username')
-        instructor_name = data.get('instructorName')
+        review_type = data.get('reviewType')
         content = data.get('content')
 
-        if all([username, instructor_name, content]):
-            new_comment = add_comment(username, instructor_name, content)
+        if all([username, review_type, content]):
+            new_comment = add_comment(username, review_type, content)
 
             if new_comment:
-                return jsonify({'message': 'Comment added successfully.', 'comment': new_comment.serialize()}), 201
+                return jsonify({'message': 'Comment added successfully.', 'comment': new_comment.serialize()}), 200
             
             return jsonify({'message': 'Comment not added. Check content.'}), 400
 
 # Route to delete a comment by ID
-@app.route('/comments/delete', methods=[ "POST" ])
-def remove_comment():
+# @app.route('/comments/delete', methods=[ "POST" ])
+# def remove_comment():
 
-    id = request.args.get('id')
+#     id = request.args.get('id')
 
-    comment = fetch_comment( id )
+#     comment = fetch_comment( id )
 
-    if not comment:
-        return jsonify({ 'message': 'Comment not found' }), 404
+#     if not comment:
+#         return jsonify({ 'message': 'Comment not found' }), 404
 
-    delete_comment( comment )
-    return jsonify({ 'message': 'Comment deleted successfully' }), 200
+#     delete_comment( comment )
+#     return jsonify({ 'message': 'Comment deleted successfully' }), 200
 
 # Route to get total average rating for a professor
 @app.route('/ratings/get_rating', methods=["POST"])

@@ -1,33 +1,42 @@
 import {useState, useEffect} from 'react';
-import '../styles/Comment.css';
+import '../styles/main.css';
 import AuthenticateUser from './AuthenticateUser';
 
-const Comment = ({instructorName}) => {
+const Comment = ({reviewType}) => {
   const [comments, setComments] = useState([]);
   const {loginStatus, username} = AuthenticateUser();
   const [content, setContent] = useState('');
 
-  // get all comments for a specific instructor's page
+  // fix bug where comments get duplicated in fetch (not displayed more than once but behind the scenes)
+  const setUniqueComments = (unfilteredComments) => {
+    if (!unfilteredComments) return null;
+    const uniqueComments = unfilteredComments.filter((comment, index, self) =>
+      index === self.findIndex((c) => c.id === comment.id)
+    );
+    setComments(uniqueComments);
+  }
+
+  // get all comments for a specific instructor or course page
   useEffect(() => {
-    if (!instructorName) return;
+    if (!reviewType) return;
 
     const fetchComments = async () => {
       try {
-        const response = await fetch(`/service/comment/load_comments?instructorName=${encodeURIComponent(instructorName)}`);
+        const response = await fetch(`/service/comment/load_comments?review_type=${encodeURIComponent(reviewType)}`);
 
         if (!response.ok) {
           throw new Error('Fetching comments failed.');
         }
 
         const data = await response.json();
-        setComments(data);
+        setUniqueComments(data);
       } catch (e) {
         console.error('Error fetching comments:', e);
       }
     }
 
     fetchComments();
-  }, [instructorName]);
+  }, [reviewType]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,7 +60,7 @@ const Comment = ({instructorName}) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({"username": username, "instructorName": instructorName, "content": content})
+        body: JSON.stringify({"username": username, "reviewType": reviewType, "content": content})
       });
 
       if (!response.ok) {
@@ -59,7 +68,7 @@ const Comment = ({instructorName}) => {
       }
 
       // comment processed, now display it
-      setComments((prevComments) => [...prevComments, {username, content}]);
+      setComments((prevComments) => [...prevComments, {username, content}]); // adding normally and then filtering for duplicates later
       setContent('');
     } catch (e) {
       console.error('Error submitting comment:', e);
@@ -71,13 +80,11 @@ const Comment = ({instructorName}) => {
       <section className="reviews">
         <h2>Student Reviews</h2>
         <div className="review-list">
-          <ul>
-            {comments.map((comment) => (
-              <li key={comment.id} className="comment">
-                <strong>@{comment.username}</strong> {comment.content}
-              </li>
-            ))}
-          </ul>
+          {comments.map((comment) => (
+            <li key={comment.id} className="comment">
+              <strong>@{comment.username}</strong> {comment.content}
+            </li>
+          ))}
         </div>
       </section>
       <section className="reviews">

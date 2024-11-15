@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StarRatings from 'react-star-ratings';
 import { NUM_STARS } from './DisplayAverageRating';
+import AuthenticateUser from './AuthenticateUser';
 import '../styles/main.css';
 
 const SubmitRating = ({className, instructorName, searchBy}) => {

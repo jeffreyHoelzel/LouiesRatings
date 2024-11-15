@@ -99,7 +99,7 @@ const ProfessorPage = () => {
         <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
       </section>
 
-      <Comment instructorName={instructorName} />
+      <Comment reviewType={instructorName} />
     </main>
   );
 }
