@@ -1,109 +1,101 @@
-import React, { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
+import '../styles/main.css';
+import AuthenticateUser from './AuthenticateUser';
 
-const Comments = () => {
-    const [ comments, setComments ] = useState([]);
-    const [ userId, setUserId ] = useState( '' );
-    const [ content, setContent ] = useState( '' ); // Fixed variable name here
+const Comment = ({reviewType}) => {
+  const [comments, setComments] = useState([]);
+  const {loginStatus, username} = AuthenticateUser();
+  const [content, setContent] = useState('');
 
-    useEffect(() => {
-        fetchComments();
-    }, []);
+  // fix bug where comments get duplicated in fetch (not displayed more than once but behind the scenes)
+  const setUniqueComments = (unfilteredComments) => {
+    if (!unfilteredComments) return null;
+    const uniqueComments = unfilteredComments.filter((comment, index, self) =>
+      index === self.findIndex((c) => c.id === comment.id)
+    );
+    setComments(uniqueComments);
+  }
+
+  // get all comments for a specific instructor or course page
+  useEffect(() => {
+    if (!reviewType) return;
 
     const fetchComments = async () => {
-        try {
-            const response = await fetch( 'service/comments' );
+      try {
+        const response = await fetch(`/service/comment/load_comments?review_type=${encodeURIComponent(reviewType)}`);
 
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            const data = await response.json();
-            setComments(data);
-
-        } catch ( error ) {
-            console.error( 'Error fetching comments: ', error );
-        }
-    };
-
-    const handleSubmit = async ( e ) => {
-        e.preventDefault(); // Corrected the method name here <- Chat is that you?!?!!?
-        if ( !userId || !content ) { // Corrected variable name here
-            alert( 'Please enter both user ID and comment content.' );
-            return;
+        if (!response.ok) {
+          throw new Error('Fetching comments failed.');
         }
 
-        try {
-            const response = await fetch( 'service/comments', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }, // Added missing comma here
-                body: JSON.stringify({ user_id: userId, content: content }),
-            });
-
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            setUserId('');
-            setContent('');
-            fetchComments();
-
-        } catch ( error ) {
-            console.error( 'Error submitting comments: ', error );
-        }
-    };
-
-    const handleDeleteComment = async ( id ) => {
-        try {
-            const response = await fetch( `service/comments/delete?id=${encodeURIComponent(id)}`, {
-                method: 'POST',
-            });
-
-            if ( !response.ok ) {
-                throw new Error( 'Network response was not ok' );
-            }
-
-            fetchComments();
-
-        } catch ( error ) {
-            console.error( 'Error deleting comment: ', error );
-        }
+        const data = await response.json();
+        setUniqueComments(data);
+      } catch (e) {
+        console.error('Error fetching comments:', e);
+      }
     }
 
-    // The return statement must be inside the Comments component
-    return (
-        <div>
-            <h2>Comments</h2>
-            <form onSubmit={handleSubmit}>
-                    <label htmlFor="userId">User ID:</label>
-                    <input
-                        type="number"
-                        id="userId"
-                        value={ userId }
-                        onChange={(e) => setUserId( e.target.value )}
-                        required
-                    />
-                    <label htmlFor="content">Comment:</label>
-                    <textarea
-                        id="content"
-                        value={ content }
-                        onChange={(e) => setContent( e.target.value )}
-                        required
-                    />
-                <button id="submit" type="submit">Submit Comment</button>
-            </form>
-            <h3>Comment List</h3>
-            <ul id="comment-list">
-                {comments.map(( comment ) => (
-                    <li className="comments" id={ `${comment.user_id}` } key={comment.id}>
-                        <strong>User { comment.user_id }:</strong> {comment.content} <em>({new Date(comment.timestamp).toLocaleString()})</em>
-                        <button className="trash-can" onClick={() => handleDeleteComment(comment.id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
+    fetchComments();
+  }, [reviewType]);
 
-export default Comments;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // check if user logged in
+    if (!loginStatus) {
+      alert('Please log in to submit a rating.');
+      return;
+    }
+
+    // check if user typed anything
+    if (!content) {
+      alert('Enter a comment to submit.');
+      return;
+    }
+
+    // submit a comment
+    try {
+      const response = await fetch('/service/comment/post_comment', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({"username": username, "reviewType": reviewType, "content": content})
+      });
+
+      if (!response.ok) {
+        console.error('Submitting new comment failed.');
+      }
+
+      // comment processed, now display it
+      setComments((prevComments) => [...prevComments, {username, content}]); // adding normally and then filtering for duplicates later
+      setContent('');
+    } catch (e) {
+      console.error('Error submitting comment:', e);
+    }
+  }
+
+  return (
+    <div className="reviews-container">
+      <section className="reviews">
+        <h2>Student Reviews</h2>
+        <div className="review-list">
+          {comments.map((comment) => (
+            <li key={comment.id} className="comment">
+              <strong>@{comment.username}</strong> {comment.content}
+            </li>
+          ))}
+        </div>
+      </section>
+      <section className="reviews">
+        <h2>Leave a Review</h2>
+        <div className="new-review">
+          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your review here..." rows="5"></textarea>
+          <button type="submit" onClick={handleSubmit}>Submit Review</button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default Comment;

@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 # create sqlalchemy object
 db = SQLAlchemy()
 
+# constants
+MAX_COURSE_NUM_LEN: int = 7
+
 # ====================================
 # DATABASE MODELS
 # ====================================
@@ -51,16 +54,42 @@ class ClassData(db.Model):
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
       
-class Comment(db.Model):
+class InstructorComment(db.Model):
     id = db.Column( db.Integer, primary_key=True, autoincrement = True )
     user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
+    instructor_name = db.Column(db.String(20), nullable=False)
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
 
     def serialize( self ):
+        # get username from id for display
+        username = fetch_username(self.user_id)
+
         return {
             'id' : self.id,
             'user_id': self.user_id,
+            'username': username,
+            'instructor_name': self.instructor_name,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
+    
+class CourseComment(db.Model):
+    id = db.Column( db.Integer, primary_key=True, autoincrement = True )
+    user_id = db.Column( db.Integer, autoincrement=True, nullable=False )
+    class_name = db.Column(db.String(10), nullable=False)
+    content = db.Column( db.Text, nullable=False )
+    timestamp = db.Column( db.DateTime, default=datetime.utcnow)
+
+    def serialize( self ):
+        # get username from id for display
+        username = fetch_username(self.user_id)
+
+        return {
+            'id' : self.id,
+            'user_id': self.user_id,
+            'username': username,
+            'class_name': self.class_name,
             'content': self.content,
             'timestamp': self.timestamp.isoformat()
         }
@@ -122,10 +151,16 @@ def fetch_grade_distribution_data(db: SQLAlchemy):
     db.session.bulk_save_objects(data_to_add)
     db.session.commit()
 
-def add_comment(user_id, content):
+def add_comment(username, review_type, content):
     try:
-        # Create a new Comment object with the provided user_id and content
-        new_comment = Comment(user_id=user_id, content=content)
+        # Get user id by provided username
+        user_id = fetch_user_id(username)
+
+        # Create a new Comment object with user_id, instructor/course name, and content
+        if len(review_type) <= MAX_COURSE_NUM_LEN:
+            new_comment = CourseComment(user_id=user_id, class_name=review_type, content=content)
+        else:
+            new_comment = InstructorComment(user_id=user_id, instructor_name=review_type, content=content)
         
         # Add the new comment to the database session
         db.session.add(new_comment)
@@ -140,14 +175,17 @@ def add_comment(user_id, content):
         
         return None
 
-def fetch_comment(comment_id):
-    return Comment.query.get(comment_id)
+def fetch_comments(search_by):
+    if len(search_by) <= MAX_COURSE_NUM_LEN:
+        return CourseComment.query.filter_by(class_name=search_by).all()
 
-def delete_comment(comment):
-    # Check if the comment exists
-    db.session.delete(comment)
-    db.session.commit()
-    return True
+    return InstructorComment.query.filter_by(instructor_name=search_by).all()
+
+# def delete_comment(comment):
+#     # Check if the comment exists
+#     db.session.delete(comment)
+#     db.session.commit()
+#     return True
     
 def fetch_classes(class_name: str):
     # get all classes (id, name) from database that match the string up to that point
@@ -223,5 +261,17 @@ def rating_exists(user_id, search_name, by):
     else:
         # return if the user has already given a rating to this instructor
         return InstructorRating.query.filter_by(user_id=user_id, instructor_name=search_name).first()
+    
 
+def fetch_user_id(username):
+    # get user from database using username
+    user = User.query.filter_by(username=username).first()
+    # return user id
+    return user.id
+
+
+def fetch_username(user_id):
+    user = User.query.filter_by(id=user_id).first()
+
+    return user.username
   # ====================================

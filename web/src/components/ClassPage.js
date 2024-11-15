@@ -4,6 +4,7 @@ import '../styles/main.css';
 import Chart from './Chart';
 import DisplayAverageRating from './DisplayAverageRating.js';
 import SubmitRating from './SubmitRating.js';
+import Comment from './Comment.js';
 
 const ClassPage = () => {
   const { classId } = useParams();
@@ -101,6 +102,7 @@ const ClassPage = () => {
         <SubmitRating className={classData.code} instructorName={null} searchBy="class_name" />
       </section>
 
+      <Comment reviewType={classData.code} />
     </main>
   );
 }

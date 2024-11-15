@@ -58,50 +58,6 @@ h2 {
     padding-bottom: 5px;
 }
 
-.reviews .review-list {
-    margin-top: 10px;
-    color: #333;
-}
-
-.leave-review {
-    background-color: #F9F9F9;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    width: 100%;
-}
-
-.leave-review h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-.leave-review textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    resize: vertical;
-}
-
-.leave-review button {
-    background-color: #1A2852;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-}
-
-.leave-review button:hover {
-    background-color: #F4B51A;
-    color: #1A2852;
-}
-
 .pass-fail-rates p {
     font-size: larger;
     font-weight: 500;
