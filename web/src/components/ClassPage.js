@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../styles/ClassPageStyling.css';
+import '../styles/main.css';
 import Chart from './Chart';
 import DisplayAverageRating from './DisplayAverageRating.js';
 import SubmitRating from './SubmitRating.js';
