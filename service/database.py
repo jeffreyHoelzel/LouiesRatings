@@ -176,9 +176,7 @@ def add_comment(username, review_type, content):
         return None
 
 def fetch_comments(search_by):
-    logger.info('\nsearch by: %s', search_by)
     if len(search_by) <= MAX_COURSE_NUM_LEN:
-        logger.info('\nsearching by course')
         return CourseComment.query.filter_by(class_name=search_by).all()
 
     return InstructorComment.query.filter_by(instructor_name=search_by).all()

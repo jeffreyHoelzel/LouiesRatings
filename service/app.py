@@ -320,7 +320,7 @@ def get_graph_data():
 def load_comments():
     if request.method == 'GET':
         review_type = request.args.get('review_type')
-        logger.info('\ntype: %s', review_type)
+        
         comments = fetch_comments(review_type)
 
         if comments:
