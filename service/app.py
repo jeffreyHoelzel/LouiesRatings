@@ -269,26 +269,34 @@ def get_class_data():
     else:
         return jsonify({"error": "Class not found"}), 404
 
-@app.route('/get_graph_data', methods=["GET", "POST"])
+@app.route('/get_graph_data', methods=["POST"])
 def get_graph_data():
     if request.method == 'POST':
         request_data = request.json  # Get JSON data from the request
 
         # get specfic class data
         search_by = request_data.get('search_by')
-
-        # get specific data from search name
-        grade_data = list()
-
         search_name = request_data.get(search_by)
+        option = request_data.get('option')
 
+        # initialize the query
+        query = ClassData.query
+
+        # build the filter conditions
         if search_by == 'class_name':
-            grade_data = ClassData.query.filter_by(class_name=search_name).all()
-
+            query = query.filter_by(class_name=search_name)
+            if option != "All":
+                query = query.filter_by(instructor_name=option)
+                
         else:
-            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
+            query = query.filter_by(instructor_name=search_name)
+            if option != "All":
+                query = query.filter_by(class_name=option)
 
-        if len(grade_data) == 0:
+        # execute the query and get the result
+        class_data = query.all()
+
+        if len(class_data) == 0:
             # nothing found, so return empty data
             return jsonify({"grade": "empty", "sum":0}), 404
         
@@ -302,7 +310,7 @@ def get_graph_data():
                 'F': data.f,
                 'P': data.p,
                 'W': data.w
-            } for data in grade_data
+            } for data in class_data
         ])
 
         # add row for column sums
@@ -315,6 +323,32 @@ def get_graph_data():
         grade_distributions = grade_distributions.T.reset_index(drop=False).rename(columns={"index":"grade"})
         
         return jsonify(grade_distributions.to_json(orient='records')), 200
+
+@app.route('/get_graph_options', methods=["POST"])
+def get_graph_options():
+    if request.method == 'POST':
+        request_data = request.json  # Get JSON data from the request
+
+        # get specfic class data
+        search_by = request_data.get('search_by')
+        search_name = request_data.get(search_by)
+
+        # default option
+        options = ["All"]
+
+        if search_by == 'class_name':
+            class_data = ClassData.query.filter_by(class_name=search_name).all()
+            new_options = [data.instructor_name for data in class_data]
+        else:
+            class_data = ClassData.query.filter_by(instructor_name=search_name).all()
+            new_options = [data.class_name for data in class_data]
+
+        # make unqiue and sort
+        new_options = sorted(list(set(new_options)))
+
+        options += new_options
+        
+        return jsonify(options), 200
 
 @app.route('/comment/load_comments', methods=['GET'])
 def load_comments():
