@@ -5,7 +5,7 @@ import Login from './Login';
 import AuthenticateUser from './AuthenticateUser';
 
 // style imports
-import '../styles/login.css';
+import '../styles/main.css';
 
 
 // make a header component for the website that contains the logo, search bar, and profile icon
@@ -44,7 +44,7 @@ const Header = () => {
             <div className="container">
                 <div className="logo-box">
                     <button onClick={directToHomepage}>
-                        <img src="/imgs/logo.png" alt="Logo" />
+                        <img src="/imgs/LouiesRatingsLogo.png" alt="Logo" />
                     </button>
                 </div>
 

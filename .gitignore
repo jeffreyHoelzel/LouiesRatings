@@ -13,6 +13,8 @@ venv
 web/.DS_Store
 web/public/.DS_Store
 web/src/.DS_Store
+web/src/styles/main.css
+web/src/styles/main.css.map
 
 .db
 service/table.db
