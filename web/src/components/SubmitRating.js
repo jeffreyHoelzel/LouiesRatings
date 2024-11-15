@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import StarRatings from 'react-star-ratings';
 import { NUM_STARS } from './DisplayAverageRating';
-import '../styles/Ratings.css';
+import AuthenticateUser from './AuthenticateUser';
+import '../styles/main.css';
 
 const SubmitRating = ({className, instructorName, searchBy}) => {
-    const [ userId, setUserId ] = useState( '' );
+    const {loginStatus, username} = AuthenticateUser();
     const [rating, setRating] = useState(0);
 
     // Catch Rating value
@@ -14,8 +15,13 @@ const SubmitRating = ({className, instructorName, searchBy}) => {
 
     const handleSubmit = async ( e ) => {
         e.preventDefault();
-        if ( !userId || rating == 0 ) {
-            alert( 'Please enter both user ID and rating.' );
+        if (!loginStatus) {
+            alert('Please log in to submit a rating.');
+            return;
+        }
+
+        if (rating === 0) {
+            alert('Choose a rating to submit.');
             return;
         }
 
@@ -25,7 +31,7 @@ const SubmitRating = ({className, instructorName, searchBy}) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ user_id: userId, class_name: className, instructor_name: instructorName, search_by: searchBy, rating: rating/NUM_STARS }),
+                body: JSON.stringify({ username: username, class_name: className, instructor_name: instructorName, search_by: searchBy, rating: rating/NUM_STARS }),
             });
 
             if ( !response.ok ) {
@@ -56,14 +62,6 @@ const SubmitRating = ({className, instructorName, searchBy}) => {
                 starDimension={"25px"}
                 starSpacing={"2px"}
             />
-             <label htmlFor="userId">User ID:</label>
-                <input
-                    type="number"
-                    id="userId"
-                    value={ userId }
-                    onChange={(e) => setUserId( e.target.value )}
-                    required
-                />
             <button type="submit" onClick={handleSubmit}>Submit Rating</button>
         </div>
     )

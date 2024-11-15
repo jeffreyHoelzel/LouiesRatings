@@ -1,0 +1,127 @@
+@media (max-width: 1200px) {
+.class-header h1 {
+  font-size: 2rem;
+}
+
+    .info-sections {
+      flex-direction: column;
+}
+  }
+  
+@media (max-width: 992px) {
+  .class-header h1 {
+    font-size: 1.8rem;
+  }
+
+.info-sections {
+    flex-direction: column;
+    gap: 20px;
+}
+
+.grade-distribution,
+.grade-distribution-graph,
+.pass-fail-rates,
+.instructor-info {
+    flex: unset;
+    width: 100%;
+}
+
+.reviews,
+.leave-review {
+    padding: 15px;
+  }
+  
+.class-header p,
+.pass-fail-rates p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .class-header h1 {
+    font-size: 1.5rem;
+  }
+
+.class-header p {
+    font-size: 0.9rem;
+}
+
+.search-bar {
+    width: 100%;
+    font-size: 14px;
+  }
+
+.info-sections {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.grade-distribution,
+.grade-distribution-graph,
+.pass-fail-rates {
+    width: 100%;
+}
+
+.leave-review button,
+.rating button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .class-page {
+    padding: 20px;
+}
+
+.class-header {
+    padding: 15px;
+  }
+  
+  .class-header h1 {
+    font-size: 1.3rem;
+  }
+
+.search-bar-box h1 {
+    font-size: 1.2rem;
+}
+
+.info-sections {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.grade-distribution-graph {
+    max-width: 100%;
+    min-height: 200px;
+}
+
+.content-box {
+    padding: 10px;
+    min-height: 300px;
+}
+
+.leave-review textarea {
+    font-size: 14px;
+}
+}
+
+@media (max-width: 400px) {
+.class-header h1 {
+    font-size: 1.2rem;
+}
+
+.login-btn,
+.sign-up-btn,
+.rating button {
+    font-size: 0.9rem;
+}
+
+.search-bar {
+    font-size: 12px;
+}
+
+.reviews,
+.leave-review {
+    padding: 10px;
+}
+}

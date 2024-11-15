@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../styles/ClassPageStyling.css';
+import '../styles/main.css';
 import Chart from './Chart';
 import DisplayAverageRating from './DisplayAverageRating.js';
 import SubmitRating from './SubmitRating.js';
+import Comment from './Comment.js';
 
 const ClassPage = () => {
   const { classId } = useParams();
@@ -66,10 +67,10 @@ const ClassPage = () => {
   // If class data is successfully fetched, render the class page
   return (
     <main className="class-page container">
-      <header className="class-header">
+      <div className="class-header">
         <h1>{formattedClassId}</h1>
         <h2>{classData.class_title || 'No Title Available'}</h2>
-      </header>
+      </div>
 
       <DisplayAverageRating className={classData.code} instructorName={null} searchBy="class_name" />
 
@@ -101,6 +102,7 @@ const ClassPage = () => {
         <SubmitRating className={classData.code} instructorName={null} searchBy="class_name" />
       </section>
 
+      <Comment reviewType={classData.code} />
     </main>
   );
 }

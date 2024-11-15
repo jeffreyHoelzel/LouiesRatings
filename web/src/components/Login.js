@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
 // style imports
-import '../styles/login.css';
-import '../styles/homepage.css';
+import '../styles/main.css';
 import RegisterUser from './RegisterUser';
 
 const Login = () => {
