@@ -67,10 +67,10 @@ const ClassPage = () => {
   // If class data is successfully fetched, render the class page
   return (
     <main className="class-page container">
-      <header className="class-header">
+      <div className="class-header">
         <h1>{formattedClassId}</h1>
         <h2>{classData.class_title || 'No Title Available'}</h2>
-      </header>
+      </div>
 
       <DisplayAverageRating className={classData.code} instructorName={null} searchBy="class_name" />
 
