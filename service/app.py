@@ -357,10 +357,7 @@ def load_comments():
         
         comments = fetch_comments(review_type)
 
-        if comments:
-            return jsonify([comment.serialize() for comment in comments]), 200
-    
-        return jsonify([]), 400
+        return jsonify([comment.serialize() for comment in comments]), 200
         
 @app.route('/comment/post_comment', methods=['POST'])
 def post_comment():

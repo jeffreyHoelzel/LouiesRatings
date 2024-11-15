@@ -80,11 +80,11 @@ const Comment = ({reviewType}) => {
       <section className="reviews">
         <h2>Student Reviews</h2>
         <div className="review-list">
-          {comments.map((comment) => (
+          {comments.length ? comments.map((comment) => (
             <li key={comment.id} className="comment">
               <strong>@{comment.username}</strong> {comment.content}
             </li>
-          ))}
+          )) : <p>Be the first to leave a review...</p>}
         </div>
       </section>
       <section className="reviews">
