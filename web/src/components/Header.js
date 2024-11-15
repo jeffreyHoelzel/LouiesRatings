@@ -5,7 +5,7 @@ import Login from './Login';
 import AuthenticateUser from './AuthenticateUser';
 
 // style imports
-import '../styles/login.css';
+import '../styles/main.css';
 
 
 // make a header component for the website that contains the logo, search bar, and profile icon
