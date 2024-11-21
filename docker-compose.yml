@@ -34,13 +34,13 @@ services:
     networks:
       - louie_shared_network
 
-  test:
-    container_name: test
+  acceptance-tests:
+    container_name: acceptance-tests
     build:
-      context: ./unittest
+      context: ./acceptance-tests
       dockerfile: Dockerfile
     volumes:
-      - ./unittest:/app
+      - ./acceptance-tests:/app
     networks:
       - louie_shared_network
     depends_on:

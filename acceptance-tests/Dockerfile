@@ -41,4 +41,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 
 # used to wait for backend and frontend to be available before running test
-CMD ["./wait-for-it.sh", "frontend:3000", "--", "./wait-for-it.sh", "backend:8080", "--", "python", "test.py"]
+CMD ["./wait-for-it.sh", "frontend:3000", "--", "./wait-for-it.sh", "backend:8080", "--", "python", "acceptance_test.py"]
