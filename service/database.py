@@ -59,6 +59,19 @@ class InstructorComment(db.Model):
     instructor_name = db.Column(db.String(20), nullable=False)
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
+
+    def serialize( self ):
+        # get username from id for display
+        username = Account.query.filter_by(id=self.user_id).first().username
+
+        return {
+            'id' : self.id,
+            'user_id': self.user_id,
+            'username': username,
+            'instructor_name': self.instructor_name,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
     
 class CourseComment(db.Model):
     id = db.Column( db.Integer, primary_key=True, autoincrement = True )
@@ -66,6 +79,19 @@ class CourseComment(db.Model):
     class_name = db.Column(db.String(10), nullable=False)
     content = db.Column( db.Text, nullable=False )
     timestamp = db.Column( db.DateTime, default=datetime.utcnow)
+
+    def serialize( self ):
+        # get username from id for display
+        username = Account.query.filter_by(id=self.user_id).first().username
+
+        return {
+            'id' : self.id,
+            'user_id': self.user_id,
+            'username': username,
+            'class_name': self.class_name,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
 
 class InstructorRating(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -123,48 +149,5 @@ def fetch_grade_distribution_data(db: SQLAlchemy):
     # add all data objects to database
     db.session.bulk_save_objects(data_to_add)
     db.session.commit()
-
-def add_rating(user_id, search_name, rating, by):
-    try:
-        # Check if user has already made a rating for this instructor/class
-        rating_row = rating_exists(user_id, search_name, by=by)
-        if rating_row:
-            # overwrite current rating
-            rating_row.rating = rating
-
-            success_message = 'Previous rating overwritten!'
-        else:
-
-            if by == 'class_name':
-                # Create a new ClassRating object with the provided user_id, class_name, and rating
-                rating_row = ClassRating(user_id=user_id, class_name=search_name, rating=rating)
-            else:
-                # Create a new InstructorRating object with the provided user_id, instructor_name, and rating
-                rating_row = InstructorRating(user_id=user_id, instructor_name=search_name, rating=rating)
-            
-            # Add the new rating to the database session
-            db.session.add(rating_row)
-
-            success_message = 'Rating added!'
-
-        # Commit the session to save changes
-        db.session.commit()
-        
-        # return new/overwritted rating and success mesage
-        return rating_row, success_message
-    
-    except Exception as database_error:
-        # Roll back the session in case of error
-        db.session.rollback()
-        
-        return None, None
-
-def rating_exists(user_id, search_name, by):
-    if by == 'class_name':
-        # return if the user has already given a rating to this class
-        return ClassRating.query.filter_by(user_id=user_id, class_name=search_name).first()
-    else:
-        # return if the user has already given a rating to this instructor
-        return InstructorRating.query.filter_by(user_id=user_id, instructor_name=search_name).first()
     
   # ====================================

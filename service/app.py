@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import db
+from database import db, fetch_grade_distribution_data
+import threading
 import os
 import logging
 import sys
@@ -13,6 +14,9 @@ from rating import get_average_rating, add_rating
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger("service")
+
+# turn to true to start filling the database with class information when the server starts
+FILL_DB_WITH_CLASS_DATA = False
 
 # only fill if sqlite database does not already exists on start up
 if not os.path.isfile('table.db'):
@@ -145,9 +149,8 @@ def get_class_data_route():
         return jsonify({"error": "Class ID is required"}), 400
 
     class_data, status_code = get_class_data(class_id)
-
     if class_data:
-        jsonify({"class": class_data}), status_code
+        return jsonify({"class": class_data}), status_code
     
     return jsonify({"error": "Class not found"}), status_code
 
@@ -163,7 +166,7 @@ def get_graph_data_route():
 
         grade_distributions, status_code = get_graph_data(search_by, search_name, option)
         
-        if grade_distributions:
+        if not grade_distributions.empty:
             return jsonify(grade_distributions.to_json(orient='records')), status_code
         
         return jsonify({"error": "No grade distributions for chart found"}), 404
@@ -258,5 +261,16 @@ def post_rating_route():
 
 # ====================================
 
+def fill_db_with_class_data():
+    logger.info("\nWebscraper running...")
+    # only run this to fill database with class data
+    with app.app_context():
+        fetch_grade_distribution_data(db)
+    logger.info("\nWebscraper finished...")
+
 if __name__ == '__main__':
+    if FILL_DB_WITH_CLASS_DATA:
+        thread = threading.Thread(target=fill_db_with_class_data)
+        thread.start()
+
     app.run(host='0.0.0.0', port=8080)

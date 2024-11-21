@@ -1,6 +1,7 @@
-from database import ClassData
+from database import db, ClassData
 import pandas as pd
-from collections import Counter
+from sqlalchemy import func
+from flask import jsonify
 
 def get_professor_data(instructor_name):
     # Split the instructor name into last name and first name and search database for any matching names
@@ -18,7 +19,7 @@ def get_professor_data(instructor_name):
             "semester": course.semester,
             "subject": course.subject,
             "class_name": course.class_name,
-            "section": course.section,
+            "section": course.section
         }
         for course in courses
     ]
@@ -66,18 +67,16 @@ def get_class_data(class_id):
     class_data = ClassData.query.filter_by(class_name=class_id).first()
 
     if class_data:
-        all_class_data = ClassData.query.all()
-
-        all_instructors = [data.instructor_name for data in all_class_data]
-
-        value_counts = Counter(all_instructors)
-
-        most_common_instructor, count = value_counts.most_common(1)[0]
-
+        '''
+        // This works but I will leave it out for now
+        primary_instructor_row = db.session.query(
+            ClassData.instructor_name, func.count(ClassData.instructor_name).label('count')
+            ).filter_by(class_name=class_id).group_by(ClassData.instructor_name).order_by(func.count(ClassData.instructor_name).desc()).first()
+        '''
+                                                       
         return {
             "title": f"{class_data.subject} {class_data.class_name}",
-            "code": class_data.class_name,
-            "instructor": most_common_instructor
+            "code": class_data.class_name
         }, 200
-
+    
     return None, 404

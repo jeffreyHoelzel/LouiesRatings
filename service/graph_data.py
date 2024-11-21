@@ -21,7 +21,7 @@ def get_graph_data(search_by, search_name, option):
 
     if len(class_data) == 0:
         # nothing found, so return empty data
-        return None, 404
+        return pd.DataFrame(), 404
     
     # create pandas data frame user the data, only get relevant information
     grade_distributions= pd.DataFrame([
