@@ -1,6 +1,5 @@
 # For accessing webscraping script
 from flask_sqlalchemy import SQLAlchemy
-from webscraper import get_all_grade_distribution_data_parallel
 from datetime import datetime
 import logging
 
@@ -10,8 +9,6 @@ logger = logging.getLogger(__name__)
 
 # create sqlalchemy object
 db = SQLAlchemy()
-
-
 
 # ====================================
 # DATABASE MODELS
@@ -108,46 +105,3 @@ class ClassRating(db.Model):
     rating = db.Column(db.Float, nullable=False)
 
 # ====================================
-
-
-
-
-# ====================================
-# DATABASE FUNCTIONS
-# ====================================
-def fetch_grade_distribution_data(db: SQLAlchemy):
-    grade_distribution_df = get_all_grade_distribution_data_parallel()
-
-    data_to_add = []
-    
-    # create database object for each row
-    # note: I want to use .tosql, but it won't work
-    for idx, row in grade_distribution_df.iterrows():
-        data = ClassData(
-            semester = row["Semester"],
-            subject = row["Subject"],
-            class_name = row["Class"],
-            section = row["Section"],
-            class_nbr = int(row["Class NBR "]),
-            instructor_name = row["Instructor Name"],
-            a = int(row["A"]),
-            b = int(row["B"]),
-            c = int(row["C"]),
-            d = int(row["D"]),
-            f = int(row["F"]),
-            au = int(row["AU"]),
-            p = int(row["P"]),
-            ng = int(row["NG"]),
-            w = int(row["W"]),
-            i = int(row["I"]),
-            ip = int(row["IP"]),
-            pending = int(row["Pending"]),
-            total = int(row["Total"])
-        )
-        data_to_add.append(data)
-
-    # add all data objects to database
-    db.session.bulk_save_objects(data_to_add)
-    db.session.commit()
-    
-  # ====================================
