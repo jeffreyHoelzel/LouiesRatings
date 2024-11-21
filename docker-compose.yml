@@ -34,6 +34,22 @@ services:
     networks:
       - louie_shared_network
 
+  unit-tests:
+    container_name: unit-tests
+    build:
+      context: ./unit-tests
+      dockerfile: Dockerfile
+    volumes:
+      - ./unit-tests:/app
+      - ./service:/app/service
+    networks:
+      - louie_shared_network
+    depends_on:
+      - frontend
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   acceptance-tests:
     container_name: acceptance-tests
     build:
