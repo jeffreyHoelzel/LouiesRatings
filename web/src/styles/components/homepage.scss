@@ -143,39 +143,39 @@ footer .container {
 .best-rated-box {
     width: 100%;
     padding: 20px;
-    background-color:white;
+    background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 0x;
     border: 2px solid black;
-}
-
-.sections-container {
+  }
+  
+  .sections-container {
     display: flex;
     justify-content: space-between;
     gap: 20px;
-}
-
-.section {
+  }
+  
+  .section {
     flex: 1;
     padding: 15px;
     background-color: #1A2852;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.professor {
+  }
+  
+  .professor {
     text-align: center;
-    margin-bottom: 15px
-}
-
-.professor h2 {
+    margin-bottom: 15px;
+  }
+  
+  .professor h2 {
     font-size: 1.2rem;
     color: white;
     margin-bottom: 8px;
-}
-
-.professor p {
+  }
+  
+  .rating2 p {
     font-size: 1rem;
     color: white;
-}
+  }

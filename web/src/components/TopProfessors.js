@@ -57,7 +57,7 @@ const TopProfessors = () => {
           {col1.map((professor, index) => (
             <div key={index} className="professor">
               <h2>{professor.instructor_name}</h2>
-              <div className="rating">
+              <div className="rating2">
                 <StarRatings 
                   rating={professor.avg_rating * 5}
                   starRatedColor="#F4B51A"
@@ -77,7 +77,7 @@ const TopProfessors = () => {
           {col2.map((professor, index) => (
             <div key={index} className="professor">
               <h2>{professor.instructor_name}</h2>
-              <div className="rating">
+              <div className="rating2">
                 <StarRatings 
                   rating={professor.avg_rating * 5}
                   starRatedColor="#F4B51A"
@@ -97,7 +97,7 @@ const TopProfessors = () => {
           {col3.map((professor, index) => (
             <div key={index} className="professor">
               <h2>{professor.instructor_name}</h2>
-              <div className="rating">
+              <div className="rating2">
                 <StarRatings 
                   rating={professor.avg_rating * 5}
                   starRatedColor="#F4B51A"
