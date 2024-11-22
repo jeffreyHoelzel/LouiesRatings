@@ -71,10 +71,8 @@ class TestBackend(unittest.TestCase):
                 last_name="User",
                 email="testuser1@example.com"
             )
+
             db.session.add(user_data)
-
-
-
             db.session.commit()
 
     def test_course_search(self):
@@ -122,7 +120,31 @@ class TestBackend(unittest.TestCase):
         self.assertEqual(message, "The user specified does not exist. Please try again.")
         self.assertEqual(logged_in, False)
         self.assertEqual(status, 401)
+    
+    def test_add_rating(self):
+        message, status = add_rating("testuser2", 1, "class_name", "CS 249")
+        self.assertEqual(message, 'Rating added!')
+        self.assertEqual(status, 201)
+    
+    def test_average_rating(self):
+        average_rating, status = get_average_rating("class_name", "CS 249")
+        self.assertEqual(average_rating, 1)
+        self.assertEqual(status, 200)
 
+    def test_graph_options(self):
+        options = get_graph_options("class_name", "CS 249")
+        self.assertEqual(options, ["All", "Doe,Jane"])
+    
+    def test_get_graph_data(self):
+        grade_distributions, status = get_graph_data("class_name", "CS 249", "Doe,Jane")
+        self.assertEqual(grade_distributions.loc[0, 'sum'], 20)
+        self.assertEqual(grade_distributions.loc[1, 'sum'], 15)
+        self.assertEqual(grade_distributions.loc[2, 'sum'], 10)
+        self.assertEqual(grade_distributions.loc[3, 'sum'], 5)
+        self.assertEqual(grade_distributions.loc[4, 'sum'], 2)
+        self.assertEqual(grade_distributions.loc[5, 'sum'], 0)
+        self.assertEqual(grade_distributions.loc[6, 'sum'], 3)
+        self.assertEqual(status, 200)
 
     @classmethod
     def tearDownClass(cls):
