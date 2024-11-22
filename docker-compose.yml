@@ -13,8 +13,8 @@ services:
       - REACT_APP_BACKEND_URL=http://backend:8080
     volumes:
       - ./web:/app 
-      - ./web/src/styles:/app/src/styles
       - /app/node_modules
+      - ./web/src/styles:/app/src/styles
     depends_on:
       - backend
     networks:

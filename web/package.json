@@ -2,16 +2,23 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "react-scripts start --html public/LouiesRatings.html",
-    "pretty": "prettier --write ."
+    "start": "concurrently \"react-scripts start\" \"npm run sass-watch\"",
+    "pretty": "prettier --write .",
+    "build-css": "sass src/styles/components/main.scss src/styles/main.css",
+    "sass-watch": "nodemon -e scss -x \"npm run build-css\""
   },
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "4.0.3",
     "react-router-dom": "^6.0.0",
-    "recharts": "^2.9.0",
-    "sass": "^1.43.4"
+    "recharts": "^2.9.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1",
+    "sass": "^1.43.4",
+    "nodemon": "^2.0.15",
+    "concurrently": "^7.2.1"
   },
   "browserslist": {
     "production": [
