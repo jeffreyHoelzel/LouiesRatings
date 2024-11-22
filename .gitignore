@@ -15,6 +15,7 @@ web/public/.DS_Store
 web/src/.DS_Store
 web/src/styles/main.css
 web/src/styles/main.css.map
+web/.npm-cache
 
 .db
 service/table.db
