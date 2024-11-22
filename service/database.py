@@ -1,7 +1,6 @@
 # For accessing webscraping script
 from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
-from webscraper import get_all_grade_distribution_data_parallel
 from datetime import datetime
 import logging
 
@@ -12,13 +11,10 @@ logger = logging.getLogger(__name__)
 # create sqlalchemy object
 db = SQLAlchemy()
 
-# constants
-MAX_COURSE_NUM_LEN: int = 7
-
 # ====================================
 # DATABASE MODELS
 # ====================================
-class User(db.Model):
+class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.LargeBinary, nullable=False) # hashed password as byte string (don't have to mess with encode/decode)
@@ -64,7 +60,7 @@ class InstructorComment(db.Model):
 
     def serialize( self ):
         # get username from id for display
-        username = fetch_username(self.user_id)
+        username = Account.query.filter_by(id=self.user_id).first().username
 
         return {
             'id' : self.id,
@@ -84,7 +80,7 @@ class CourseComment(db.Model):
 
     def serialize( self ):
         # get username from id for display
-        username = fetch_username(self.user_id)
+        username = Account.query.filter_by(id=self.user_id).first().username
 
         return {
             'id' : self.id,

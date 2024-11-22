@@ -74,10 +74,10 @@ const ProfessorPage = () => {
 
   return (
     <main className="professor-page container">
-      <header className="professor-header">
+      <div className="professor-header">
         <h1>{instructorName}</h1>
         <hr className="professor-line"></hr>
-      </header>
+      </div>
 
       <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
       

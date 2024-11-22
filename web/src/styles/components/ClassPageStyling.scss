@@ -3,36 +3,30 @@
     padding: 40px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; 
+    justify-content: space-between;
     min-height: 80vh;
-    background-color: #f9f9f9; 
-    border-radius: 10px; 
 }
 
 /* Class header styling */
-.class-header {
+.course-header {
     align-items: flex-start;
     text-align: center;
-    margin-bottom: 30px;
-    background-color: #fff; 
-    border-radius: 8px; 
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px; 
+    margin-bottom: 10px;
+    background-color: white;
+    border-style: none;
+    z-index: 0;
+    height: 60px;
 }
 
 /* Title styles */
-.class-header h1 {
+.course-header h1 {
     font-size: 2.5rem;
-    color: #1A2852; 
-    margin: 0; 
+    color: #1A2852;
+    font-weight: bold;
 }
 
-/* Description styling */
-.class-header p {
-    font-size: 1.2rem; 
-    color: #555; 
-    margin-top: 5px; 
+.class-instructor {
+    margin-top: 5px;
 }
 
 /* Instructor styling */
@@ -43,8 +37,9 @@
 /* Info sections layout */
 .info-sections {
     display: flex;
-    justify-content: space-between; 
-    gap: 20px; 
+    flex-wrap: wrap;
+    justify-content: space-around; 
+    gap: 25vh;
     margin: 40px 0;
 }
 
@@ -90,4 +85,10 @@
 
 .pass-fail-rates {
     align-self: flex-end;
+}
+
+.class-line {
+    border: none;
+    height: 4px;
+    background-color: #F4B51A;
 }

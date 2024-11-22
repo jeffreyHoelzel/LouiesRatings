@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data, InstructorRating, ClassRating
@@ -9,18 +9,15 @@ import bcrypt as bc
 import os
 import logging
 import sys
+from search import search_for
+from user import add_user, try_login
+from page_data import get_professor_data, get_pass_fail_rate, get_class_data
+from graph_data import get_graph_data, get_graph_options
+from comments import add_comment, fetch_comments
+from rating import get_average_rating, add_rating
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger("service")
-
-# turn to true to start filling the database with class information when the server starts
-FILL_DB_WITH_CLASS_DATA = False
-
-# only fill if sqlite database does not already exists on start up
-if not os.path.isfile('table.db'):
-    FILL_DB_WITH_CLASS_DATA = True
-
-# For testing only
 
 # ====================================
 # Create app
@@ -45,7 +42,7 @@ with app.app_context():
 # BACKEND FUNCTIONS
 # ====================================
 @app.route('/', methods=['GET', 'POST'])
-def send_message():
+def send_message_route():
 
     # checks if form is for post request
     if request.method == 'POST':
@@ -61,7 +58,7 @@ def send_message():
     return jsonify(message="Hello From Backend"), 200
 
 @app.route('/search', methods=['POST'])
-def search():
+def search_route():
 
     # checks if the request is a get type also think Post as a way to send data to the backend to make changes to the data 
     # or just get data from the backend in this case
@@ -79,7 +76,7 @@ def search():
         return jsonify(results), 200
     
 @app.route('/register', methods=['POST'])
-def register():
+def register_route():
     if request.method == 'POST':
         # get JSON data from new user
         data = request.json
@@ -91,108 +88,37 @@ def register():
         first_name = data.get('firstName')
         last_name = data.get('lastName')
 
-        # convert password to byte string
-        byte_password = password.encode('utf-8')
-        # generate salt
-        salt = bc.gensalt()
-        # get hashed password with salt
-        hashed_password = bc.hashpw(byte_password, salt)
+        message, error, status_code = add_user(username, password, email, first_name, last_name)
 
-        # if all credentials are not empty strings, create a new user object, otherwise, throw error
-        if all([username, password, email, first_name, last_name]):
-            new_user = User(username=username, password=hashed_password, email=email, first_name=first_name, last_name=last_name)
-        else:
-            logger.info('\nServer was provided with incomplete information.')
-            return jsonify({'message': 'Server was provided with incomplete information.', 'error': True}), 422
-
-        # search for username and email in database
-        user_db = db.session.query(User).filter_by(username=username, email=email).first()
-
-        # if either are in use, send 403 response (already exists)
-        if user_db is not None:
-            logger.info('\nUsername or email already in use.')
-            return jsonify({'message': 'Username or email already in use.', 'error': True}), 403
-        
-        # otherwise, add user to database
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-        except Exception as database_error:
-            # Roll back the session in case of error
-            db.session.rollback()
-
-        # return success message and 200 response (ok)
-        logger.info('\nNew user successfully added.')
-        return jsonify({'message': 'New user successfully added.', 'error': False}), 200
+        return jsonify({'message': message, 'error': error}), status_code
     
 @app.route('/login', methods=['POST'])
-def login():
+def login_route():
     if request.method == 'POST':
         # get JSON data from user
         data = request.json
         requested_username = data.get('username')
         requested_password = data.get('password')
 
-        # get user from database using username
-        user = db.session.query(User).filter_by(username=requested_username).first()
-        db_password = user.password
-
-        # check if user exists if a valid password is present
-        if user is not None and db_password:
-            # verify password
-            if bc.checkpw(requested_password.encode('utf-8'), db_password):
-                logger.info('\nPasswords match. User logged in successfully.')
-                return jsonify({'message': 'User logged in successfully.', 'exists': True}), 200
-            else:
-                logger.info('\nIncorrect password.')
-                return jsonify({'message': 'Incorrect password. Please try again.', 'exists': False}), 401
-        else:
-            logger.info('\nThe user specified does not exist.')
-            return jsonify({'message': 'The user specified does not exist. Please try again.', 'exists': False}), 401
+        message, exists, status_code = try_login(requested_username, requested_password)
+    
+        return jsonify({'message': message, 'exists': exists}), status_code
     
 @app.route('/professor', methods=['GET'])
-def get_professor_data():
+def get_professor_data_route():
     instructor_name = request.args.get('name')
-    # Testing
-    # app.logger.debug(f"Received request for instructor: {instructor_name}")
 
     if instructor_name:
-        # Split the instructor name into last name and first name and search database for any matching names
-        last_name, first_name = instructor_name.split(", ")
-        courses = ClassData.query.filter(
-            ClassData.instructor_name.ilike(f"%{last_name}%"),
-            ClassData.instructor_name.ilike(f"%{first_name}%")
-        ).all()
-    else:
-        return jsonify({"error": "Professor not found"}), 404
+        full_instructor_name, course_data = get_professor_data(instructor_name)
 
-    # Extract full instructor name from the first matched course, add space following comma
-    full_instructor_name = courses[0].instructor_name
-    
-    course_data = [
-        {
-            "semester": course.semester,
-            "subject": course.subject,
-            "class_name": course.class_name,
-            "section": course.section,
-            "grades": {
-                "A": course.a,
-                "B": course.b,
-                "C": course.c,
-                "D": course.d,
-                "F": course.f,
-                "P": course.p,
-                "W": course.w
-            },
-        }
-        for course in courses
-    ]
+        if full_instructor_name and course_data:
+            # Include the full instructor name in the response
+            return jsonify({"professor": full_instructor_name, "courses": course_data})
 
-    # Include the full instructor name in the response
-    return jsonify({"professor": full_instructor_name, "courses": course_data})
+    return jsonify({"error": "Professor not found"}), 404
 
 @app.route('/get_pass_fail_rate', methods=['POST'])
-def get_pass_fail_rate():
+def get_pass_fail_rate_route():
 
     data = request.json
 
@@ -206,118 +132,57 @@ def get_pass_fail_rate():
         return jsonify({"error": "Invalid search criteria"}), 400
 
     # Fetch grade data from database, setup to work with class or instructor
-    try:
-        if search_by == 'class_name':
-            grade_data = ClassData.query.filter_by(class_name=search_name).all()
-        elif search_by == 'instructor_name':
-            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
-        else:
-            return jsonify({"error": "Invalid search criteria"}), 400
+    pass_rate, fail_rate, message, status_code = get_pass_fail_rate(search_by, search_name)
 
-        if not grade_data:
-            return jsonify({"pass_rate": 0, "fail_rate": 0}), 404
-
-    except Exception as e:
-        return jsonify({"error": "Database query failed"}), 500
-
-    # Create a pandas DataFrame from the grade data to calculate pass/fail rates
-    grade_distributions = pd.DataFrame([{
-        'A': data.a,
-        'B': data.b,
-        'C': data.c,
-        'D': data.d,
-        'F': data.f,
-        'P': data.p,
-    } for data in grade_data])
-
-    grade_sums = grade_distributions.sum(numeric_only=True)
-    total_pass = grade_sums['A'] + grade_sums['B'] + grade_sums['C'] + grade_sums['P']
-    total_fail = grade_sums['D'] + grade_sums['F']
-    total_grades = total_pass + total_fail
-
-    # Calculate final pass/fail rates
-    pass_rate = (total_pass / total_grades * 100) if total_grades > 0 else 0
-    fail_rate = (total_fail / total_grades * 100) if total_grades > 0 else 0
-
-
-    return jsonify({"pass_rate": pass_rate, "fail_rate": fail_rate}), 200
+    if message == None:
+        return jsonify({"pass_rate": pass_rate, "fail_rate": fail_rate}), status_code
+    
+    return jsonify({"error": message}), status_code
 
 @app.route('/class', methods=['GET'])
-def get_class_data():
+def get_class_data_route():
     class_id = request.args.get('classId') 
     if not class_id:
         return jsonify({"error": "Class ID is required"}), 400
 
-    # Fetch class data from the database
-    class_data = ClassData.query.filter_by(class_name=class_id).first()
-
+    class_data, status_code = get_class_data(class_id)
     if class_data:
-        return jsonify({"class": {
-            "title": f"{class_data.subject} {class_data.class_name}",
-            "code": class_data.class_name,
-            "instructor": class_data.instructor_name,
-            "grades": {
-                "A": class_data.a,
-                "B": class_data.b,
-                "C": class_data.c,
-                "D": class_data.d,
-                "F": class_data.f,
-                "P": class_data.p,
-                "W": class_data.w
-            },
-        }}), 200
-    else:
-        return jsonify({"error": "Class not found"}), 404
+        return jsonify({"class": class_data}), status_code
+    
+    return jsonify({"error": "Class not found"}), status_code
 
-@app.route('/get_graph_data', methods=["GET", "POST"])
-def get_graph_data():
+@app.route('/get_graph_data', methods=["POST"])
+def get_graph_data_route():
     if request.method == 'POST':
         request_data = request.json  # Get JSON data from the request
 
         # get specfic class data
         search_by = request_data.get('search_by')
+        search_name = request_data.get(search_by)
+        option = request_data.get('option')
 
-        # get specific data from search name
-        grade_data = list()
+        grade_distributions, status_code = get_graph_data(search_by, search_name, option)
+        
+        if not grade_distributions.empty:
+            return jsonify(grade_distributions.to_json(orient='records')), status_code
+        
+        return jsonify({"error": "No grade distributions for chart found"}), 404
 
+@app.route('/get_graph_options', methods=["POST"])
+def get_graph_options_route():
+    if request.method == 'POST':
+        request_data = request.json  # Get JSON data from the request
+
+        # get specfic class data
+        search_by = request_data.get('search_by')
         search_name = request_data.get(search_by)
 
-        if search_by == 'class_name':
-            grade_data = ClassData.query.filter_by(class_name=search_name).all()
-
-        else:
-            grade_data = ClassData.query.filter_by(instructor_name=search_name).all()
-
-        if len(grade_data) == 0:
-            # nothing found, so return empty data
-            return jsonify({"grade": "empty", "sum":0}), 404
+        options = get_graph_options(search_by, search_name)
         
-        # create pandas data frame user the data, only get relevant information
-        grade_distributions= pd.DataFrame([
-            {
-                'A': data.a,
-                'B': data.b,
-                'C': data.c,
-                'D': data.d,
-                'F': data.f,
-                'P': data.p,
-                'W': data.w
-            } for data in grade_data
-        ])
-
-        # add row for column sums
-        grade_distributions.loc["sum"] = grade_distributions.sum(numeric_only=True)
-
-        # remove all rows except for the last two
-        grade_distributions = grade_distributions.iloc[[-1]]
-
-        # transpose, and make the index a column for grades
-        grade_distributions = grade_distributions.T.reset_index(drop=False).rename(columns={"index":"grade"})
-        
-        return jsonify(grade_distributions.to_json(orient='records')), 200
+        return jsonify(options), 200
 
 @app.route('/comment/load_comments', methods=['GET'])
-def load_comments():
+def load_comments_route():
     if request.method == 'GET':
         review_type = request.args.get('review_type')
         
@@ -362,7 +227,7 @@ def post_comment():
 
 # Route to get total average rating for a professor
 @app.route('/ratings/get_rating', methods=["POST"])
-def get_rating():
+def get_rating_route():
     if request.method == 'POST':
         # Get JSON data from the request
         data = request.json
@@ -371,23 +236,13 @@ def get_rating():
         search_by = data.get('search_by')
         search_name = data.get(search_by)
 
-        # Fetch all ratings on instructor/class from the database
-        if search_by == 'class_name':
-            ratings = ClassRating.query.filter_by(class_name=search_name).all()
-        elif search_by == 'instructor_name':
-            ratings = InstructorRating.query.filter_by(instructor_name=search_name).all()
-        else:
-            return jsonify({"error": "Search by instructor or class name is required"}), 400
-        
-        # get average rating if there are some existing
-        average_rating = 0
-        if len(ratings) > 0:
-            average_rating = (sum([rating.rating for rating in ratings])/len(ratings))
-        return jsonify({'rating': average_rating}), 200
+        average_rating, status_code = get_average_rating(search_by, search_name)
+
+        return jsonify({'rating': average_rating}), status_code
     
 # Route to add rating for a professor
 @app.route('/ratings/post_rating', methods=["POST"])
-def post_rating():
+def post_rating_route():
     if request.method == 'POST':
         data = request.json  # Get JSON data from the request
 
@@ -397,23 +252,9 @@ def post_rating():
         search_by = data.get('search_by')
         search_name = data.get(search_by)
 
-        if username:
-            # Get the user id from username
-            user_id = fetch_user_id(username)
-        else:
-            return jsonify({'message': 'Username parameter missing or not provided.'}), 400
+        message, status_code = add_rating(username, rating, search_by, search_name)
 
-        # Check if rating is a valid percentage
-        if rating > 0 and rating <= 1:
-            new_rating, success_message = add_rating(user_id, search_name, rating, by=search_by)
-
-            # Check if rating was successfully added
-            if new_rating:
-                return jsonify({'message': success_message}), 201
-            
-            return jsonify({'message': 'Failed to add rating. Check username and instructor name.'}), 400
-            
-        return jsonify({'message': 'Failed to add rating. Rating not a valid percentage.'}), 400
+        return jsonify({'message': message}), status_code
 
 @app.route('/top_professors', methods=['GET'])
 def top_professors():
@@ -426,16 +267,5 @@ def top_professors():
 
 # ====================================
 
-def fill_db_with_class_data():
-    logger.info("\nWebscraper running...")
-    # only run this to fill database with class data
-    with app.app_context():
-        fetch_grade_distribution_data(db)
-    logger.info("\nWebscraper finished...")
-
 if __name__ == '__main__':
-    if FILL_DB_WITH_CLASS_DATA:
-        thread = threading.Thread(target=fill_db_with_class_data)
-        thread.start()
-
     app.run(host='0.0.0.0', port=8080)
