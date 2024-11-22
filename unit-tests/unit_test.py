@@ -99,11 +99,30 @@ class TestBackend(unittest.TestCase):
         self.assertEqual(error, True)
         self.assertEqual(status, 403)
 
-    def test_add_user_with_incomplete_info(self):
+    def test_add_user_incomplete_info(self):
         message, error, status = add_user(username="", password="fakepassword123", email="testuser3@example.com", first_name="Test", last_name="User3") # no username, will work for any other missing parameter
         self.assertEqual(message, "Server was provided with incomplete information.")
         self.assertEqual(error, True)
         self.assertEqual(status, 422)
+
+    def test_successful_login(self):
+        message, logged_in, status = try_login(requested_username="testuser1", requested_password="fakepassword123")
+        self.assertEqual(message, "User logged in successfully.")
+        self.assertEqual(logged_in, True)
+        self.assertEqual(status, 200)
+
+    def test_unsuccessful_login(self):
+        message, logged_in, status = try_login(requested_username="testuser1", requested_password="fakepassword") # incorrect password
+        self.assertEqual(message, "Incorrect password. Please try again.")
+        self.assertEqual(logged_in, False)
+        self.assertEqual(status, 401)
+
+    def test_login_user_dne(self):
+        message, logged_in, status = try_login(requested_username="testuser4", requested_password="fakepassword123") # user dne
+        self.assertEqual(message, "The user specified does not exist. Please try again.")
+        self.assertEqual(logged_in, False)
+        self.assertEqual(status, 401)
+
 
     @classmethod
     def tearDownClass(cls):
