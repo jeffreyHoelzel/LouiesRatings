@@ -1,13 +1,19 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import db
+from flask_sqlalchemy import SQLAlchemy
+from database import db, User, ClassData, fetch_grade_distribution_data, InstructorRating, ClassRating
+from database import add_comment, search_for, add_rating, fetch_user_id, fetch_comments, get_top_rated_professors
+import threading
+import pandas as pd
+import bcrypt as bc
+import os
 import logging
 import sys
 from search import search_for
 from user import add_user, try_login
 from page_data import get_professor_data, get_pass_fail_rate, get_class_data
 from graph_data import get_graph_data, get_graph_options
-from comments import add_comment,fetch_comments
+from comments import add_comment, fetch_comments
 from rating import get_average_rating, add_rating
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -249,6 +255,15 @@ def post_rating_route():
         message, status_code = add_rating(username, rating, search_by, search_name)
 
         return jsonify({'message': message}), status_code
+
+@app.route('/top_professors', methods=['GET'])
+def top_professors():
+    if request.method == 'GET':
+        # Fetch top professors
+        professors = get_top_rated_professors()
+
+        # Return the list of professors as JSON, if any, or an empty list if none found
+        return jsonify(professors), 200 if professors else 400
 
 # ====================================
 

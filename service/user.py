@@ -36,10 +36,10 @@ def add_user(username, password, email, first_name, last_name):
 def try_login(requested_username, requested_password):
     # get user from database using username
     user = db.session.query(Account).filter_by(username=requested_username).first()
-    db_password = user.password
 
     # check if user exists if a valid password is present
-    if user is not None and db_password:
+    if user is not None:
+        db_password = user.password # user may be None so password attribute will not be present
         # verify password
         if bc.checkpw(requested_password.encode('utf-8'), db_password):
             return 'User logged in successfully.', True, 200

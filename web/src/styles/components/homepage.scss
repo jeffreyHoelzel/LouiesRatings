@@ -10,7 +10,7 @@
 
 body {
     background: white;
-    min-height: 200vh;
+    min-height: 120vh;
 }
 
 header {
@@ -21,6 +21,10 @@ header {
     background-color: #1A2852;
     min-height: 8vh;
     align-content: center;
+}
+
+.title-box {
+    border: 2px solid black;
 }
 
 .container {
@@ -54,7 +58,7 @@ header {
 }
 
 .logo-box {
-    width: 60px; 
+    width: 50px; 
     height: 60px; 
     display: flex;
     justify-content: center;
@@ -117,7 +121,7 @@ header {
 main {
     padding: 20px;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .content-box {
@@ -133,6 +137,7 @@ main {
 main h1 {
     font-size: 4rem;
     margin-bottom: 10px;
+    color: #1A2852;
 }
 
 footer{
@@ -150,3 +155,43 @@ footer .container {
     height: 60px;
     color: #1A2852;
 }
+
+.best-rated-box {
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0x;
+    border: 2px solid black;
+  }
+  
+  .sections-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .section {
+    flex: 1;
+    padding: 15px;
+    background-color: #1A2852;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .professor {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  .professor h2 {
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 8px;
+  }
+  
+  .rating2 p {
+    font-size: 1rem;
+    color: white;
+  }

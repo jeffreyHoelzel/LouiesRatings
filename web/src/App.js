@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './styles/main.css';
 import Header from './components/Header';
 import Main from './components/Main';
-import Footer from './components/Footer';
 import ClassPage from './components/ClassPage'; 
 import ProfessorPage from './components/ProfessorPage';
+import TopProfessors from './components/TopProfessors';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 
 function App() {
   const [message, setMessage] = useState("Loading...");
@@ -33,8 +34,8 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/professor/:professorId" element={<ProfessorPage />} />
           <Route path="/class/:classId" element={<ClassPage />} /> 
+          <Route path="/top_professors" element={<TopProfessors />} />
         </Routes>
-        <Footer />
       </div>
     </Router>
   );

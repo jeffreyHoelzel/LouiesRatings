@@ -39,7 +39,7 @@ def get_graph_data(search_by, search_name, option):
     # add row for column sums
     grade_distributions.loc["sum"] = grade_distributions.sum(numeric_only=True)
 
-    # remove all rows except for the last two
+    # remove all rows except for the sum
     grade_distributions = grade_distributions.iloc[[-1]]
 
     # transpose, and make the index a column for grades
