@@ -38,13 +38,16 @@ const Header = () => {
         window.reload();
     }
 
-    // TODO: we should add a route to the logo to lead to main!
     return (
         <header>
             <div className="container">
                 <div className="logo-box">
+                    <img src="/imgs/LouiesRatingsLogo.png" alt="Logo" />
+                </div>
+
+                <div className='home-button'>
                     <button onClick={directToHomepage}>
-                        <img src="/imgs/LouiesRatingsLogo.png" alt="Logo" />
+                        <img src="/imgs/home.png" alt="Home Icon"/>
                     </button>
                 </div>
 
