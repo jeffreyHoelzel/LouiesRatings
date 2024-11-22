@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, ClassData, fetch_grade_distribution_data, InstructorRating, ClassRating
-from database import add_comment, search_for, add_rating, fetch_user_id, fetch_comments
+from database import add_comment, search_for, add_rating, fetch_user_id, fetch_comments, get_top_rated_professors
 import threading
 import pandas as pd
 import bcrypt as bc
@@ -414,6 +414,15 @@ def post_rating():
             return jsonify({'message': 'Failed to add rating. Check username and instructor name.'}), 400
             
         return jsonify({'message': 'Failed to add rating. Rating not a valid percentage.'}), 400
+
+@app.route('/top_professors', methods=['GET'])
+def top_professors():
+    if request.method == 'GET':
+        # Fetch top professors
+        professors = get_top_rated_professors()
+
+        # Return the list of professors as JSON, if any, or an empty list if none found
+        return jsonify(professors), 200 if professors else 400
 
 # ====================================
 

@@ -75,6 +75,7 @@ const Comment = ({reviewType}) => {
     }
   }
 
+/*
   return (
     <div className="reviews-container">
       <section className="reviews">
@@ -97,5 +98,32 @@ const Comment = ({reviewType}) => {
     </div>
   );
 }
+*/
+
+return (
+  <div className="reviews-container">
+    <section className="new-review-section">
+      <h2>Leave a Review</h2>
+      <div className="new-review">
+        <textarea 
+          value={content} 
+          onChange={(e) => setContent(e.target.value)} 
+          placeholder="Write your review here..." 
+          rows="5">
+        </textarea>
+        <button type="submit" onClick={handleSubmit}>Submit Review</button>
+      </div>
+    </section>
+    <ul className="review-list">
+      {comments.map((comment) => (
+        <li key={comment.id} className="comment">
+          <strong>@{comment.username}</strong> {comment.content}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+      }
+
 
 export default Comment;

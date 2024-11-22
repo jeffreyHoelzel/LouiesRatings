@@ -1,4 +1,5 @@
 # For accessing webscraping script
+from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
 from webscraper import get_all_grade_distribution_data_parallel
 from datetime import datetime
@@ -274,4 +275,28 @@ def fetch_username(user_id):
     user = User.query.filter_by(id=user_id).first()
 
     return user.username
+
+def get_top_rated_professors():
+    try:
+        # Fetch top-rated professors based on average rating from InstructorRating
+        top_professors = InstructorRating.query \
+            .with_entities(InstructorRating.instructor_name, db.func.avg(InstructorRating.rating).label('avg_rating')) \
+            .group_by(InstructorRating.instructor_name) \
+            .order_by(db.func.avg(InstructorRating.rating).desc()) \
+            .limit(3).all()
+
+        if top_professors:
+            # Return the list of professors with their average ratings
+            return [{
+                'instructor_name': professor.instructor_name,
+                'avg_rating': professor.avg_rating
+            } for professor in top_professors]
+
+        return {'message': 'No top-rated professors found'}, 404
+
+    except Exception as database_error:
+        # Rollback the session in case of error
+        db.session.rollback()
+
+        return {'error': str(database_error)}, 500
   # ====================================
