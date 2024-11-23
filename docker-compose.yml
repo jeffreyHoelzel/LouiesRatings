@@ -11,6 +11,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_BACKEND_URL=http://backend:8080
+      - NODE_OPTIONS=--openssl-legacy-provider
     volumes:
       - ./web:/app 
       - /app/node_modules
