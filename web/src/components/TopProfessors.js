@@ -18,7 +18,6 @@ const TopProfessors = () => {
         }
 
         const text = await response.text();
-        console.log('Raw Response:', text);
 
         // Try to parse the text as JSON
         const data = JSON.parse(text);
