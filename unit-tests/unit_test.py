@@ -146,6 +146,24 @@ class TestBackend(unittest.TestCase):
         self.assertEqual(grade_distributions.loc[6, 'sum'], 3)
         self.assertEqual(status, 200)
 
+    def test_add_course_comment_successfully(self):
+        comment = add_comment(username="testuser1", review_type="CS 249", content="test comment")
+        self.assertEqual(comment.class_name, "CS 249")
+        self.assertEqual(comment.content, "test comment")
+
+    def test_add_instructor_comment_successfully(self):
+        comment = add_comment(username="testuser1", review_type="Doe,Jane", content="test comment")
+        self.assertEqual(comment.instructor_name, "Doe,Jane")
+        self.assertEqual(comment.content, "test comment")
+
+    def test_add_course_comment_unsuccessfully(self):
+        comment = add_comment(username="", review_type="CS 249", content="test comment")
+        self.assertEqual(comment, None)
+
+    def test_add_instructor_comment_unsuccessfully(self):
+        comment = add_comment(username="", review_type="Doe,Jane", content="test comment")
+        self.assertEqual(comment, None)
+
     @classmethod
     def tearDownClass(cls):
         db.session.remove()
