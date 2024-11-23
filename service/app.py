@@ -8,7 +8,7 @@ from user import add_user, try_login
 from page_data import get_professor_data, get_pass_fail_rate, get_class_data
 from graph_data import get_graph_data, get_graph_options
 from comments import add_comment, fetch_comments
-from rating import get_average_rating, add_rating
+from rating import get_average_rating, add_rating, get_top_rated_professors
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger("service")
@@ -249,6 +249,15 @@ def post_rating_route():
         message, status_code = add_rating(username, rating, search_by, search_name)
 
         return jsonify({'message': message}), status_code
+
+@app.route('/top_professors', methods=['GET'])
+def top_professors():
+    if request.method == 'GET':
+        # Fetch top professors
+        professors, status = get_top_rated_professors()
+
+        # Return the list of professors as JSON, if any, or an empty list if none found
+        return jsonify(professors), status
 
 # ====================================
 

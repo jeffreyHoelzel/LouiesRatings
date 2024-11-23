@@ -1,4 +1,5 @@
 # For accessing webscraping script
+from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logging
