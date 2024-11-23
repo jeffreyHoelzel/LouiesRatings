@@ -5,8 +5,6 @@ import { NUM_STARS } from './DisplayAverageRating';
 
 const TopProfessors = () => {
   const [professors, setProfessors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Fetch top professors from the API
   useEffect(() => {
@@ -61,12 +59,12 @@ const TopProfessors = () => {
                 <StarRatings 
                   rating={professor.avg_rating * NUM_STARS}
                   starRatedColor="#F4B51A"
-                  numberOfStars={5}
+                  numberOfStars={NUM_STARS}
                   isSelectable={false}
                   starDimension={"30px"}
                   starSpacing={"4px"}
                 />
-                <p>{professor.avg_rating?.toFixed(2) * NUM_STARS} / 5</p>
+                <p>{professor.avg_rating?.toFixed(2) * NUM_STARS} / {NUM_STARS}</p>
               </div>
             </div>
           ))}
@@ -81,12 +79,12 @@ const TopProfessors = () => {
                 <StarRatings 
                   rating={professor.avg_rating * NUM_STARS}
                   starRatedColor="#F4B51A"
-                  numberOfStars={5}
+                  numberOfStars={NUM_STARS}
                   isSelectable={false}
                   starDimension={"30px"}
                   starSpacing={"4px"}
                 />
-                <p>{professor.avg_rating?.toFixed(2) * NUM_STARS} / 5</p>
+                <p>{professor.avg_rating?.toFixed(2) * NUM_STARS} / {NUM_STARS}</p>
               </div>
             </div>
           ))}
@@ -101,12 +99,12 @@ const TopProfessors = () => {
                 <StarRatings 
                   rating={professor.avg_rating * NUM_STARS}
                   starRatedColor="#F4B51A"
-                  numberOfStars={5}
+                  numberOfStars={NUM_STARS}
                   isSelectable={false}
                   starDimension={"30px"}
                   starSpacing={"4px"}
                 />
-                <p>{professor.avg_rating?.toFixed(2) * NUM_STARS} / 5</p>
+                <p>{professor.avg_rating?.toFixed(2) * NUM_STARS} / {NUM_STARS}</p>
               </div>
             </div>
           ))}
