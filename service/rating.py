@@ -1,5 +1,6 @@
-from database import db, ClassRating, InstructorRating
+from database import db, ClassRating, InstructorRating, ClassData
 from user import fetch_user_id
+from sqlalchemy import func
 
 def get_average_rating(search_by, search_name):
 # Fetch all ratings on instructor/class from the database
@@ -78,3 +79,52 @@ def rating_exists(user_id, search_name, by):
     else:
         # return if the user has already given a rating to this instructor
         return InstructorRating.query.filter_by(user_id=user_id, instructor_name=search_name).first()
+    
+def get_top_rated_professors():
+    num_top_professors = 3
+    try:       
+        # Fetch top-rated professors based on average rating from InstructorRating
+        top_professors = InstructorRating.query \
+            .with_entities(InstructorRating.instructor_name, db.func.avg(InstructorRating.rating).label('avg_rating')) \
+            .group_by(InstructorRating.instructor_name) \
+            .order_by(db.func.avg(InstructorRating.rating).desc()) \
+            .order_by(func.random()) \
+            .limit(num_top_professors).all()
+
+        if len(top_professors) >= 3:
+            return [{
+                'instructor_name': professor.instructor_name,
+                'avg_rating': professor.avg_rating
+            } for professor in top_professors], 200
+
+        # Otherwise, get random professors to fill up the rest
+        avg_ratings = []
+            
+        random_professors = (
+            ClassData.query
+            .with_entities(ClassData.instructor_name)
+            .distinct()
+            .order_by(func.random())
+            .limit(num_top_professors - len(top_professors))  # Only get the needed amount
+            .all()
+        )
+
+        for professor in top_professors:
+            avg_ratings.append({
+                'instructor_name': professor.instructor_name,
+                'avg_rating': professor.avg_rating
+            })
+            
+        for professor in random_professors:
+            avg_ratings.append({
+                'instructor_name': professor.instructor_name,
+                'avg_rating': 0
+            })
+
+        return avg_ratings, 200
+
+    except Exception as database_error:
+        # Rollback the session in case of error
+        db.session.rollback()
+
+        return [], 400
