@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from selenium.common.exceptions import StaleElementReferenceException, ElementClickInterceptedException, TimeoutException
+from selenium.common.exceptions import TimeoutException
 
 class TestFrontend(unittest.TestCase):
     @classmethod
@@ -47,22 +47,6 @@ class TestFrontend(unittest.TestCase):
         
         # navigate back to homepage
         self.driver.get("http://host.docker.internal")
-
-# helper functions =========================
-    def __retry_click(self, by, value, retries=3):
-        # loop over number of retries specified (3 is usually enough)
-        for _ in range(retries):
-            # try to open profile
-            try:
-                btn = WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((by, value)))
-                btn.click()
-                # exit upon success
-                return
-            except (StaleElementReferenceException, ElementClickInterceptedException):
-                # retry if exception thrown
-                pass
-        # throw exception if not found of stale state
-        raise Exception(f"Element not found or still in stale state after {retries} retries, check to see if database has been deleted")
 
     def test_user_registration(self):
         # navigate to the homepage

@@ -71,8 +71,22 @@ class TestBackend(unittest.TestCase):
                 last_name="User",
                 email="testuser1@example.com"
             )
-
             db.session.add(user_data)
+
+            # comment data for testing fetch comments
+            course_comment = CourseComment(
+                user_id=1, 
+                class_name="CS 249", 
+                content="test comment"
+            )
+            instructor_comment = InstructorComment(
+                user_id=1, 
+                instructor_name="Doe,Jane", 
+                content="test comment"
+            )
+            db.session.add(instructor_comment)
+            db.session.add(course_comment)
+
             db.session.commit()
 
     def test_course_search(self):
@@ -163,6 +177,26 @@ class TestBackend(unittest.TestCase):
     def test_add_instructor_comment_unsuccessfully(self):
         comment = add_comment(username="", review_type="Doe,Jane", content="test comment")
         self.assertEqual(comment, None)
+
+    def test_fetch_course_comment_successfully(self):
+        result = fetch_comments(search_by="CS 249")
+        self.assertEqual(result[0].user_id, 1)
+        self.assertEqual(result[0].class_name, "CS 249")
+        self.assertEqual(result[0].content, "test comment")
+
+    def test_fetch_instructor_comment_successfully(self):
+        result = fetch_comments(search_by="Doe,Jane")
+        self.assertEqual(result[0].user_id, 1)
+        self.assertEqual(result[0].instructor_name, "Doe,Jane")
+        self.assertEqual(result[0].content, "test comment")
+
+    def test_fetch_course_comment_unsuccessfully(self):
+        result = fetch_comments(search_by="course dne")
+        self.assertEqual(result, [])
+
+    def test_fetch_instructor_comment_unsuccessfully(self):
+        result = fetch_comments(search_by="instructor dne")
+        self.assertEqual(result, [])
 
     @classmethod
     def tearDownClass(cls):
