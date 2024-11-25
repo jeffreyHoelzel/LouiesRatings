@@ -11,5 +11,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8080
-CMD ["python", "app.py"]
+# used to wait for backend and frontend to be available before running test
+CMD ["python", "unit_test.py"]

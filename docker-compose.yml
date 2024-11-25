@@ -11,10 +11,11 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_BACKEND_URL=http://backend:8080
+      - NODE_OPTIONS=--openssl-legacy-provider
     volumes:
       - ./web:/app 
-      - ./web/src/styles:/app/src/styles
       - /app/node_modules
+      - ./web/src/styles:/app/src/styles
     depends_on:
       - backend
     networks:
@@ -36,13 +37,29 @@ services:
     secrets:
       - db_url
 
-  test:
-    container_name: test
+  unit-tests:
+    container_name: unit-tests
     build:
-      context: ./unittest
+      context: ./unit-tests
       dockerfile: Dockerfile
     volumes:
-      - ./unittest:/app
+      - ./unit-tests:/app
+      - ./service:/app/service
+    networks:
+      - louie_shared_network
+    depends_on:
+      - frontend
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  acceptance-tests:
+    container_name: acceptance-tests
+    build:
+      context: ./acceptance-tests
+      dockerfile: Dockerfile
+    volumes:
+      - ./acceptance-tests:/app
     networks:
       - louie_shared_network
     depends_on:

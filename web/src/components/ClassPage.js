@@ -67,21 +67,12 @@ const ClassPage = () => {
   // If class data is successfully fetched, render the class page
   return (
     <main className="class-page container">
-      <div className="class-header">
+      <div className="course-header">
         <h1>{formattedClassId}</h1>
-        <h2>{classData.class_title || 'No Title Available'}</h2>
+        <hr className="class-line"></hr>
       </div>
 
       <DisplayAverageRating className={classData.code} instructorName={null} searchBy="class_name" />
-
-      <div className="class-description">
-        <p>{classData.description || 'No Description Available'}</p>
-      </div>
-
-      <div className="class-instructor">
-        <h3>Primary instructor for this course:</h3>
-        <p>{classData.instructor || 'No Instructor Available'}</p>
-      </div>
       
       <div className="info-sections">
         <section className="grade-distribution-graph">

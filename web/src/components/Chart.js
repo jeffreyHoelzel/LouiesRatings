@@ -91,7 +91,7 @@ const Chart = ({className, instructorName, searchBy}) => {
             <div className="chart-dropdown">
                 <select value={currOption} onChange={(e) => setCurrOption(e.target.value)}>
                     {options.map((option) => (
-                        <option value={option}>{option}</option>
+                        <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
             </div>
