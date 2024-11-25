@@ -89,6 +89,10 @@ const ClassPage = () => {
     }
   }, [formattedClassId]);
   
+  const handleProfessorClick = (professor) => {
+    const formattedProfessor = professor.toLowerCase().replace(/\s+/g, '-');  // Format the professor name
+    navigate(`/professor/${formattedProfessor}`);
+  };
 
   if (error) return <p>{error}</p>;
   if (!classData) return <p>Loading...</p>;
