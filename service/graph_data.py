@@ -64,7 +64,3 @@ def get_graph_options(search_by, search_name):
     options += new_options
 
     return options
-
-def get_professor_list(search_name):
-    # get all options (minus All)
-    return get_graph_options(search_by='class_name', search_name=search_name).remove('All')
