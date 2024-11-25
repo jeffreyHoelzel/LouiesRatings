@@ -20,8 +20,10 @@ import concurrent.futures
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'service')))
 from database import db, ClassData
 
-# IMPORTANT: REPLACE THIS WITH POSTGRESQL URL
-DATABASE_URL = 'sqlite:///table.db'
+# IMPORTANT: REPLACE THIS WITH POSTGRESQL URL if you want to edit the actual database
+service_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'service'))
+db_path = os.path.join(service_directory, 'table.db')
+DATABASE_URL = f'sqlite:///{db_path}'
 
 NAU_CLASS_DISTRIBUTION_URL = "https://www7.nau.edu/pair/reports/ClassDistribution"
 
@@ -40,11 +42,6 @@ def main():
 
     # create database tables
     with app.app_context():
-        # drop current class_data table
-        with db.session.begin():
-            ClassData.__table__.drop(db.engine)
-
-        db.create_all()
         fetch_grade_distribution_data(db)
 
 # fill database with class data
@@ -78,6 +75,12 @@ def fetch_grade_distribution_data(db: SQLAlchemy):
             total = int(row["Total"])
         )
         data_to_add.append(data)
+    
+    # drop current class_data table
+    db.create_all()
+    with db.session.begin():
+        ClassData.__table__.drop(db.engine)
+    db.create_all()
 
     # add all data objects to database
     db.session.bulk_save_objects(data_to_add)

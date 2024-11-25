@@ -30,7 +30,7 @@ const ProfessorPage = () => {
         // Call professor endpoint with formatted name
         const response = await fetch(`/service/professor?name=${encodeURIComponent(formattedInstructorName)}`);
         if (!response.ok) throw new Error("Professor not found.");
-        
+
         const data = await response.json();
         setProfessorData(data.courses);
         setInstructorName(data.professor);
@@ -53,7 +53,6 @@ const ProfessorPage = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ search_by: 'instructor_name', instructor_name: instructorName })
           });
-
           if (passFailResponse.ok) {
             const passFailData = await passFailResponse.json();
             setPassFailData({ passRate: passFailData.pass_rate, failRate: passFailData.fail_rate });
@@ -64,11 +63,9 @@ const ProfessorPage = () => {
           console.error('Error fetching pass/fail data', err);
         }
       };
-
       fetchPassFailRate();
     }
   }, [instructorName]);
-
   if (error) return <p>{error}</p>;
   if (!professorData) return <p>Loading...</p>;
 
@@ -80,7 +77,7 @@ const ProfessorPage = () => {
       </div>
 
       <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
-      
+
       <div className="info-sections">
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>

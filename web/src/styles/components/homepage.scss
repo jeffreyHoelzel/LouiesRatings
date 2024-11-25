@@ -1,16 +1,15 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
-
     border: none;
 }
 
 body {
     background: white;
     min-height: 200vh;
+    min-height: 120vh;
 }
 
 header {
@@ -19,6 +18,9 @@ header {
     z-index: 1000;
     transition: 0.6s;
     background-color: #1A2852;
+}
+
+.title-box {
     border: 2px solid black;
 }
 
@@ -31,27 +33,24 @@ header {
 
 .logo-box {
     width: 60px; 
+    width: 50px; 
     height: 60px; 
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
 .logo-box img {
     max-width: 100%; 
     max-height: 100%;
 }
-
 .logo-box button {
     background-color: #1A2852;
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
 .logo-box button:hover {
     background-color: #243463;
 }
-
 .search-bar-box {
     display: flex;
     justify-content: flex-start;
@@ -60,7 +59,6 @@ header {
     padding: 0 10px;
     color: white;
 }
-
 .search-bar-box h1 {
     margin-right: 10px;
     font-size: 1.5rem;
@@ -68,7 +66,6 @@ header {
     font-family: 'Roboto';
     color: white;
 }
-
 .search-bar {
     width: 50%;
     padding: 8px;
@@ -77,7 +74,6 @@ header {
     font-size: 16px;
     transition: border-color 0.3s;
 }
-
 .profile-box {
     width: 60px;
     height: 60px;
@@ -87,26 +83,24 @@ header {
     background-color: #1A2852;
     padding: 3px;
 }
-
 .profile-box:hover {
     cursor: pointer;
 }
-
 .profile-box img {
     max-width: 80%;
     max-height: 80%;
     border-radius: 50%;
     border: 2px solid #fff;
 }
-
 main {
     padding: 20px;
     text-align: center;
     margin-top: 20px;
+    margin-top: 10px;
 }
 
 .content-box {
-    background-image: url(../img/notes.webp);
+    background-image: url(img/notes.webp);
     background-size: cover;
     background-position: center;
     padding: 20px;
@@ -114,10 +108,10 @@ main {
     color: #1A2852;
     border: 2px solid black;
 }
-
 main h1 {
     font-size: 4rem;
     margin-bottom: 10px;
+    color: #1A2852;
 }
 
 footer{
@@ -127,7 +121,6 @@ footer{
     background-color: #F4B51A;
     border-top: 2px solid black;
 }
-
 footer .container {
     display: flex;
     justify-content: center;
@@ -135,3 +128,43 @@ footer .container {
     height: 60px;
     color: #1A2852;
 }
+
+.best-rated-box {
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0x;
+    border: 2px solid black;
+  }
+
+  .sections-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .section {
+    flex: 1;
+    padding: 15px;
+    background-color: #1A2852;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .professor {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .professor h2 {
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .rating2 p {
+    font-size: 1rem;
+    color: white;
+  }
