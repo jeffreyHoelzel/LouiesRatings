@@ -33,9 +33,6 @@ const Header = () => {
     const directToHomepage = () => {
         // direct to homepage
         window.location.href = '/';
-
-        // reload page
-        window.reload();
     }
 
     // TODO: we should add a route to the logo to lead to main!
