@@ -66,6 +66,5 @@ def get_graph_options(search_by, search_name):
     return options
 
 def get_professor_list(search_name):
-    class_data = ClassData.query.filter_by(class_name=search_name).all()
-    professor_list = [data.instructor_name for data in class_data]
-    return sorted(list(set(professor_list)))  # Remove duplicates and sort
+    # get all options (minus All)
+    return get_graph_options(search_by='class_name', search_name=search_name)[1:]
