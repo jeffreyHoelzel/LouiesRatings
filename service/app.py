@@ -6,7 +6,7 @@ import sys
 from search import search_for
 from user import add_user, try_login
 from page_data import get_professor_data, get_pass_fail_rate, get_class_data
-from graph_data import get_graph_data, get_graph_options
+from graph_data import get_graph_data, get_graph_options, get_professor_list
 from comments import add_comment, fetch_comments
 from rating import get_average_rating, add_rating, get_top_rated_professors
 
@@ -97,6 +97,20 @@ def login_route():
         message, exists, status_code = try_login(requested_username, requested_password)
     
         return jsonify({'message': message, 'exists': exists}), status_code
+    
+@app.route('/get_professors_for_class', methods=['GET'])
+def get_professors_for_class():
+    class_name = request.args.get('class_name')
+    if not class_name:
+        return jsonify({"error": "Class name is required"}), 400
+
+    professors = get_professor_list(class_name)
+    if not professors:
+        return jsonify({"error": "No professors found for this class"}), 404
+
+    return jsonify(professors), 200
+
+
     
 @app.route('/professor', methods=['GET'])
 def get_professor_data_route():

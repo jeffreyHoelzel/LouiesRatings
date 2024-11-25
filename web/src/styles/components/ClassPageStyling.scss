@@ -92,3 +92,49 @@
     height: 4px;
     background-color: #F4B51A;
 }
+
+/* Professors list container */
+.professors-list ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0;
+    margin: 0;
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    gap: 20px; /* Space between items */
+}
+
+.professors-list li {
+    margin: 0; /* Remove vertical margins */
+    padding: 12px; /* Add padding around each item */
+    font-size: 1rem; /* Adjust font size for readability */
+    background-color: #f9f9f9; /* Subtle background color */
+    border: 1px solid #ddd; /* Add a border for separation */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    flex: 0 1 calc(33% - 20px); /* Allow up to 3 items per row, adjust for spacing */
+    box-sizing: border-box; /* Prevent padding from affecting width */
+}
+
+.professors-list li:hover {
+    background-color: #f4b51a; /* Highlight background on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+    cursor: pointer; /* Indicate the item is clickable */
+}
+
+.professors-list li a {
+    display: flex; /* Arrange content horizontally */
+    justify-content: space-between; /* Space out text and arrow */
+    align-items: center; /* Center align text and icon */
+    text-decoration: none; /* Remove underline */
+    color: #1a2852; /* Neutral link color */
+}
+
+.professors-list li a:hover {
+    color: white; /* Change text color on hover to match the background */
+}
+
+.professors-list li a svg {
+    width: 16px; /* Reduce arrow size */
+    height: 16px;
+    color: inherit; /* Match arrow color with text */
+}
