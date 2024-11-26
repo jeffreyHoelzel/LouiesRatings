@@ -58,9 +58,7 @@ const ProfessorPage = () => {
           <h1>{firstName}</h1>
           <hr className="professor-line"></hr>
 
-          <div className="rating">
-            <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
-          </div>
+          <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
 
           <section className="reviews">
             <h2>Leave a Rating</h2>

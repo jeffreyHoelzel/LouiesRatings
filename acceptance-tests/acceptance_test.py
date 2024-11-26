@@ -42,8 +42,10 @@ class TestFrontend(unittest.TestCase):
 
         # check that the professors name is being displayed correctly
         header_element = self.driver.find_element(By.CLASS_NAME, "professor-header")
-        name = header_element.find_element(By.TAG_NAME, "h1")
-        self.assertEqual("Gerosa,Marco Aurelio", name.text, "Professor page not displaying expected professor name in title")
+        h1_elements = header_element.find_elements(By.TAG_NAME, "h1")
+        h1_texts = [element.text for element in h1_elements]
+        name = ','.join(h1_texts)    
+        self.assertEqual("Gerosa,Marco Aurelio", name, "Professor page not displaying expected professor name in title")
         
         # navigate back to homepage
         self.driver.get("http://host.docker.internal")

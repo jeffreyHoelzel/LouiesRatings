@@ -20,7 +20,8 @@
 
 /* Title styles */
 .course-header h1 {
-    font-size: 2.5rem;
+    font-size: 4rem;
+    text-align: left;
     color: #1A2852;
     font-weight: bold;
 }
@@ -85,6 +86,7 @@
     border: none;
     height: 4px;
     background-color: #F4B51A;
+    margin-bottom: 20px;
 }
 
 /* Professors list container */
@@ -131,4 +133,8 @@
     width: 16px; /* Reduce arrow size */
     height: 16px;
     color: inherit; /* Match arrow color with text */
+}
+
+.professors-list {
+    margin-top: 10px;
 }

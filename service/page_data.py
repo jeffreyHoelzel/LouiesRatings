@@ -39,7 +39,6 @@ def get_class_data(class_id):
         '''
                                                        
         return {
-            "title": f"{class_data.subject} {class_data.class_name}",
             "code": class_data.class_name
         }, 200
     
