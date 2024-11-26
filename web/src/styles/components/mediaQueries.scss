@@ -1,12 +1,16 @@
 @media (max-width: 1200px) {
-.class-header h1 {
-  font-size: 2rem;
-}
-
-    .info-sections {
-      flex-direction: column;
-}
+  .class-header h1 {
+    font-size: 2rem;
   }
+
+  .info-sections {
+    flex-direction: column;
+  }
+
+  .top-content {
+    gap: 10vh;
+  }
+}
   
 @media (max-width: 992px) {
   .class-header h1 {
@@ -66,6 +70,18 @@
 .rating button {
     width: 100%;
   }
+
+.top-content {
+    flex-direction: column;
+    gap: 10vh;
+    justify-content: space-between;
+    min-height: 1000px;
+}
+
+.professor-header h1 {
+  text-align: center;
+}
+  
 }
 
 @media (max-width: 576px) {

@@ -1,3 +1,10 @@
+.top-content {
+    display: flex;
+    flex-direction: row-reverse; 
+    justify-content: space-between;
+    gap: 25vh;
+}
+
 .professor-page {
     padding: 40px;
     display: flex;
@@ -11,7 +18,7 @@
     flex-wrap: wrap;
     justify-content: space-around; 
     gap: 25vh;
-    margin: 40px 0;
+    margin: 0;
 }
 
 .grade-distribution,
@@ -35,7 +42,8 @@
 }
 
 .professor-header h1 {
-    font-size: 2.5rem;
+    font-size: 4rem;
+    text-align: left;
     color: #1A2852;
 }
 
@@ -46,7 +54,6 @@
     margin: 20px 0;
     border-radius: 5px;
     border: 1px solid #ddd;
-    width: 100%;
 }
 
 
@@ -67,4 +74,5 @@ h2 {
     border: none;
     height: 4px;
     background-color: #F4B51A;
+    margin-bottom: 20px;
 }

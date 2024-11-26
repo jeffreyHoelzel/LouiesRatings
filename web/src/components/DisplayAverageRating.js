@@ -40,8 +40,8 @@ const DisplayAverageRating = ({className, instructorName, searchBy}) => {
             starRatedColor="#F4B51A"
             numberOfStars={NUM_STARS}
             isSelectable={false}
-            starDimension={"50px"}
-            starSpacing={"4px"}
+            starDimension={"75px"}
+            starSpacing={"5px"}
         />
         <p>{Math.round(rating * NUM_STARS * 10)/10} / {NUM_STARS}</p>
     </div>

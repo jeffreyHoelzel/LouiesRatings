@@ -11,6 +11,8 @@ const ProfessorPage = () => {
   const [professorData, setProfessorData] = useState(null); // Stores course data
   const [instructorName, setInstructorName] = useState(""); // Exact name from DB
   const [error, setError] = useState(null);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
 
   // Format professorId to "Last Name, First Name" for query
   const formatName = (id) => {
@@ -33,6 +35,10 @@ const ProfessorPage = () => {
         const data = await response.json();
         setProfessorData(data.courses);
         setInstructorName(data.professor);
+        // split the name into first and last
+        setLastName(data.professor.split(",")[0]);
+        setFirstName(data.professor.split(",")[1]);
+
       } catch (err) {
         setError(err.message);
       }
@@ -46,24 +52,30 @@ const ProfessorPage = () => {
 
   return (
     <main className="professor-page container">
-      <div className="professor-header">
-        <h1>{instructorName}</h1>
-        <hr className="professor-line"></hr>
+      <div className="top-content">
+        <div className="professor-header">
+          <h1>{lastName}</h1>
+          <h1>{firstName}</h1>
+          <hr className="professor-line"></hr>
+
+          <div className="rating">
+            <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
+          </div>
+
+          <section className="reviews">
+            <h2>Leave a Rating</h2>
+            <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
+          </section>
+
+        </div>
+
+        <div className="info-sections">
+          <section className="grade-distribution-graph">
+            <h2>Grade Distribution Graph</h2>
+            <Chart className={null} instructorName={instructorName} searchBy="instructor_name" />
+          </section>
+        </div>
       </div>
-
-      <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
-
-      <div className="info-sections">
-        <section className="grade-distribution-graph">
-          <h2>Grade Distribution Graph</h2>
-          <Chart className={null} instructorName={instructorName} searchBy="instructor_name" />
-        </section>
-      </div>
-
-      <section className="reviews">
-        <h2>Leave a Rating</h2>
-        <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
-      </section>
 
       <Comment reviewType={instructorName} />
     </main>
