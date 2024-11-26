@@ -64,8 +64,15 @@ const ClassPage = () => {
   }, [formattedClassId]);
   
   const handleProfessorClick = (professor) => {
-    const formattedProfessor = professor.toLowerCase().replace(/\s+/g, '-');  // Format the professor name
-    navigate(`/professor/${formattedProfessor}`);
+    const prof = professor.toLowerCase();
+
+    // split the name into first and last
+    const last = prof.split(",")[0];
+
+    // in case of multiple "first" names
+    const first = prof.split(",")[1].split(' ')[0];
+
+    navigate(`/professor/${last}-${first}`);
   };
 
   if (error) return <p>{error}</p>;
