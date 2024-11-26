@@ -6,6 +6,7 @@ const Chart = ({className, instructorName, searchBy}) => {
     const [data, setData] = useState([{grade: "empty", sum:0}]); // Initialize data that is graphed as empty
     const [options, setOptions] = useState(["All"]);
     const [currOption, setCurrOption] = useState("All");
+    const [passFailData, setPassFailData] = useState({ passRate: 0, failRate: 0, withdrawRate: 0 });
 
     // fetch options
     useEffect(() => {
@@ -65,8 +66,11 @@ const Chart = ({className, instructorName, searchBy}) => {
                 if( response.ok ) {
                     // fill chart with fetched data
                     const tempData = await response.json();
-                    const chartData = JSON.parse(tempData);
+                    const chartData = JSON.parse(tempData.grade_distributions);
                     setData(chartData)
+                    
+                    // get pass fail rates
+                    setPassFailData({ passRate: tempData.pass_rate, failRate: tempData.fail_rate, withdrawRate: tempData.withdraw_rate });
                 }
                 else {
                     throw new Error('Fetching chart data was response unsuccessful');
@@ -94,6 +98,13 @@ const Chart = ({className, instructorName, searchBy}) => {
                         <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
+            </div>
+
+            
+            <div className="pass-fail-rates">
+            <p>Pass Rate: {passFailData.passRate.toFixed(2)}%</p>
+            <p>Fail Rate: {passFailData.failRate.toFixed(2)}%</p>
+            <p>Withdraw Rate: {passFailData.withdrawRate.toFixed(2)}%</p>
             </div>
         </div>
     );

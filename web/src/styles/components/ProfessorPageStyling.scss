@@ -15,8 +15,8 @@
 }
 
 .grade-distribution,
-.grade-distribution-graph,
-.pass-fail-rates {
+.grade-distribution-graph
+{
     flex: 1; 
     background-color: #F9F9F9;
     padding: 20px;
@@ -56,20 +56,6 @@ h2 {
     margin-bottom: 10px;
     border-bottom: 2px solid #F4B51A;
     padding-bottom: 5px;
-}
-
-.pass-fail-rates p {
-    font-size: larger;
-    font-weight: 500;
-}
-
-.pass-fail-rates {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    min-width: 40vh;
-    height: 30vh;
 }
 
 .grade-distribution-graph {

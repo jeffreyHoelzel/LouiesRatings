@@ -46,7 +46,6 @@
 /* Styles for individual sections */
 .grade-distribution,
 .grade-distribution-graph,
-.pass-fail-rates,
 .instructor-info {
     flex: 1; 
     background-color: #fff; 
@@ -81,10 +80,6 @@
 /* Specific styles for pass-fail rates and grade distribution sections */
 .grade-distribution {
     align-self: flex-start;
-}
-
-.pass-fail-rates {
-    align-self: flex-end;
 }
 
 .class-line {

@@ -38,32 +38,6 @@ const ClassPage = () => {
     fetchClassData();
   }, [formattedClassId]);
 
-  // Fetch pass/fail rate data
-  useEffect(() => {
-    if (formattedClassId) {
-      const fetchPassFailRate = async () => {
-        try {
-          const passFailResponse = await fetch('/service/get_pass_fail_rate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ search_by: 'class_name', class_name: formattedClassId })
-          });
-
-          if (passFailResponse.ok) {
-            const passFailData = await passFailResponse.json();
-            setPassFailData({ passRate: passFailData.pass_rate, failRate: passFailData.fail_rate });
-          } else {
-            console.error('Error fetching pass/fail data');
-          }
-        } catch (err) {
-          console.error('Error fetching pass/fail data', err);
-        }
-      };
-
-      fetchPassFailRate();
-    }
-  }, [formattedClassId]);
-
   // Fetch associated professors
   useEffect(() => {
     console.log('Fetching professors for class:', formattedClassId); // Log to verify the class name
@@ -111,13 +85,6 @@ const ClassPage = () => {
         <section className="grade-distribution-graph">
           <h2>Grade Distribution Graph</h2>
           <Chart className={classData.code} instructorName={null} searchBy="class_name" />
-        </section>
-      
-
-        <section className="pass-fail-rates">
-          <h2>Pass/Fail Rates</h2>
-          <p>Pass Rate: {passFailData.passRate.toFixed(2)}%</p>
-          <p>Fail Rate: {passFailData.failRate.toFixed(2)}%</p>        
         </section>
       </div>
 
