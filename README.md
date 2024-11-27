@@ -25,7 +25,8 @@ Louie's Ratings is an NAU class information aggregator website. A web based tool
 ---
 <a href="https://github.com/jeffreyHoelzel/LouiesRatings/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=jeffreyHoelzel/LouiesRatings" />
-</a>
+</a><br><br>
+
 See how to contribute in [contributing](./CONTRIBUTING.MD).
 
 ## License
