@@ -35,17 +35,20 @@ const Header = () => {
         window.location.href = '/';
     }
 
-    // TODO: we should add a route to the logo to lead to main!
     return (
         <header>
             <div className="container">
                 <div className="logo-box">
-                    <button onClick={directToHomepage}>
-                        <img src="/imgs/LouiesRatingsLogo.png" alt="Logo" />
-                    </button>
+                    <img src="/imgs/LouiesRatingsLogo.png" alt="Logo" />
                 </div>
 
                 <Search/>
+
+                <div className="home-button">
+                    <button onClick={directToHomepage}>
+                        <img src="/imgs/home.png" alt="Home Icon" />
+                    </button>
+                </div>
 
                 <div className="profile-box">
                     <a className="popup-form" onClick={toggleLoginPopup}>

@@ -18,8 +18,29 @@ header {
     z-index: 1000;
     transition: 0.6s;
     background-color: #1A2852;
+    align-content: center;
+    max-height: fit-content;
 }
 
+.home-button {
+    width: 60px;
+    max-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1A2852;
+    padding: 10px;
+    margin-right: 10px;
+}
+.home-button img {
+    width: 100%;
+    height: 100%;
+    background-color: #1A2852;
+    display: block;
+}
+.home-button img:hover {
+    cursor: pointer;
+}
 .title-box {
     border: 2px solid black;
 }
@@ -32,9 +53,8 @@ header {
 }
 
 .logo-box {
-    width: 60px; 
-    width: 50px; 
-    height: 60px; 
+    width: 80px; 
+    height: 80px; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,21 +63,14 @@ header {
     max-width: 100%; 
     max-height: 100%;
 }
-.logo-box button {
-    background-color: #1A2852;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-.logo-box button:hover {
-    background-color: #243463;
-}
 .search-bar-box {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     flex-grow: 1;
     padding: 0 10px;
     color: white;
+    align-self: center;
 }
 .search-bar-box h1 {
     margin-right: 10px;
@@ -94,7 +107,7 @@ header {
 }
 main {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 60px;
     margin-bottom: 20px;
 }
 
@@ -103,7 +116,7 @@ main {
     background-size: 100% auto;
     background-position: center;
     background-repeat: no-repeat;
-    margin: 0;
+    margin-bottom: 20px;
     width: 100vw;
     height: 33vw;
     display: flex;
@@ -160,7 +173,6 @@ footer .container {
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 0x;
-    border: 2px solid black;
   }
 
   .sections-container {
