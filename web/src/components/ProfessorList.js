@@ -20,7 +20,7 @@ const ProfessorList = ({ professors, handleProfessorClick }) => {
             onClick={() => handleProfessorClick(professor)}  // Use the click handler
           >
             <Link 
-               to={`/professor/${encodeURIComponent(professor.toLowerCase().replace(/\s+/g, '-'))}`}
+               to='#' // no navigation because it is handled in handleProfessorClick
               className="flex items-center justify-between text-blue-600 hover:text-blue-800"
             >
               <span>{professor}</span>
