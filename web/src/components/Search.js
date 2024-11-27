@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect , useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import '../styles/main.css';
@@ -6,6 +7,8 @@ import '../styles/main.css';
 const Search = () => {
     // make a tied variable and mutator for string inputted
     const [search, setSearch] = React.useState("");
+
+    const [placeholder, setPlaceholder] = useState("Search (e.g. CS249 or 'Doe, Jane')");
 
     // this pair will hold the classes from search and the other will update the classes
     const [filteredResults, setFilteredResults] = React.useState([]);
@@ -84,13 +87,32 @@ const Search = () => {
         window.location.reload();
     }
 
+    // Adjust placeholder text based on screen size
+    // Longer text was cutting off on mobile
+    useEffect(() => {
+        const updatePlaceholder = () => {
+            if (window.innerWidth <= 768) {
+                setPlaceholder('Search...');
+            } else {
+                setPlaceholder("Search (e.g. CS249 or 'Doe, Jane')");
+            }
+        };
+
+        // Add event listener for resizing
+        window.addEventListener('resize', updatePlaceholder);
+
+        // Initial check
+        updatePlaceholder();
+
+        // Clean up event listener
+        return () => window.removeEventListener('resize', updatePlaceholder);
+    }, []);
 
     return (
         <div className="search-bar-box">
-            <h1>Louie's Ratings</h1>
 
             <div className="search-container">
-                <input type="text" className="search-bar" placeholder="Search..." value={search} onChange={handleInputChange}/>
+                <input type="text" className="search-bar" placeholder={placeholder} value={search} onChange={handleInputChange}/>
 
                 
                 {search && filteredResults.length > 0 && filteredResults[0].length > 0 && (
