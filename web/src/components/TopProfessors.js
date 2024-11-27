@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import '../styles/main.css';
 import { NUM_STARS } from './DisplayAverageRating';
 
 const TopProfessors = () => {
   const [professors, setProfessors] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch top professors from the API
   useEffect(() => {
@@ -41,6 +43,18 @@ const TopProfessors = () => {
     professors.length
   );
 
+  function handleProfessorClick(professor) {
+    const prof = professor.toLowerCase();
+
+    // split the name into first and last
+    const last = prof.split(",")[0];
+
+    // in case of multiple "first" names
+    const first = prof.split(",")[1].split(' ')[0];
+
+    navigate(`/professor/${last}-${first}`);
+  }
+
   return (
     <div className="best-rated-box">
       <h2>Top Rated Professors</h2>
@@ -49,7 +63,7 @@ const TopProfessors = () => {
         {/* Column 1 */}
         <div className="section">
           {col1.map((professor, index) => (
-            <div key={index} className="professor">
+            <div key={index} className="professor" onClick={() => handleProfessorClick(professor.instructor_name)}>
               <h2>{professor.instructor_name}</h2>
               <div className="rating2">
                 <StarRatings 
@@ -69,7 +83,7 @@ const TopProfessors = () => {
         {/* Column 2 */}
         <div className="section">
           {col2.map((professor, index) => (
-            <div key={index} className="professor">
+            <div key={index} className="professor" onClick={() => handleProfessorClick(professor.instructor_name)}>
               <h2>{professor.instructor_name}</h2>
               <div className="rating2">
                 <StarRatings 
@@ -89,7 +103,7 @@ const TopProfessors = () => {
         {/* Column 3 */}
         <div className="section">
           {col3.map((professor, index) => (
-            <div key={index} className="professor">
+            <div key={index} className="professor" onClick={() => handleProfessorClick(professor.instructor_name)}>
               <h2>{professor.instructor_name}</h2>
               <div className="rating2">
                 <StarRatings 
