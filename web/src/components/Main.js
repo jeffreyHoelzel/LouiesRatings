@@ -5,9 +5,12 @@ import TopProfessors from './TopProfessors';
 const Main = () => {
   return (
     <main>
-      <div className="title-box">
-        <h1>Louie's Ratings</h1>
-        <p>By students, for students</p>
+      <div className="content-box">
+        <div className="description">
+          <h2>Welcome to Louie’s Ratings.</h2>
+          <p>We help NAU students make confident course choices by providing insights into professor teaching styles, grade distributions, and student feedback.</p>
+          <p>Get the information you need to succeed each semester, all in one place.</p>
+        </div>
       </div>
       <TopProfessors/>
     </main>
