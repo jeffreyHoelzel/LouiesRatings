@@ -7,3 +7,17 @@
     margin-left: auto;
     border: 1px solid black;
   }
+
+.pass-fail-rates p {
+    font-size: larger;
+    font-weight: 500;
+    text-align: left;
+}
+
+.pass-fail-rates {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: auto;
+}

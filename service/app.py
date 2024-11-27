@@ -5,7 +5,7 @@ import logging
 import sys
 from search import search_for
 from user import add_user, try_login
-from page_data import get_professor_data, get_pass_fail_rate, get_class_data
+from page_data import get_professor_data, get_class_data
 from graph_data import get_graph_data, get_graph_options, get_professor_list
 from comments import add_comment, fetch_comments
 from rating import get_average_rating, add_rating, get_top_rated_professors
@@ -109,8 +109,6 @@ def get_professors_for_class():
         return jsonify({"error": "No professors found for this class"}), 404
 
     return jsonify(professors), 200
-
-
     
 @app.route('/professor', methods=['GET'])
 def get_professor_data_route():
@@ -124,28 +122,6 @@ def get_professor_data_route():
             return jsonify({"professor": full_instructor_name, "courses": course_data})
 
     return jsonify({"error": "Professor not found"}), 404
-
-@app.route('/get_pass_fail_rate', methods=['POST'])
-def get_pass_fail_rate_route():
-
-    data = request.json
-
-    if not data:
-        return jsonify({"error": "No JSON data received"}), 400
-
-    search_by = data.get('search_by')
-    search_name = data.get(search_by)
-
-    if not search_by or not search_name:
-        return jsonify({"error": "Invalid search criteria"}), 400
-
-    # Fetch grade data from database, setup to work with class or instructor
-    pass_rate, fail_rate, message, status_code = get_pass_fail_rate(search_by, search_name)
-
-    if message == None:
-        return jsonify({"pass_rate": pass_rate, "fail_rate": fail_rate}), status_code
-    
-    return jsonify({"error": message}), status_code
 
 @app.route('/class', methods=['GET'])
 def get_class_data_route():
@@ -169,10 +145,11 @@ def get_graph_data_route():
         search_name = request_data.get(search_by)
         option = request_data.get('option')
 
-        grade_distributions, status_code = get_graph_data(search_by, search_name, option)
+        grade_distributions, pass_rate, fail_rate, withdraw_rate, status_code = get_graph_data(search_by, search_name, option)
         
         if not grade_distributions.empty:
-            return jsonify(grade_distributions.to_json(orient='records')), status_code
+            return jsonify({'grade_distributions':grade_distributions.to_json(orient='records'), 
+                            'pass_rate': pass_rate, 'fail_rate':fail_rate, 'withdraw_rate': withdraw_rate}), status_code
         
         return jsonify({"error": "No grade distributions for chart found"}), 404
 

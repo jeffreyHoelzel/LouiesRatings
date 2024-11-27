@@ -93,21 +93,46 @@ header {
     border: 2px solid #fff;
 }
 main {
-    padding: 20px;
     text-align: center;
     margin-top: 20px;
-    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .content-box {
-    background-image: url(img/notes.webp);
-    background-size: cover;
+    background-image: url(img/homepage_banner.png);
+    background-size: 100% auto;
     background-position: center;
-    padding: 20px;
-    min-height: 500px;
-    color: #1A2852;
-    border: 2px solid black;
+    background-repeat: no-repeat;
+    margin: 0;
+    width: 100vw;
+    height: 33vw;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    max-width:100%;
 }
+
+.description {
+    color: white;
+    width: 50vw;
+    height: 33vw;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-right: 10vw;
+}
+
+.description h2 {
+    font-size: 2.5vw;
+    color: white;
+}
+
+.description p {
+    font-size: 2vw;
+}
+
 main h1 {
     font-size: 4rem;
     margin-bottom: 10px;
@@ -151,6 +176,14 @@ footer .container {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .section:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #243463;
   }
 
   .professor {

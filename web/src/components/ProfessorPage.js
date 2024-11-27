@@ -10,8 +10,9 @@ const ProfessorPage = () => {
   const { professorId } = useParams();
   const [professorData, setProfessorData] = useState(null); // Stores course data
   const [instructorName, setInstructorName] = useState(""); // Exact name from DB
-  const [passFailData, setPassFailData] = useState({ passRate: 0, failRate: 0 });
   const [error, setError] = useState(null);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
 
   // Format professorId to "Last Name, First Name" for query
   const formatName = (id) => {
@@ -34,6 +35,10 @@ const ProfessorPage = () => {
         const data = await response.json();
         setProfessorData(data.courses);
         setInstructorName(data.professor);
+        // split the name into first and last
+        setLastName(data.professor.split(",")[0]);
+        setFirstName(data.professor.split(",")[1]);
+
       } catch (err) {
         setError(err.message);
       }
@@ -42,59 +47,33 @@ const ProfessorPage = () => {
     fetchProfessorData();
   }, [formattedInstructorName]);
 
-  // Fetch pass/fail rate data
-  useEffect(() => {
-    if (instructorName) {
-      const fetchPassFailRate = async () => {
-        try {
-          // Call pass/fail rate endpoint searching with instructor name
-          const passFailResponse = await fetch('/service/get_pass_fail_rate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ search_by: 'instructor_name', instructor_name: instructorName })
-          });
-          if (passFailResponse.ok) {
-            const passFailData = await passFailResponse.json();
-            setPassFailData({ passRate: passFailData.pass_rate, failRate: passFailData.fail_rate });
-          } else {
-            console.error('Error fetching pass/fail data');
-          }
-        } catch (err) {
-          console.error('Error fetching pass/fail data', err);
-        }
-      };
-      fetchPassFailRate();
-    }
-  }, [instructorName]);
   if (error) return <p>{error}</p>;
   if (!professorData) return <p>Loading...</p>;
 
   return (
     <main className="professor-page container">
-      <div className="professor-header">
-        <h1>{instructorName}</h1>
-        <hr className="professor-line"></hr>
+      <div className="top-content">
+        <div className="professor-header">
+          <h1>{lastName}</h1>
+          <h1>{firstName}</h1>
+          <hr className="professor-line"></hr>
+
+          <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
+
+          <section className="reviews">
+            <h2>Leave a Rating</h2>
+            <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
+          </section>
+
+        </div>
+
+        <div className="info-sections">
+          <section className="grade-distribution-graph">
+            <h2>Grade Distribution Graph</h2>
+            <Chart className={null} instructorName={instructorName} searchBy="instructor_name" />
+          </section>
+        </div>
       </div>
-
-      <DisplayAverageRating className={null} instructorName={instructorName} searchBy="instructor_name" />
-
-      <div className="info-sections">
-        <section className="grade-distribution-graph">
-          <h2>Grade Distribution Graph</h2>
-          <Chart className={null} instructorName={instructorName} searchBy="instructor_name" />
-        </section>
-
-        <section className="pass-fail-rates">
-          <h2>Pass/Fail Rates</h2>
-          <p>Pass Rate: {passFailData.passRate.toFixed(2)}%</p>
-          <p>Fail Rate: {passFailData.failRate.toFixed(2)}%</p>
-        </section>
-      </div>
-
-      <section className="reviews">
-        <h2>Leave a Rating</h2>
-        <SubmitRating className={null} instructorName={instructorName} searchBy="instructor_name" />
-      </section>
 
       <Comment reviewType={instructorName} />
     </main>

@@ -11,7 +11,7 @@ from database import db, Account, ClassData, InstructorComment, CourseComment, I
 
 from search import search_for
 from user import add_user, try_login
-from page_data import get_professor_data, get_pass_fail_rate, get_class_data
+from page_data import get_professor_data, get_class_data
 from graph_data import get_graph_data, get_graph_options
 from comments import add_comment, fetch_comments
 from rating import get_average_rating, add_rating
@@ -150,7 +150,7 @@ class TestBackend(unittest.TestCase):
         self.assertEqual(options, ["All", "Doe,Jane"])
     
     def test_get_graph_data(self):
-        grade_distributions, status = get_graph_data("class_name", "CS 249", "Doe,Jane")
+        grade_distributions, pass_rate, fail_rate, withdraw_rate, status = get_graph_data("class_name", "CS 249", "Doe,Jane")
         self.assertEqual(grade_distributions.loc[0, 'sum'], 20)
         self.assertEqual(grade_distributions.loc[1, 'sum'], 15)
         self.assertEqual(grade_distributions.loc[2, 'sum'], 10)
