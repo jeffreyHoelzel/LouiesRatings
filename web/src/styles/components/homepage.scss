@@ -107,7 +107,7 @@ header {
 }
 main {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 60px;
     margin-bottom: 20px;
 }
 
@@ -116,7 +116,7 @@ main {
     background-size: 100% auto;
     background-position: center;
     background-repeat: no-repeat;
-    margin: 0;
+    margin-bottom: 20px;
     width: 100vw;
     height: 33vw;
     display: flex;
@@ -173,7 +173,6 @@ footer .container {
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 0x;
-    border: 2px solid black;
   }
 
   .sections-container {

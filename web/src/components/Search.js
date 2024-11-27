@@ -94,7 +94,7 @@ const Search = () => {
             if (window.innerWidth <= 768) {
                 setPlaceholder('Search...');
             } else {
-                setPlaceholder("Search (e.g. CS249 or 'Doe, Jane')");
+                setPlaceholder("Search (e.g. 'CS249' or 'Doe, Jane')");
             }
         };
 
