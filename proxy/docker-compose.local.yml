@@ -11,6 +11,9 @@ services:
     container_name: proxy-local
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - /root/webroot:/usr/local/apache2/htdocs:rw
     networks:
       - louie_shared_network
 
